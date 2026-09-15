@@ -8,6 +8,9 @@ StoryLine/逆世书/今生/Research/迁移原始资料/
 /.agents/
 /.claudian/sessions/
 .obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.trash/
+.obsidian/cache/
 .obsidian/plugins/universal-ui-translator/secrets.bin
 .obsidian/plugins/universal-ui-translator/translation-cache.json
 .obsidian/plugins/universal-ui-translator/usage.json
