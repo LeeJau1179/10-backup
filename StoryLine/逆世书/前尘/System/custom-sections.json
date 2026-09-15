@@ -1,0 +1,20 @@
+{
+  "characterCustomSections": [],
+  "locationCustomSections": [],
+  "codexCategoryCustomSections": {
+    "systems": []
+  },
+  "codexVisualGroups": {
+    "character": [],
+    "lore": []
+  },
+  "customLocationTypes": [],
+  "codexCustomCategories": [],
+  "codexEnabledCategories": [
+    "items",
+    "lore",
+    "organizations",
+    "culture",
+    "systems"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "codexCustomCategories": [],
+  "codexEnabledCategories": [
+    "items",
+    "lore",
+    "organizations",
+    "culture",
+    "systems"
+  ]
+}

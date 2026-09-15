@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "fields": [
+    {
+      "id": "uf_mtuwd8gp_vwhf0",
+      "label": "主意识",
+      "section": "Scene",
+      "category": "scene",
+      "type": "text",
+      "options": [],
+      "placeholder": "",
+      "order": 1789006648345,
+      "topLevelKey": "dominant_person"
+    },
+    {
+      "id": "uf_mtuwdjtw_36cy7",
+      "label": "外身份",
+      "section": "Scene",
+      "category": "scene",
+      "type": "text",
+      "options": [],
+      "placeholder": "",
+      "order": 1789006663076,
+      "topLevelKey": "external_identity"
+    }
+  ],
+  "sectionOrders": {
+    "Relationships|character": [
+      {
+        "kind": "builtin",
+        "key": "family"
+      },
+      {
+        "kind": "builtin",
+        "key": "relations"
+      }
+    ]
+  }
+}

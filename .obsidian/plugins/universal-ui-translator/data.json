@@ -1,0 +1,39 @@
+{
+  "enabled": false,
+  "targetLang": "zh-CN",
+  "displayMode": "replace",
+  "bilingualFormat": "{o} | {t}",
+  "activeProvider": "openai",
+  "providers": {
+    "openai": {
+      "apiBaseUrl": "https://api.deepseek.com",
+      "model": "deepseek-v4-pro",
+      "disableThinking": true
+    }
+  },
+  "cacheEnabled": true,
+  "cacheMaxEntries": 5000,
+  "batchWindowMs": 100,
+  "maxConcurrentRequests": 3,
+  "requestTimeoutMs": 30000,
+  "monthlyCharBudget": null,
+  "glossary": {},
+  "skipPatterns": [],
+  "scope": {
+    "core": true,
+    "communityPlugins": false,
+    "pluginWhitelist": [],
+    "pluginBlacklist": [
+      "universal-ui-translator"
+    ]
+  },
+  "interceptors": {
+    "command": true,
+    "menu": true,
+    "setting": true,
+    "dom": true,
+    "marketplace": true
+  },
+  "debugMode": false,
+  "communityScopeMigratedV115": true
+}
