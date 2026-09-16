@@ -10,5 +10,5 @@ modified: 2026-09-10
 locationType: 银行网点
 world: 源界
 parent: 滨海
-significance: 第一卷 1 幕取景：奖金到账·ATM验证。
+significance: 第一卷 1 幕取景：ATM验证·奖金到手。
 ---
