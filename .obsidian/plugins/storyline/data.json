@@ -7,7 +7,7 @@
   "customStatuses": [],
   "defaultView": "board",
   "defaultBoardMode": "corkboard",
-  "lastBoardMode": "corkboard",
+  "lastBoardMode": "kanban",
   "lastBoardGroupBy": "act",
   "lastStorylineViewMode": "list",
   "lastStorylineSortMode": "reading-order",
