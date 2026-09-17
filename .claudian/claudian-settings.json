@@ -1,7 +1,7 @@
 {
   "userName": "",
   "permissionMode": "yolo",
-  "model": "haiku",
+  "model": "sonnet",
   "thinkingBudget": "off",
   "effortLevel": "high",
   "serviceTier": "default",
@@ -97,10 +97,10 @@
   "settingsProvider": "claude",
   "lastSelectedChatModel": {
     "providerId": "claude",
-    "model": "sonnet"
+    "model": "opus"
   },
   "savedProviderModel": {
-    "claude": "haiku"
+    "claude": "sonnet"
   },
   "savedProviderEffort": {
     "claude": "high"

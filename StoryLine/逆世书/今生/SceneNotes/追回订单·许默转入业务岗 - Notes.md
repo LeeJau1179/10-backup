@@ -30,9 +30,7 @@
 
 ## 场景约束
 
-- sceneScope：sequence
 
-- orderingInstruction：最终sequence插入D-1-12-A之后、D-1-13-A之前
 
 ## 作者裁定（2026-09-17）
 
