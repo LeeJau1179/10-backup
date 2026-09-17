@@ -106,15 +106,19 @@ var BatchTranslator = class _BatchTranslator {
           e.reject(new Error("Provider \u672A\u914D\u7F6E"));
         return;
       }
-      const batches = this.splitBatches([...groups.keys()]);
+      const batches = this.splitBatches([...groups.keys()], provider);
       const concurrency = (_a = this.options.concurrency) != null ? _a : 3;
+      let remaining = entries.length;
       let idx = 0;
       const workers = Array.from(
         { length: Math.min(concurrency, batches.length) },
         async () => {
+          var _a2, _b2;
           while (idx < batches.length) {
             const batch = batches[idx++];
             await this.runBatch(provider, batch, groups);
+            remaining -= batch.length;
+            (_b2 = (_a2 = this.options).onQueueChange) == null ? void 0 : _b2.call(_a2, remaining);
           }
         }
       );
@@ -126,10 +130,14 @@ var BatchTranslator = class _BatchTranslator {
         this.schedule();
     }
   }
-  /** 单批上限拆分：条数或字符先达者成批（4.2.2） */
-  splitBatches(texts) {
+  /**
+   * 单批上限拆分：条数或字符先达者成批（4.2.2）
+   * 条数上限取「窗口聚合上限与 Provider 声明的 maxBatchSize」的较小值（A4）——
+   * 声明值是 Provider 单请求真实承载上限（如 Custom 模板单条 = 1），不得越过
+   */
+  splitBatches(texts, provider) {
     var _a, _b;
-    const maxItems = (_a = this.options.maxBatchItems) != null ? _a : 50;
+    const maxItems = Math.min((_a = this.options.maxBatchItems) != null ? _a : 50, provider.maxBatchSize);
     const maxChars = (_b = this.options.maxBatchChars) != null ? _b : 4e3;
     const batches = [];
     let cur = [];
@@ -201,7 +209,7 @@ var DEFAULT_SETTINGS = {
   activeProvider: "openai",
   providers: {},
   cacheEnabled: true,
-  cacheMaxEntries: 5e3,
+  cacheMaxEntries: 5e4,
   batchWindowMs: 100,
   maxConcurrentRequests: 3,
   requestTimeoutMs: 3e4,
@@ -217,6 +225,7 @@ var DEFAULT_SETTINGS = {
     pluginBlacklist: ["universal-ui-translator"]
   },
   interceptors: { command: true, menu: true, setting: true, dom: true, marketplace: true },
+  usageInStatusBar: true,
   debugMode: false
 };
 var CACHE_SCHEMA_VERSION = 1;
@@ -224,9 +233,10 @@ var CACHE_SCHEMA_VERSION = 1;
 // src/core/cache-manager.ts
 var NINETY_DAYS_MS = 90 * 24 * 60 * 60 * 1e3;
 var MAX_ENTRY_CHARS = 4e3;
-var DISK_MAX_BYTES = 8 * 1024 * 1024;
+var DISK_MAX_BYTES = 64 * 1024 * 1024;
+var BAK_REFRESH_MS = 5 * 60 * 1e3;
 var CacheManager = class {
-  constructor(io, filePath, maxEntries = 5e3, diskMaxEntries = 2e4, now = () => Date.now(), migrations = {}) {
+  constructor(io, filePath, maxEntries = 2e4, diskMaxEntries = maxEntries, now = () => Date.now(), migrations = {}) {
     this.io = io;
     this.filePath = filePath;
     this.maxEntries = maxEntries;
@@ -239,6 +249,8 @@ var CacheManager = class {
     this.loaded = false;
     this.dirtyCount = 0;
     this.lastFlushAt = null;
+    this.accessDirty = false;
+    this.lastBakAt = 0;
   }
   static makeKey(src, providerId, targetLang, model) {
     return (0, import_crypto.createHash)("sha256").update(src + providerId + targetLang + model).digest("hex").slice(0, 16);
@@ -247,22 +259,27 @@ var CacheManager = class {
   get pendingWrites() {
     return this.dirtyCount;
   }
+  /** B2：自上次 flush 后是否发生过命中（装配层据此触发保底落盘，把访问时间写回磁盘） */
+  get accessedSinceFlush() {
+    return this.accessDirty;
+  }
+  /** v1.1.9：运行时调整容量上限（内存=磁盘同值，设置页热生效）；调小立即淘汰最旧条目 */
+  setMaxEntries(n) {
+    this.maxEntries = n;
+    this.diskMaxEntries = n;
+    this.evictIfNeeded();
+  }
   async load() {
     var _a;
     if (this.loaded)
       return;
     this.loaded = true;
-    if (!await this.io.exists(this.filePath))
-      return;
-    let file;
-    try {
-      file = JSON.parse(await this.io.read(this.filePath));
-    } catch (e) {
-      return;
+    let file = await this.readFile(this.filePath);
+    if (file === null) {
+      file = await this.readFile(`${this.filePath}.bak`);
     }
-    if (typeof file.schemaVersion !== "number" || file.schemaVersion > CACHE_SCHEMA_VERSION) {
+    if (file === null)
       return;
-    }
     if (file.schemaVersion < CACHE_SCHEMA_VERSION) {
       const migrated = this.migrate(file);
       if (!migrated)
@@ -270,11 +287,33 @@ var CacheManager = class {
       file = migrated;
     }
     const cutoff = this.now() - NINETY_DAYS_MS;
-    const entries = Object.entries((_a = file.entries) != null ? _a : {}).filter(([, e]) => e.updatedAt >= cutoff && e.src.length + e.tgt.length <= MAX_ENTRY_CHARS).sort(([, a], [, b]) => b.updatedAt - a.updatedAt).slice(0, this.diskMaxEntries);
+    const entries = Object.entries((_a = file.entries) != null ? _a : {}).filter(
+      ([, e]) => {
+        var _a2;
+        return ((_a2 = e.lastAccessAt) != null ? _a2 : e.updatedAt) >= cutoff && e.src.length + e.tgt.length <= MAX_ENTRY_CHARS;
+      }
+    ).sort(([, a], [, b]) => {
+      var _a2, _b;
+      return ((_a2 = b.lastAccessAt) != null ? _a2 : b.updatedAt) - ((_b = a.lastAccessAt) != null ? _b : a.updatedAt);
+    }).slice(0, this.diskMaxEntries).reverse();
     for (const [key, e] of entries) {
       this.mem.set(key, e);
     }
     this.evictIfNeeded();
+  }
+  /** 读取并校验缓存文件；不存在/损坏/更高版本返回 null（前向兼容保护） */
+  async readFile(path) {
+    try {
+      if (!await this.io.exists(path))
+        return null;
+      const parsed = JSON.parse(await this.io.read(path));
+      if (typeof parsed.schemaVersion !== "number" || parsed.schemaVersion > CACHE_SCHEMA_VERSION) {
+        return null;
+      }
+      return parsed;
+    } catch (e) {
+      return null;
+    }
   }
   /** 逐段迁移至当前版本；缺迁移路径返回 null */
   migrate(file) {
@@ -288,22 +327,19 @@ var CacheManager = class {
     return cur;
   }
   /**
-   * 查询缓存。传入 currentFrom 时启用版本维度惰性失效（设计文档 D5）：
-   * 条目来源版本与当前版本不符则视为未命中并移除。
+   * 查询缓存。v1.2（B1）来源版本维度退役：缓存键已精确锚定原文文本，
+   * 来源升级但文本未变的条目（占绝大多数）继续命中——不再整批删除重译
    */
-  get(key, currentFrom) {
+  get(key) {
     const entry = this.mem.get(key);
     if (!entry) {
       this.misses++;
       return null;
     }
-    if (currentFrom !== void 0 && entry.from !== currentFrom) {
-      this.mem.delete(key);
-      this.misses++;
-      return null;
-    }
     entry.hits++;
     this.hits++;
+    entry.lastAccessAt = this.now();
+    this.accessDirty = true;
     this.mem.delete(key);
     this.mem.set(key, entry);
     return entry;
@@ -318,12 +354,26 @@ var CacheManager = class {
   }
   /** 批量落盘：内存视图（含 load 读入的磁盘条目）按条数与字节双上限截断后写 JSON */
   async flush() {
+    var _a, _b;
     await this.load();
-    const sorted = [...this.mem.entries()].sort(([, a], [, b]) => b.updatedAt - a.updatedAt).slice(0, this.diskMaxEntries);
+    if (this.now() - this.lastBakAt >= BAK_REFRESH_MS) {
+      const stamp = this.now();
+      this.lastBakAt = stamp;
+      try {
+        if (await this.io.exists(this.filePath)) {
+          await this.io.write(`${this.filePath}.bak`, await this.io.read(this.filePath));
+        }
+      } catch (e) {
+      }
+    }
+    const sorted = [...this.mem.entries()].sort(([, a], [, b]) => {
+      var _a2, _b2;
+      return ((_a2 = b.lastAccessAt) != null ? _a2 : b.updatedAt) - ((_b2 = a.lastAccessAt) != null ? _b2 : a.updatedAt);
+    }).slice(0, this.diskMaxEntries);
     let bytes = 0;
     const kept = {};
     for (const [key, e] of sorted) {
-      bytes += key.length + e.src.length + e.tgt.length + e.from.length + 128;
+      bytes += key.length + e.src.length + e.tgt.length + ((_b = (_a = e.from) == null ? void 0 : _a.length) != null ? _b : 0) + 128;
       if (bytes > DISK_MAX_BYTES)
         break;
       kept[key] = e;
@@ -332,8 +382,9 @@ var CacheManager = class {
       schemaVersion: CACHE_SCHEMA_VERSION,
       entries: kept
     };
-    await this.io.write(this.filePath, JSON.stringify(file, null, 2));
+    await this.io.write(this.filePath, JSON.stringify(file));
     this.dirtyCount = 0;
+    this.accessDirty = false;
     this.lastFlushAt = this.now();
   }
   stats() {
@@ -351,6 +402,24 @@ var CacheManager = class {
     this.hits = 0;
     this.misses = 0;
     this.dirtyCount = 0;
+    this.accessDirty = false;
+  }
+  /**
+   * v1.1.9：清理与当前 引擎+语言+模型 不匹配的条目——缓存键含这三个维度，
+   * 换过模型/引擎后旧条目永远不会再命中，纯占空间。无 model 字段的旧条目按引擎+语言判定。
+   * 返回删除条数（计入待落盘，由调用方 flush）
+   */
+  purgeMismatched(provider, lang, model) {
+    let removed = 0;
+    for (const [key, e] of [...this.mem.entries()]) {
+      if (e.provider !== provider || e.lang !== lang || e.model !== void 0 && e.model !== model) {
+        this.mem.delete(key);
+        removed++;
+      }
+    }
+    if (removed > 0)
+      this.dirtyCount += removed;
+    return removed;
   }
   /**
    * 导入缓存条目（4.5 缓存 Tab 导入；FR-12 用户间共享词表）
@@ -366,6 +435,8 @@ var CacheManager = class {
           tgt: e.tgt,
           provider: typeof e.provider === "string" ? e.provider : "imported",
           lang: typeof e.lang === "string" ? e.lang : "",
+          // v1.1.9：透传模型标记（清理失效条目按模型判定）
+          ...typeof e.model === "string" ? { model: e.model } : {},
           from: typeof e.from === "string" ? e.from : "",
           hits: typeof e.hits === "number" ? e.hits : 0,
           updatedAt: typeof e.updatedAt === "number" ? e.updatedAt : Date.now()
@@ -384,16 +455,6 @@ var CacheManager = class {
     }
   }
 };
-
-// src/core/app-version.ts
-function resolveObsidianVersion(appVersion, userAgent) {
-  var _a;
-  if (typeof appVersion === "string" && appVersion.length > 0) {
-    return appVersion;
-  }
-  const m = userAgent.match(/obsidian\/([\d.]+)/i);
-  return (_a = m == null ? void 0 : m[1]) != null ? _a : "unknown";
-}
 
 // src/filters/filter-engine.ts
 var _FilterEngine = class _FilterEngine {
@@ -512,7 +573,7 @@ var TranslationCoordinator = class {
    *   熔断与预算不受影响（钱包保护不动）
    */
   async translateWithOutcome(text, ctx, opts) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l;
     if (!this.filter.shouldTranslate(text))
       return { text, outcome: "filtered" };
     const fixed = this.options.glossary[text];
@@ -523,15 +584,14 @@ var TranslationCoordinator = class {
       return { text, outcome: "no-provider" };
     const cacheOn = (_c = (_b = (_a = this.options).isCacheEnabled) == null ? void 0 : _b.call(_a)) != null ? _c : true;
     const model = (_f = (_e = (_d = this.options).getModelId) == null ? void 0 : _e.call(_d)) != null ? _f : "";
-    const from = (_i = (_h = (_g = this.options).resolveFrom) == null ? void 0 : _h.call(_g, ctx.pluginId)) != null ? _i : "";
     const key = CacheManager.makeKey(text, provider.id, this.options.targetLang, model);
-    const hit = cacheOn ? this.cache.get(key, from || void 0) : null;
+    const hit = cacheOn ? this.cache.get(key) : null;
     if (hit)
       return { text: hit.tgt, outcome: "cache" };
-    if (this.options.usageTracker && await this.options.usageTracker.isOverBudget((_j = this.options.monthlyCharBudget) != null ? _j : null)) {
+    if (this.options.usageTracker && await this.options.usageTracker.isOverBudget((_g = this.options.monthlyCharBudget) != null ? _g : null)) {
       if (!this.budgetNotified) {
         this.budgetNotified = true;
-        (_l = (_k = this.options).onBudgetExceeded) == null ? void 0 : _l.call(_k);
+        (_i = (_h = this.options).onBudgetExceeded) == null ? void 0 : _i.call(_h);
       }
       return { text, outcome: "budget" };
     }
@@ -547,8 +607,8 @@ var TranslationCoordinator = class {
       const { masked, tokens } = FilterEngine.protectPlaceholders(text);
       const context = `${ctx.source}:${ctx.pluginId}`;
       const raw = this.options.translateVia ? await this.options.translateVia(masked, context) : await provider.translate(masked, { context });
-      void ((_m = this.options.usageTracker) == null ? void 0 : _m.record(masked.length));
       const restored = FilterEngine.restorePlaceholders(raw.trim(), tokens);
+      void ((_j = this.options.usageTracker) == null ? void 0 : _j.record(masked.length, restored.length));
       if (!FilterEngine.placeholdersIntact(text, restored)) {
         return { text, outcome: "failed", error: "\u8BD1\u6587\u5360\u4F4D\u7B26\u88AB\u6539\u5199" };
       }
@@ -558,7 +618,8 @@ var TranslationCoordinator = class {
           tgt: restored,
           provider: provider.id,
           lang: this.options.targetLang,
-          from,
+          // v1.1.9：缓存键已含模型维度，条目冗余一份供「清理失效条目」按模型判定
+          model,
           hits: 0,
           updatedAt: this.now()
         });
@@ -568,17 +629,21 @@ var TranslationCoordinator = class {
     } catch (e) {
       if (/HTTP 40[13]/.test(String(e)) && !this.authNotified) {
         this.authNotified = true;
-        (_o = (_n = this.options).onAuthFailure) == null ? void 0 : _o.call(_n);
+        (_l = (_k = this.options).onAuthFailure) == null ? void 0 : _l.call(_k);
       }
       if (this.consecutiveFailures < 3) {
         console.warn(`[uut] \u7FFB\u8BD1\u8BF7\u6C42\u5931\u8D25\uFF1A${String(e).slice(0, 160)}`);
       }
-      this.noteFailure(text);
+      this.noteFailure(text, e);
       return { text, outcome: "failed", error: String(e).slice(0, 160) };
     }
   }
   isCircuitOpen() {
     return this.now() < this.circuitOpenUntil;
+  }
+  /** v1.2 A3：熔断剩余毫秒（状态栏倒计时显示用） */
+  circuitRemainingMs() {
+    return Math.max(0, this.circuitOpenUntil - this.now());
   }
   /** 配置变更热生效（v1.1.0）：清熔断、负缓存与鉴权提示状态——修好配置后无需重启/苦等 10 分钟 */
   resetFailures() {
@@ -588,9 +653,11 @@ var TranslationCoordinator = class {
     this.authNotified = false;
     this.budgetNotified = false;
   }
-  noteFailure(text) {
+  noteFailure(text, e) {
     var _a;
     this.negativeCache.set(text, this.now());
+    if (e !== void 0 && /HTTP 429/.test(String(e)))
+      return;
     this.consecutiveFailures++;
     if (this.consecutiveFailures >= CIRCUIT_FAILURE_THRESHOLD && !this.isCircuitOpen()) {
       this.circuitOpenUntil = this.now() + CIRCUIT_OPEN_MS;
@@ -680,6 +747,49 @@ var KeyStorage = class {
   }
 };
 
+// src/core/semaphore.ts
+var Semaphore = class {
+  constructor(getLimit) {
+    this.getLimit = getLimit;
+    this.active = 0;
+    this.queue = [];
+  }
+  async acquire() {
+    if (this.active < this.getLimit()) {
+      this.active++;
+      return;
+    }
+    await new Promise((resolve) => this.queue.push(resolve));
+  }
+  release() {
+    const next = this.queue.shift();
+    if (next) {
+      next();
+    } else {
+      this.active--;
+    }
+  }
+  /** 当前在途数（测试断言用） */
+  get inFlight() {
+    return this.active;
+  }
+};
+
+// src/core/format.ts
+function fmtCompact(n) {
+  if (n < 1e3)
+    return String(Math.round(n));
+  if (n < 1e6)
+    return `${(n / 1e3).toFixed(1)}k`;
+  return `${(n / 1e6).toFixed(1)}M`;
+}
+function fmtCost(v, currency = "\xA5") {
+  return v >= 1 ? `${currency}${v.toFixed(2)}` : `${currency}${v.toFixed(3)}`;
+}
+function estimateTokenCost(inTokens, outTokens, price) {
+  return (inTokens * price.inputPerMillion + outTokens * price.outputPerMillion) / 1e6;
+}
+
 // src/interceptors/command-patcher.ts
 var import_obsidian = require("obsidian");
 var CommandPatcher = class {
@@ -719,12 +829,13 @@ var CommandPatcher = class {
     } else {
       sweep();
     }
-    this.originalAddCommand = import_obsidian.Plugin.prototype.addCommand;
-    const self = this;
-    import_obsidian.Plugin.prototype.addCommand = function(command) {
+    const original = proto.addCommand;
+    this.originalAddCommand = original;
+    const patchCommand = (command, pluginId) => this.patchCommand(command, pluginId);
+    proto.addCommand = function(command) {
       var _a, _b;
-      self.patchCommand(command, (_b = (_a = this.manifest) == null ? void 0 : _a.id) != null ? _b : "unknown");
-      return self.originalAddCommand.call(this, command);
+      patchCommand(command, (_b = (_a = this.manifest) == null ? void 0 : _a.id) != null ? _b : "unknown");
+      return original.call(this, command);
     };
     this.debug("CommandPatcher \u5DF2\u6FC0\u6D3B\uFF08addCommand \u589E\u91CF\u52AB\u6301\u5C31\u7EEA\uFF1B\u5B58\u91CF\u626B\u63CF\u5F85\u5E03\u5C40\u5C31\u7EEA\uFF09");
     return true;
@@ -1098,6 +1209,12 @@ var MarketplacePatcher = class {
     this.rescanInterval = null;
     /** v1.1.8：失败 Notice 去抖（同一原因 30 秒内不重复弹） */
     this.noticeAt = /* @__PURE__ */ new Map();
+    /** v1.2 P1 二级：每文档在途翻译趟注册表与悬浮进度条（聚合显示 settled/total） */
+    this.activeProgress = /* @__PURE__ */ new Map();
+    this.progressEls = /* @__PURE__ */ new Map();
+    this.progressTimers = /* @__PURE__ */ new Map();
+    /** v1.3.1：弹窗常驻用量徽标（市场浏览器为独立窗口，主窗口状态栏不可见——唯一消耗视图） */
+    this.usageEls = /* @__PURE__ */ new Map();
   }
   activate() {
     if (typeof MutationObserver !== "function" || !document.body)
@@ -1108,6 +1225,7 @@ var MarketplacePatcher = class {
     return true;
   }
   deactivate() {
+    var _a;
     for (const obs of this.observers)
       obs.disconnect();
     this.observers = [];
@@ -1116,9 +1234,16 @@ var MarketplacePatcher = class {
       this.rescanInterval = null;
     }
     for (const doc of this.documents) {
-      doc.querySelectorAll(".uut-mkt-btn, .uut-mkt-detail-btn").forEach((b) => b.remove());
+      doc.querySelectorAll(".uut-mkt-btn, .uut-mkt-detail-btn, .uut-mkt-progress, .uut-mkt-usage").forEach((b) => b.remove());
       doc.querySelectorAll('[data-uut="mkt"]').forEach((el) => el.removeAttribute("data-uut"));
     }
+    for (const [doc, timer] of this.progressTimers) {
+      ((_a = doc.defaultView) != null ? _a : window).clearTimeout(timer);
+    }
+    this.progressTimers.clear();
+    this.progressEls.clear();
+    this.activeProgress.clear();
+    this.usageEls.clear();
     this.documents.clear();
     this.noticeAt.clear();
   }
@@ -1128,6 +1253,33 @@ var MarketplacePatcher = class {
       return;
     this.observeDocument(doc);
     this.injectButtons(doc);
+    this.ensureUsageBadge(doc);
+  }
+  /**
+   * v1.3.1：更新全部弹窗徽标的用量文案（供 main.ts 1Hz 供数调用）
+   * text 为 null 时隐藏（设置关闭/引擎未配置等）
+   */
+  setUsageLine(text) {
+    for (const [doc, el] of this.usageEls) {
+      if (!el.isConnected) {
+        this.usageEls.delete(doc);
+        continue;
+      }
+      el.textContent = text != null ? text : "";
+      el.classList.toggle("uut-hidden", text === null);
+    }
+  }
+  /** v1.3.1：确保弹窗存在常驻用量徽标（R-30 跨 realm：由目标 doc 自建） */
+  ensureUsageBadge(doc) {
+    if (this.usageEls.has(doc))
+      return;
+    const el = doc.createElement("div");
+    el.className = "uut-mkt-usage";
+    el.setAttribute("data-uut", "usage");
+    el.setAttribute("data-no-translate", "true");
+    el.classList.add("uut-hidden");
+    doc.body.appendChild(el);
+    this.usageEls.set(doc, el);
   }
   rescanDocuments() {
     var _a, _b;
@@ -1227,8 +1379,12 @@ var MarketplacePatcher = class {
     var _a;
     btn.textContent = "\u2026";
     btn.setAttribute("disabled", "true");
+    btn.classList.add("uut-mkt-progressing");
     try {
-      const stats = await this.translatePass(item, skipClosest);
+      const stats = await this.translatePass(item, skipClosest, (settled, total) => {
+        if (btn.isConnected && total > 0)
+          btn.textContent = `${settled}/${total}`;
+      });
       if (stats.detached > 0 && item.isConnected) {
         const retry = await this.translatePass(item, skipClosest);
         stats.done += retry.done;
@@ -1266,10 +1422,15 @@ var MarketplacePatcher = class {
       btn.textContent = "\u8BD1";
     } finally {
       btn.removeAttribute("disabled");
+      btn.classList.remove("uut-mkt-progressing");
     }
   }
-  /** 单趟收集 + 并行送译 + 回写；返回分类统计供调用方决定反馈与是否重试 */
-  async translatePass(item, skipClosest) {
+  /**
+   * 单趟收集 + 并行送译 + 回写；返回分类统计供调用方决定反馈与是否重试
+   * v1.2 P1：可选 onSettle 进度回调——分母为送译节点总数（先收集后送译，开译即知），
+   * 分子在每个节点任意结局（成功/失败/游离/模式抑制）结算时递增，确定型不回退
+   */
+  async translatePass(item, skipClosest, onSettle) {
     const doc = item.ownerDocument;
     const skipSelector = "[data-no-translate], [data-uut], code, pre" + (skipClosest ? `, ${skipClosest}` : "");
     const walker = doc.createTreeWalker(item, NodeFilter.SHOW_TEXT, {
@@ -1287,6 +1448,16 @@ var MarketplacePatcher = class {
       nodes.push(cur);
       cur = walker.nextNode();
     }
+    const targets = nodes.filter((n) => {
+      var _a;
+      return ((_a = n.nodeValue) != null ? _a : "").trim().length >= 2;
+    });
+    const total = targets.length;
+    let settled = 0;
+    const progress = total > 0 ? this.beginProgress(doc, total) : null;
+    if (progress)
+      this.renderProgress(doc);
+    onSettle == null ? void 0 : onSettle(0, total);
     let done = 0;
     let detached = 0;
     let modeSuppressed = 0;
@@ -1294,47 +1465,54 @@ var MarketplacePatcher = class {
     let firstError;
     const tally = /* @__PURE__ */ new Map();
     await Promise.all(
-      nodes.map(async (node) => {
+      targets.map(async (node) => {
         var _a, _b, _c;
         const original = (_a = node.nodeValue) != null ? _a : "";
         const trimmed = original.trim();
-        if (trimmed.length < 2)
-          return;
-        const parent = node.parentElement;
-        let t = null;
-        if (parent) {
-          t = (_b = tally.get(parent)) != null ? _b : { total: 0, ok: 0 };
-          t.total++;
-          tally.set(parent, t);
-        }
-        const res = await this.coordinator.translateWithOutcome(
-          trimmed,
-          { source: "dom", pluginId: "marketplace" },
-          { bypassNegativeCache: true }
-        );
-        outcomes.push(res.outcome);
-        if (res.outcome === "failed") {
-          firstError != null ? firstError : firstError = res.error;
-          return;
-        }
-        const formatted = this.format(res.text, trimmed);
-        if (formatted === null || formatted === trimmed) {
-          if (formatted === null && res.text !== trimmed) {
-            modeSuppressed++;
-          } else if (t) {
-            t.ok++;
+        try {
+          const parent = node.parentElement;
+          let t = null;
+          if (parent) {
+            t = (_b = tally.get(parent)) != null ? _b : { total: 0, ok: 0 };
+            t.total++;
+            tally.set(parent, t);
           }
-          return;
+          const res = await this.coordinator.translateWithOutcome(
+            trimmed,
+            { source: "dom", pluginId: "marketplace" },
+            { bypassNegativeCache: true }
+          );
+          outcomes.push(res.outcome);
+          if (res.outcome === "failed") {
+            firstError != null ? firstError : firstError = res.error;
+            return;
+          }
+          const formatted = this.format(res.text, trimmed);
+          if (formatted === null || formatted === trimmed) {
+            if (formatted === null && res.text !== trimmed) {
+              modeSuppressed++;
+            } else if (t) {
+              t.ok++;
+            }
+            return;
+          }
+          if (!node.isConnected) {
+            detached++;
+            return;
+          }
+          node.nodeValue = original.replace(trimmed, formatted);
+          (_c = this.onWriteBack) == null ? void 0 : _c.call(this, node);
+          if (t)
+            t.ok++;
+          done++;
+        } finally {
+          settled++;
+          if (progress) {
+            progress.settled = settled;
+            this.renderProgress(doc);
+          }
+          onSettle == null ? void 0 : onSettle(settled, total);
         }
-        if (!node.isConnected) {
-          detached++;
-          return;
-        }
-        node.nodeValue = original.replace(trimmed, formatted);
-        (_c = this.onWriteBack) == null ? void 0 : _c.call(this, node);
-        if (t)
-          t.ok++;
-        done++;
       })
     );
     for (const [parent, t] of tally) {
@@ -1342,7 +1520,97 @@ var MarketplacePatcher = class {
         parent.setAttribute("data-uut", "mkt");
       }
     }
+    this.endProgress(doc, progress, done);
     return { done, detached, modeSuppressed, outcomes, firstError };
+  }
+  /** P1 二级：注册一趟在途翻译（取消该文档待移除计时器，复用已有浮条） */
+  beginProgress(doc, total) {
+    var _a;
+    let set = this.activeProgress.get(doc);
+    if (!set) {
+      set = /* @__PURE__ */ new Set();
+      this.activeProgress.set(doc, set);
+    } else if (set.size > 0 && [...set].every((r) => r.settled >= r.total)) {
+      set.clear();
+    }
+    const record = { settled: 0, total };
+    set.add(record);
+    const timer = this.progressTimers.get(doc);
+    if (timer !== void 0) {
+      ((_a = doc.defaultView) != null ? _a : window).clearTimeout(timer);
+      this.progressTimers.delete(doc);
+    }
+    return record;
+  }
+  /** P1 二级：按注册表聚合刷新浮条文本与十档宽度（离散类切换，禁内联样式） */
+  renderProgress(doc) {
+    const set = this.activeProgress.get(doc);
+    if (!set || set.size === 0)
+      return;
+    let settled = 0;
+    let total = 0;
+    for (const r of set) {
+      settled += r.settled;
+      total += r.total;
+    }
+    const el = this.ensureProgressEl(doc);
+    el.label.textContent = `UUT \u7FFB\u8BD1\u4E2D ${settled}/${total}`;
+    const step = total === 0 ? 0 : Math.min(10, Math.floor(settled / total * 10));
+    const pulse = settled < total ? " uut-pulse" : "";
+    el.fill.className = `uut-mkt-progress-fill uut-p-${step}${pulse}`;
+  }
+  /** P1 二级：一趟结束——保留在注册表（累计口径：完成的趟仍计入 settled/total）；
+   * 该文档全部趟完成时显示完成并延时移除浮条 */
+  endProgress(doc, record, done) {
+    var _a;
+    if (!record)
+      return;
+    const set = this.activeProgress.get(doc);
+    if (!set)
+      return;
+    const allDone = [...set].every((r) => r.settled >= r.total);
+    if (!allDone) {
+      this.renderProgress(doc);
+      return;
+    }
+    this.activeProgress.delete(doc);
+    const el = this.progressEls.get(doc);
+    if (el == null ? void 0 : el.root.isConnected) {
+      el.label.textContent = done > 0 ? "UUT \u2713 \u5DF2\u5B8C\u6210" : "UUT \u5DF2\u7ED3\u675F";
+      el.root.classList.add("uut-mkt-progress-done");
+    }
+    const view = (_a = doc.defaultView) != null ? _a : window;
+    this.progressTimers.set(
+      doc,
+      view.setTimeout(() => {
+        var _a2;
+        (_a2 = this.progressEls.get(doc)) == null ? void 0 : _a2.root.remove();
+        this.progressEls.delete(doc);
+        this.progressTimers.delete(doc);
+      }, 600)
+    );
+  }
+  /** P1 二级：确保该文档存在悬浮进度条元素（R-30 跨 realm：元素由目标 doc 自建） */
+  ensureProgressEl(doc) {
+    const existing = this.progressEls.get(doc);
+    if (existing == null ? void 0 : existing.root.isConnected)
+      return existing;
+    const root = doc.createElement("div");
+    root.className = "uut-mkt-progress";
+    root.setAttribute("data-uut", "progress");
+    root.setAttribute("data-no-translate", "true");
+    const track = doc.createElement("div");
+    track.className = "uut-mkt-progress-track";
+    const fill = doc.createElement("div");
+    fill.className = "uut-mkt-progress-fill uut-p-0";
+    track.appendChild(fill);
+    const label = doc.createElement("span");
+    root.appendChild(track);
+    root.appendChild(label);
+    doc.body.appendChild(root);
+    const el = { root, label, fill };
+    this.progressEls.set(doc, el);
+    return el;
   }
   /** 有待译节点但零回写时的主因归类（按钱包安全优先级）；无可译内容返回 null（显示 ✓） */
   summarizeBlocked(outcomes, firstError) {
@@ -1404,11 +1672,12 @@ var MenuPatcher = class {
       new import_obsidian4.Notice("UUT\uFF1A\u83DC\u5355\u901A\u9053\u7FFB\u8BD1\u5DF2\u505C\u7528\uFF08addItem \u7279\u5F81\u68C0\u6D4B\u5931\u8D25\uFF09");
       return false;
     }
-    this.originalAddItem = import_obsidian4.Menu.prototype.addItem;
-    const self = this;
-    import_obsidian4.Menu.prototype.addItem = function(cb) {
-      return self.originalAddItem.call(this, (item) => {
-        self.wrapSetTitle(item);
+    const originalAddItem = proto.addItem;
+    this.originalAddItem = originalAddItem;
+    const wrapSetTitle = (item) => this.wrapSetTitle(item);
+    proto.addItem = function(cb) {
+      return originalAddItem.call(this, (item) => {
+        wrapSetTitle(item);
         return cb(item);
       });
     };
@@ -1423,19 +1692,18 @@ var MenuPatcher = class {
   }
   wrapSetTitle(item) {
     const originalSetTitle = item.setTitle.bind(item);
-    const self = this;
-    item.setTitle = function(title) {
+    item.setTitle = (title) => {
       if (typeof title !== "string" || !title) {
         return originalSetTitle(title);
       }
       const result = originalSetTitle(title);
-      self.coordinator.translate(title, { source: "menu", pluginId: "unknown" }).then((t) => {
-        const formatted = self.format(t, title);
+      this.coordinator.translate(title, { source: "menu", pluginId: "unknown" }).then((t) => {
+        const formatted = this.format(t, title);
         if (formatted === null)
           return;
         originalSetTitle(formatted);
         const titleEl = item.titleEl;
-        if (self.isBilingual() && titleEl) {
+        if (this.isBilingual() && titleEl) {
           titleEl.setAttr("title", title);
         }
       }).catch(() => void 0);
@@ -1477,13 +1745,13 @@ var SettingPatcher = class {
   wrapNameLike(method) {
     const proto = import_obsidian5.Setting.prototype;
     const original = proto[method];
-    const self = this;
+    const translateText = this.translateText.bind(this);
     proto[method] = function(name) {
       const result = original.call(this, name);
       if (typeof name === "string" && name.trim().length >= 2) {
         const el = this.nameEl;
         if (el) {
-          self.translateText(
+          translateText(
             name,
             (formatted) => {
               el.textContent = formatted;
@@ -1502,7 +1770,7 @@ var SettingPatcher = class {
   wrapSetDesc() {
     const proto = import_obsidian5.Setting.prototype;
     const original = proto.setDesc;
-    const self = this;
+    const translateText = this.translateText.bind(this);
     proto.setDesc = function(desc) {
       var _a, _b, _c;
       const result = original.call(this, desc);
@@ -1521,7 +1789,7 @@ var SettingPatcher = class {
         for (const node of nodes) {
           const fullText = (_c = node.nodeValue) != null ? _c : "";
           const trimmed = fullText.trim();
-          self.translateText(
+          translateText(
             trimmed,
             (formatted) => {
               node.nodeValue = fullText.replace(trimmed, formatted);
@@ -1563,11 +1831,12 @@ var WindowOpenHook = class {
     if (typeof window.open !== "function" || this.original)
       return this.original !== null;
     this.original = window.open;
-    const self = this;
+    const original = this.original;
+    const notifyWhenReady = (win, onReady) => this.notifyWhenReady(win, onReady);
     window.open = function(...args) {
-      const win = self.original.apply(window, args);
+      const win = original.apply(window, args);
       if (win)
-        self.notifyWhenReady(win, onWindow);
+        notifyWhenReady(win, onWindow);
       return win;
     };
     return true;
@@ -1624,18 +1893,19 @@ var TranslationProvider = class {
   constructor(http) {
     this.http = http;
   }
-  /** 默认实现：受控并发（上限 3）逐条翻译，保持返回顺序与输入一致 */
+  /**
+   * 默认实现：全量并发逐条翻译、按下标回填保序（综合改进设计 A2）
+   * 真实在途请求数由装配层 http 包装层的全局信号量统一封顶（main.ts 注入
+   * maxConcurrentRequests）——本层不再自带内层并发上限，避免与外层批次并发
+   * 相乘导致真实在途数失控（原实现内层硬编码 3：设置并发 5 实际 15 路）
+   */
   async translateBatch(texts) {
-    const limit = 3;
     const out = new Array(texts.length);
-    let i = 0;
-    const workers = Array.from({ length: Math.min(limit, texts.length) }, async () => {
-      while (i < texts.length) {
-        const cur = i++;
-        out[cur] = await this.translate(texts[cur]);
-      }
-    });
-    await Promise.all(workers);
+    await Promise.all(
+      texts.map(async (t, i) => {
+        out[i] = await this.translate(t);
+      })
+    );
     return out;
   }
 };
@@ -1714,6 +1984,26 @@ function buildUiTranslationPrompt(targetLang) {
     `6. If already in ${targetLang}, return as-is`
   ].join("\n");
 }
+var BATCH_MAX_ITEM_CHARS = 200;
+function parseNumberedResponse(raw, n) {
+  const out = new Array(n);
+  const seen = /* @__PURE__ */ new Set();
+  for (const line of raw.split("\n")) {
+    if (!line.trim())
+      continue;
+    const m = /^(\d+)[.:)]?\s?(.*)$/.exec(line);
+    if (!m)
+      throw new Error(`\u6279\u91CF\u54CD\u5E94\u884C\u683C\u5F0F\u4E0D\u7B26\uFF1A${line.slice(0, 40)}`);
+    const idx = Number(m[1]);
+    if (idx < 1 || idx > n || seen.has(idx))
+      throw new Error("\u6279\u91CF\u54CD\u5E94\u5E8F\u53F7\u9519\u4F4D");
+    seen.add(idx);
+    out[idx - 1] = m[2];
+  }
+  if (seen.size !== n)
+    throw new Error(`\u6279\u91CF\u54CD\u5E94\u884C\u6570\u4E0D\u7B26\uFF08${seen.size}/${n}\uFF09`);
+  return out;
+}
 var OpenAIProvider = class extends TranslationProvider {
   constructor(http, options) {
     var _a, _b;
@@ -1721,12 +2011,25 @@ var OpenAIProvider = class extends TranslationProvider {
     this.options = options;
     this.id = "openai";
     this.name = "OpenAI \u517C\u5BB9\u63A5\u53E3";
-    this.maxBatchSize = 1;
+    /** A1 合批：单请求可承载条数（上游 BatchTranslator 每批 ≤50 条，40 留解析余量） */
+    this.maxBatchSize = 40;
     this.baseUrl = ((_a = options.baseUrl) != null ? _a : "https://api.openai.com/v1").replace(/\/+$/, "");
     this.model = (_b = options.model) != null ? _b : "gpt-4o-mini";
   }
   get modelId() {
     return this.model;
+  }
+  /** v1.3：响应携带 usage 时回传真实 token（缺字段/非数字静默跳过，不估算） */
+  emitUsage(data) {
+    var _a, _b;
+    const sink = this.options.onUsage;
+    if (!sink)
+      return;
+    const p = (_a = data.usage) == null ? void 0 : _a.prompt_tokens;
+    const c = (_b = data.usage) == null ? void 0 : _b.completion_tokens;
+    if (typeof p === "number") {
+      sink({ promptTokens: p, completionTokens: typeof c === "number" ? c : 0 });
+    }
   }
   async translate(text, ctx) {
     var _a, _b, _c;
@@ -1757,11 +2060,93 @@ var OpenAIProvider = class extends TranslationProvider {
       throw new Error(`OpenAI HTTP ${res.status}: ${res.text.slice(0, 200)}`);
     }
     const data = JSON.parse(res.text);
+    this.emitUsage(data);
     const out = (_c = (_b = (_a = data.choices) == null ? void 0 : _a[0]) == null ? void 0 : _b.message) == null ? void 0 : _c.content;
     if (typeof out !== "string" || !out.trim()) {
       throw new Error("OpenAI \u54CD\u5E94\u7F3A\u5C11 choices[0].message.content");
     }
     return out.trim();
+  }
+  /**
+   * A1 合批（综合改进设计 2.1）：单行且 ≤200 字符的条目编号成列表一次请求；
+   * 多行/超长条目走单条 translate（失败隔离——catch 后留空槽，由上游
+   * BatchTranslator.runBatch 对空槽逐条重试，不让个别失败拖垮整批结果）。
+   * 编号批响应解析失败即抛错（runBatch 整批降级拆单）。context 为 D7"仅
+   * prompt 参考"维度，批内不携带（单条通道不受影响）
+   */
+  async translateBatch(texts) {
+    if (!this.http)
+      throw new Error("HttpClient \u672A\u6CE8\u5165");
+    if (texts.length === 0)
+      return [];
+    const out = new Array(texts.length);
+    const batchIdx = [];
+    const singleIdx = [];
+    texts.forEach((t, i) => {
+      if (t.length > 0 && t.length <= BATCH_MAX_ITEM_CHARS && !t.includes("\n")) {
+        batchIdx.push(i);
+      } else {
+        singleIdx.push(i);
+      }
+    });
+    const singles = singleIdx.map(async (i) => {
+      try {
+        out[i] = await this.translate(texts[i]);
+      } catch (e) {
+      }
+    });
+    if (batchIdx.length > 0) {
+      const lines = batchIdx.map((i) => texts[i]);
+      const results = await this.translateNumbered(lines);
+      batchIdx.forEach((orig, k) => {
+        out[orig] = results[k];
+      });
+    }
+    await Promise.all(singles);
+    return out;
+  }
+  /** 编号列表单请求翻译（A1）；解析违例抛错走整批降级 */
+  async translateNumbered(lines) {
+    var _a, _b, _c;
+    if (!this.http)
+      throw new Error("HttpClient \u672A\u6CE8\u5165");
+    const system = buildUiTranslationPrompt(this.options.targetLang) + [
+      "",
+      "Batch rules:",
+      `- The user message contains ${lines.length} numbered lines. Translate each line separately.`,
+      `- Return EXACTLY ${lines.length} lines, each prefixed with its number like "1. ", in the same order.`,
+      "- Do not merge, split, or omit lines. Apply all rules above to every line."
+    ].join("\n");
+    const res = await this.http({
+      url: `${this.baseUrl}/chat/completions`,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${this.options.apiKey}`
+      },
+      body: JSON.stringify({
+        model: this.model,
+        temperature: 0,
+        // 防部分网关默认输出上限截断批响应（截断 → 解析失败 → 长期降级逐条）
+        max_tokens: 4096,
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: lines.map((t, i) => `${i + 1}. ${t}`).join("\n") }
+        ],
+        // R-34：思考模式默认开启的模型（DeepSeek V4 系列）会拖慢并放大计费，按需关闭
+        ...this.options.disableThinking ? { thinking: { type: "disabled" } } : {}
+      })
+    });
+    if (res.status !== 200) {
+      throw new Error(`OpenAI HTTP ${res.status}: ${res.text.slice(0, 200)}`);
+    }
+    const data = JSON.parse(res.text);
+    this.emitUsage(data);
+    const content = (_c = (_b = (_a = data.choices) == null ? void 0 : _a[0]) == null ? void 0 : _b.message) == null ? void 0 : _c.content;
+    if (typeof content !== "string" || !content.trim()) {
+      throw new Error("OpenAI \u54CD\u5E94\u7F3A\u5C11 choices[0].message.content");
+    }
+    return parseNumberedResponse(content.trim(), lines.length);
   }
   /** 连通性测试：真实试译一个词（/models 浅探测测不出模型名错误与账户欠费 402，R-33 教训） */
   async validateConfig() {
@@ -2012,7 +2397,7 @@ var GoogleProvider = class extends TranslationProvider {
 };
 
 // src/providers/index.ts
-async function createActiveProvider(settings, keyStorage, http) {
+async function createActiveProvider(settings, keyStorage, http, usageSink) {
   var _a, _b;
   const id = settings.activeProvider;
   const cfg = (_a = settings.providers[id]) != null ? _a : {};
@@ -2025,7 +2410,8 @@ async function createActiveProvider(settings, keyStorage, http) {
       targetLang: settings.targetLang,
       baseUrl: cfg.apiBaseUrl || void 0,
       model: cfg.model || void 0,
-      disableThinking: cfg.disableThinking
+      disableThinking: cfg.disableThinking,
+      onUsage: usageSink
     });
   }
   if (id === "custom") {
@@ -2067,6 +2453,7 @@ var import_obsidian6 = require("obsidian");
 var TABS = [
   { id: "general", label: "\u57FA\u7840" },
   { id: "api", label: "API \u914D\u7F6E" },
+  { id: "usage", label: "\u7528\u91CF\u7EDF\u8BA1" },
   { id: "scope", label: "\u4F5C\u7528\u57DF" },
   { id: "cache", label: "\u7F13\u5B58" },
   { id: "advanced", label: "\u9AD8\u7EA7" }
@@ -2095,8 +2482,14 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
     super(app, plugin);
     this.plugin = plugin;
     this.activeTab = "general";
+    /** v1.3：用量页图表口径（token 实测 ⇄ 字符折算估算；实例字段不持久化，关页即回默认） */
+    this.usageChartBasis = "token";
   }
-  async display() {
+  display() {
+    void this.renderTabs();
+  }
+  /** 实际渲染（原 display 方法体）：基类 display() 为 void，异步渲染经 void 发起不阻塞 */
+  async renderTabs() {
     const { containerEl } = this;
     containerEl.empty();
     containerEl.setAttr("data-no-translate", "true");
@@ -2108,7 +2501,7 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
       });
       btn.addEventListener("click", () => {
         this.activeTab = tab.id;
-        void this.display();
+        void this.renderTabs();
       });
     }
     const content = containerEl.createDiv("uut-tab-content");
@@ -2116,10 +2509,12 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
       this.renderGeneral(content);
     else if (this.activeTab === "api")
       await this.renderApi(content);
+    else if (this.activeTab === "usage")
+      await this.renderUsage(content);
     else if (this.activeTab === "scope")
       this.renderScope(content);
     else if (this.activeTab === "cache")
-      this.renderCache(content);
+      await this.renderCache(content);
     else
       this.renderAdvanced(content);
   }
@@ -2165,7 +2560,7 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
       d.setValue(s.activeProvider).onChange(async (v) => {
         s.activeProvider = v;
         await this.plugin.saveSettings();
-        await this.display();
+        await this.renderTabs();
       });
     });
     const cfg = (_a = s.providers[s.activeProvider]) != null ? _a : {};
@@ -2177,7 +2572,7 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
       text.inputEl.type = "password";
       text.setPlaceholder(keySaved ? "\u5DF2\u4FDD\u5B58\uFF0C\u8F93\u5165\u65B0 Key \u53EF\u8986\u76D6" : "\u8F93\u5165\u540E\u81EA\u52A8\u52A0\u5BC6\u4FDD\u5B58").onChange(async (v) => {
         await this.plugin.saveApiKey(s.activeProvider, v.trim());
-        await this.display();
+        await this.renderTabs();
       });
     });
     if (s.activeProvider === "openai") {
@@ -2210,6 +2605,45 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
           });
         }
       );
+      const priceCfg = cfg.pricePerMillion;
+      const priceText = priceCfg && priceCfg.input > 0 && priceCfg.output > 0 ? `${priceCfg.input}/${priceCfg.output}` : "";
+      let priceEnabled = priceText !== "";
+      new import_obsidian6.Setting(el).setName("token \u5355\u4EF7\uFF08\u6BCF\u767E\u4E07\uFF09").setDesc(
+        "\u683C\u5F0F \u8F93\u5165\u4EF7/\u8F93\u51FA\u4EF7\uFF0C\u5982 2/8\uFF08\u6309\u4F60\u6240\u7528\u6A21\u578B\u540E\u53F0\u6807\u4EF7\u586B\uFF09\u3002\u586B\u597D\u540E\u72B6\u6001\u680F\u4E0E\u7528\u91CF\u9875\u6309 \u5B9E\u6D4B token \xD7 \u5355\u4EF7 \u5C55\u793A\u8D39\u7528\u4F30\u7B97\uFF1B\u7559\u7A7A\u5173\u95ED\u3002\u4EC5\u5F71\u54CD\u5C55\u793A\uFF0C\u4E0D\u5F71\u54CD\u9884\u7B97\u7194\u65AD"
+      ).addText((text) => {
+        text.setPlaceholder("2/8").setValue(priceText).onChange(async (v) => {
+          var _a2;
+          const s2 = this.plugin.settings;
+          const c = (_a2 = s2.providers.openai) != null ? _a2 : {};
+          const m = /^\s*(\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)\s*$/.exec(v);
+          if (m) {
+            const input = Math.min(1e4, Number(m[1]));
+            const output = Math.min(1e4, Number(m[2]));
+            c.pricePerMillion = { input, output };
+            s2.providers.openai = c;
+            await this.plugin.saveSettings();
+            if (!priceEnabled) {
+              priceEnabled = true;
+              new import_obsidian6.Notice("UUT\uFF1A\u8D39\u7528\u4F30\u7B97\u5DF2\u542F\u7528\uFF08\u72B6\u6001\u680F\u4E0E\u7528\u91CF\u9875\u53EF\u89C1\uFF09");
+            }
+          } else if (v.trim() === "") {
+            delete c.pricePerMillion;
+            s2.providers.openai = c;
+            priceEnabled = false;
+            await this.plugin.saveSettings();
+          }
+        });
+      }).addText((text) => {
+        var _a2;
+        text.setPlaceholder("\xA5").setValue((_a2 = cfg.priceCurrency) != null ? _a2 : "").onChange(async (v) => {
+          var _a3;
+          const s2 = this.plugin.settings;
+          const c = (_a3 = s2.providers.openai) != null ? _a3 : {};
+          c.priceCurrency = v.trim() || void 0;
+          s2.providers.openai = c;
+          await this.plugin.saveSettings();
+        });
+      });
     } else if (s.activeProvider === "azure") {
       this.addTextSetting(
         el,
@@ -2359,47 +2793,75 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
       new import_obsidian6.Setting(el).setName("\u5DF2\u5B89\u88C5\u63D2\u4EF6 id \u53C2\u8003").setDesc(ids);
     }
   }
-  /** 缓存：开关、统计、落盘、清空、导出/导入（4.5 / FR-12；v1.1.5 风险标注与立即落盘） */
-  renderCache(el) {
+  /** 缓存：开关、上限、统计、落盘、清理、清空、导出/导入（4.5 / FR-12；v1.1.9 说明三段式重写 + 失效条目清理 + 磁盘文件实况） */
+  async renderCache(el) {
     const s = this.plugin.settings;
     new import_obsidian6.Setting(el).setName("\u542F\u7528\u672C\u5730\u7F13\u5B58").setDesc(
-      "\u8BD1\u6587\u6301\u4E45\u5316\u5230\u63D2\u4EF6\u76EE\u5F55 translation-cache.json\uFF0C\u540C\u4E00\u6587\u672C\u53EA\u4ED8\u4E00\u6B21 API \u8D39\u7528\u3002\u26A0\uFE0F \u5173\u95ED\u540E\u6BCF\u6B21\u6E32\u67D3\u754C\u9762\u90FD\u91CD\u65B0\u8C03 API\uFF08\u540C\u4E00\u754C\u9762\u53CD\u590D\u6D88\u8017\u989D\u5EA6\uFF09\uFF0C\u9664\u975E\u6392\u67E5\u95EE\u9898\u5426\u5219\u4E0D\u8981\u5173"
+      "\u662F\u4EC0\u4E48\uFF1A\u8BD1\u6587\u6301\u4E45\u5316\u5230\u63D2\u4EF6\u76EE\u5F55 translation-cache.json\u2014\u2014\u540C\u4E00\u6587\u672C\u53EA\u4ED8\u4E00\u6B21 API \u8D39\u7528\uFF0C\u91CD\u542F Obsidian \u540E\u4ECD\u7136\u6709\u6548\u3002\u4EC0\u4E48\u65F6\u5019\u5173\uFF1A\u53EA\u6709\u6392\u67E5\u7FFB\u8BD1\u5F02\u5E38\u65F6\u624D\u9700\u8981\u5173\u3002\u26A0\uFE0F \u5173\u95ED\u540E\u6BCF\u6B21\u6E32\u67D3\u754C\u9762\u90FD\u91CD\u65B0\u8C03 API\uFF0C\u540C\u4E00\u754C\u9762\u4F1A\u53CD\u590D\u6D88\u8017\u989D\u5EA6"
     ).addToggle(
       (t) => t.setValue(s.cacheEnabled).onChange(async (v) => {
         s.cacheEnabled = v;
         await this.plugin.saveSettings();
       })
     );
+    new import_obsidian6.Setting(el).setName("\u7F13\u5B58\u6761\u76EE\u4E0A\u9650").setDesc(
+      "\u662F\u4EC0\u4E48\uFF1A\u5185\u5B58\u4E0E\u78C1\u76D8\u5171\u7528\u6B64\u4E0A\u9650\uFF08\u9ED8\u8BA4 50000\uFF0C\u8303\u56F4 1000\u2013200000\uFF1B\u78C1\u76D8\u53E6\u6709 64MB \u5B57\u8282\u786C\u9876\uFF0C\u5148\u5230\u5148\u622A\uFF09\uFF0C\u8D85\u51FA\u540E\u6DD8\u6C70\u6700\u4E45\u672A\u7528\u7684\u6761\u76EE\u3002\u4EC0\u4E48\u65F6\u5019\u8C03\uFF1A\u793E\u533A\u5E02\u573A README \u5168\u6587\u7FFB\u8BD1\u6761\u76EE\u91CF\u5927\uFF0C\u4E0A\u9650\u592A\u4F4E\u4F1A\u63D0\u524D\u6DD8\u6C70\u8BD1\u6587\u3001\u4E0B\u6B21\u6253\u5F00\u91CD\u590D\u6D88\u8017 API\u2014\u2014\u8BD1\u6587\u662F\u7EAF\u6587\u672C\u4E0D\u5360\u7A7A\u95F4\uFF0C\u5EFA\u8BAE\u5F80\u5BBD\u4E86\u8BBE\u3002\u4EE3\u4EF7\uFF1A\u5BB9\u91CF\u8D8A\u5927\uFF0C\u542F\u52A8\u65F6\u52A0\u8F7D\u7F13\u5B58\u8D8A\u4E45\uFF08\u6BEB\u79D2\u7EA7\uFF09\u3001\u5360\u5185\u5B58\u8D8A\u591A\u3002\u4FEE\u6539\u5373\u65F6\u751F\u6548\uFF1B\u8C03\u5C0F\u4F1A\u7ACB\u5373\u6DD8\u6C70\u6700\u65E7\u6761\u76EE"
+    ).addText((text) => {
+      text.inputEl.type = "number";
+      text.setValue(String(s.cacheMaxEntries)).onChange(async (v) => {
+        const n = Number(v);
+        if (Number.isFinite(n) && n >= 1e3 && n <= 2e5) {
+          s.cacheMaxEntries = Math.floor(n);
+          await this.plugin.saveSettings();
+        }
+      });
+    });
     const stats = this.plugin.cache.stats();
+    const bytes = await this.plugin.cacheFileBytes();
+    const sizeInfo = bytes === null ? "\u78C1\u76D8\u6587\u4EF6\u5C1A\u672A\u521B\u5EFA" : `\u78C1\u76D8\u6587\u4EF6\u7EA6 ${(bytes / 1024 / 1024).toFixed(2)} MB`;
     const flushInfo = stats.lastFlushAt ? `\u6700\u540E\u843D\u76D8 ${new Date(stats.lastFlushAt).toLocaleTimeString()}` : "\u672C\u4F1A\u8BDD\u5C1A\u672A\u843D\u76D8\uFF08\u6BCF 30s \u68C0\u67E5\uFF0C\u7D2F\u8BA1 100 \u6761\u6216 5 \u5206\u949F\u81EA\u52A8\u843D\u76D8\uFF1B\u4E5F\u53EF\u70B9\u4E0B\u65B9\u300C\u7ACB\u5373\u843D\u76D8\u300D\uFF09";
     new import_obsidian6.Setting(el).setName("\u7F13\u5B58\u7EDF\u8BA1").setDesc(
-      `\u6761\u76EE ${stats.size}\uFF0C\u547D\u4E2D\u7387 ${(stats.hitRate * 100).toFixed(1)}%\uFF08\u4F1A\u8BDD\u5185\u5185\u5B58\u7EDF\u8BA1\u2014\u2014\u547D\u4E2D\u7387\u8D8A\u9AD8\uFF0C\u8D8A\u591A\u5185\u5BB9\u8D70\u4E86\u672C\u5730\u7F13\u5B58\u3001\u8D8A\u7701\u94B1\uFF09\uFF5C\u6587\u4EF6 translation-cache.json\uFF5C${flushInfo}`
+      `\u6761\u76EE ${stats.size}\uFF08\u5185\u5B58=\u78C1\u76D8\u540C\u4E0A\u9650\uFF09\uFF5C\u547D\u4E2D\u7387 ${(stats.hitRate * 100).toFixed(1)}%\uFF08\u672C\u4F1A\u8BDD\u7EDF\u8BA1\u2014\u2014\u547D\u4E2D\u7387\u8D8A\u9AD8\uFF0C\u8D8A\u591A\u5185\u5BB9\u8D70\u4E86\u672C\u5730\u7F13\u5B58\u3001\u8D8A\u7701\u94B1\uFF09\uFF5C${sizeInfo}\uFF5C${flushInfo}`
     );
-    new import_obsidian6.Setting(el).setName("\u7ACB\u5373\u843D\u76D8").setDesc("\u628A\u5185\u5B58\u4E2D\u7684\u65B0\u8BD1\u6587\u7ACB\u523B\u5199\u5165\u78C1\u76D8\uFF0C\u4E0D\u7B49\u81EA\u52A8\u843D\u76D8\u7B56\u7565\uFF08\u5D29\u6E83/\u5F3A\u6740\u6700\u591A\u4E22\u5931 5 \u5206\u949F\u8BD1\u6587\u7684\u7A97\u53E3\u7531\u6B64\u624B\u52A8\u5173\u95ED\uFF09\u3002\u96F6 API \u6D88\u8017").addButton(
+    new import_obsidian6.Setting(el).setName("\u7ACB\u5373\u843D\u76D8").setDesc(
+      "\u662F\u4EC0\u4E48\uFF1A\u65B0\u8BD1\u7684\u8BD1\u6587\u5148\u5B58\u5728\u5185\u5B58\u91CC\uFF0C\u63D2\u4EF6\u6BCF 30 \u79D2\u68C0\u67E5\u4E00\u6B21\u2014\u2014\u7D2F\u8BA1\u6EE1 100 \u6761\u65B0\u8BD1\u6587\u3001\u6216\u8DDD\u4E0A\u6B21\u843D\u76D8\u6EE1 5 \u5206\u949F\uFF0C\u624D\u5199\u5165\u78C1\u76D8\u6587\u4EF6\uFF1B\u63D2\u4EF6\u6B63\u5E38\u5378\u8F7D/\u5173\u5E93\u65F6\u4E5F\u4F1A\u5F3A\u5236\u5199\u5165\u3002\u4EC0\u4E48\u65F6\u5019\u70B9\uFF1A\u521A\u7FFB\u5B8C\u4E00\u5927\u6279\u5E02\u573A README\u3001\u6216\u51C6\u5907\u5173\u673A/\u91CD\u542F Obsidian \u524D\u70B9\u4E00\u4E0B\uFF0C\u7ACB\u523B\u628A\u5185\u5B58\u91CC\u7684\u65B0\u8BD1\u6587\u5199\u5165\u78C1\u76D8\u3002\u4E0D\u70B9\u4F1A\u600E\u6837\uFF1A\u5D29\u6E83/\u5F3A\u6740\u4F1A\u4E22\u6389\u300C\u4E0A\u6B21\u843D\u76D8\u4EE5\u6765\u300D\u7684\u65B0\u8BD1\u6587\uFF08\u6700\u591A 5 \u5206\u949F\u7684\u91CF\uFF09\uFF0C\u6B63\u5E38\u9000\u51FA\u4E0D\u53D7\u5F71\u54CD\u3002\u96F6 API \u6D88\u8017"
+    ).addButton(
       (b) => b.setButtonText("\u7ACB\u5373\u843D\u76D8").onClick(async () => {
         const res = await this.plugin.flushCacheNow();
         new import_obsidian6.Notice(`UUT\uFF1A${res.message}`);
-        await this.display();
+        await this.renderTabs();
+      })
+    );
+    new import_obsidian6.Setting(el).setName("\u6E05\u7406\u5931\u6548\u6761\u76EE").setDesc(
+      "\u662F\u4EC0\u4E48\uFF1A\u5220\u9664\u4E0E\u5F53\u524D\u300C\u5F15\u64CE + \u76EE\u6807\u8BED\u8A00 + \u6A21\u578B\u300D\u4E0D\u5339\u914D\u7684\u7F13\u5B58\u6761\u76EE\u2014\u2014\u7F13\u5B58\u952E\u5305\u542B\u8FD9\u4E09\u4E2A\u7EF4\u5EA6\uFF0C\u6362\u8FC7\u6A21\u578B\u6216\u5F15\u64CE\u540E\uFF0C\u65E7\u6761\u76EE\u6C38\u8FDC\u4E0D\u4F1A\u518D\u547D\u4E2D\uFF0C\u7EAF\u5360\u7A7A\u95F4\u3002\u4EC0\u4E48\u65F6\u5019\u70B9\uFF1A\u6362\u8FC7\u6A21\u578B/\u5F15\u64CE/\u76EE\u6807\u8BED\u8A00\u4E4B\u540E\u70B9\u4E00\u6B21\u3002\u6CE8\u610F\uFF1Av1.1.9 \u4E4B\u524D\u5199\u5165\u7684\u65E7\u6761\u76EE\u6CA1\u6709\u6A21\u578B\u6807\u8BB0\uFF0C\u53EA\u80FD\u6309\u5F15\u64CE+\u8BED\u8A00\u5224\u5B9A\u3002\u96F6 API \u6D88\u8017"
+    ).addButton(
+      (b) => b.setButtonText("\u6E05\u7406\u5931\u6548\u6761\u76EE").onClick(async () => {
+        const res = await this.plugin.purgeStaleCacheEntries();
+        new import_obsidian6.Notice(`UUT\uFF1A${res.message}`);
+        await this.renderTabs();
       })
     );
     new import_obsidian6.Setting(el).setName("\u6E05\u7A7A\u7F13\u5B58").setDesc(
-      "\u26A0\uFE0F \u6E05\u7A7A\u540E\u6240\u6709\u754C\u9762\u5C06\u5728\u4E0B\u6B21\u6253\u5F00\u65F6\u91CD\u65B0\u6D88\u8017 API \u7FFB\u8BD1\u4E00\u904D\uFF08\u6309\u57FA\u51C6\u4EF7\uFF1A\u6838\u5FC3\u754C\u9762 \u2248 \xA50.30 \u4EE5\u5185\uFF0C\u7A7A\u95F2\u65F6\u6BB5\u534A\u4EF7\uFF09\u3002\u540C\u65F6\u91CD\u7F6E\u754C\u9762\u5DF2\u663E\u793A\u7684\u8BD1\u6587\uFF08R-07 \u8054\u52A8\uFF09"
+      "\u662F\u4EC0\u4E48\uFF1A\u5220\u9664\u5168\u90E8\u7F13\u5B58\u8BD1\u6587\uFF08\u5185\u5B58+\u78C1\u76D8\uFF09\uFF0C\u540C\u65F6\u91CD\u7F6E\u754C\u9762\u5DF2\u663E\u793A\u7684\u8BD1\u6587\uFF08R-07 \u8054\u52A8\uFF09\u3002\u4EC0\u4E48\u65F6\u5019\u7528\uFF1A\u8BD1\u6587\u51FA\u73B0\u5F02\u5E38\uFF08\u5982\u5D4C\u5957\u4E71\u7801\uFF09\u3001\u6216\u6362\u4E86\u672F\u8BED\u8868\u60F3\u5168\u90E8\u91CD\u8BD1\u65F6\u3002\u26A0\uFE0F \u4EE3\u4EF7\uFF1A\u6E05\u7A7A\u540E\u6240\u6709\u754C\u9762\u5C06\u5728\u4E0B\u6B21\u6253\u5F00\u65F6\u91CD\u65B0\u6D88\u8017 API \u7FFB\u8BD1\u4E00\u904D\uFF08\u6309\u57FA\u51C6\u4EF7\uFF1A\u6838\u5FC3\u754C\u9762 \u2248 \xA50.30 \u4EE5\u5185\uFF0C\u7A7A\u95F2\u65F6\u6BB5\u534A\u4EF7\uFF09"
     ).addButton((b) => {
+      var _a;
       b.setButtonText("\u6E05\u7A7A\u7F13\u5B58");
       const btn = b;
       if (typeof btn.setDestructive === "function")
         btn.setDestructive();
       else
-        b.setWarning();
+        (_a = btn.setWarning) == null ? void 0 : _a.call(btn);
       b.onClick(async () => {
         this.plugin.cache.clear();
         this.plugin.resetCommandTranslations();
         await this.plugin.cache.flush();
         new import_obsidian6.Notice("UUT\uFF1A\u7F13\u5B58\u5DF2\u6E05\u7A7A\uFF0C\u754C\u9762\u8BD1\u6587\u5C06\u5728\u4E0B\u6B21\u8BBF\u95EE\u65F6\u91CD\u65B0\u7FFB\u8BD1");
-        await this.display();
+        await this.renderTabs();
       });
     });
-    new import_obsidian6.Setting(el).setName("\u5BFC\u51FA\u7F13\u5B58").setDesc("\u5BFC\u51FA\u5230\u5E93\u6839\u76EE\u5F55 universal-ui-translator-cache-export.json\uFF0C\u53EF\u5171\u4EAB\u7ED9\u5176\u4ED6\u7528\u6237\uFF08\u96F6 API \u6D88\u8017\uFF09").addButton(
+    new import_obsidian6.Setting(el).setName("\u5BFC\u51FA\u7F13\u5B58").setDesc(
+      "\u662F\u4EC0\u4E48\uFF1A\u628A\u7F13\u5B58\u5B8C\u6574\u5BFC\u51FA\u5230\u5E93\u6839\u76EE\u5F55 universal-ui-translator-cache-export.json\u3002\u4EC0\u4E48\u65F6\u5019\u7528\uFF1A\u6362\u7535\u8111\u8FC1\u79FB\uFF0C\u6216\u628A\u81EA\u5DF1\u79EF\u7D2F\u7684\u8BD1\u6587\u5206\u4EAB\u7ED9\u4ED6\u4EBA\u2014\u2014\u5BF9\u65B9\u5BFC\u5165\u540E\u96F6 API \u6D88\u8017\u76F4\u63A5\u590D\u7528\uFF08FR-12\uFF09\u3002\u96F6 API \u6D88\u8017"
+    ).addButton(
       (b) => b.setButtonText("\u5BFC\u51FA").onClick(async () => {
         const res = await this.plugin.exportCache();
         new import_obsidian6.Notice(`UUT\uFF1A${res.message}`);
@@ -2408,7 +2870,9 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
     const fileInput = el.createEl("input", {
       attr: { type: "file", accept: ".json,application/json" }
     });
-    new import_obsidian6.Setting(el).setName("\u5BFC\u5165\u7F13\u5B58").setDesc("\u9009\u62E9\u7F13\u5B58 JSON \u6587\u4EF6\uFF08\u6821\u9A8C schemaVersion \u4E0E\u6761\u76EE\u7ED3\u6784\uFF0C\u975E\u6CD5\u6587\u4EF6\u62D2\u7EDD\uFF09").addButton(
+    new import_obsidian6.Setting(el).setName("\u5BFC\u5165\u7F13\u5B58").setDesc(
+      "\u662F\u4EC0\u4E48\uFF1A\u4ECE\u7F13\u5B58 JSON \u6587\u4EF6\u5408\u5E76\u6761\u76EE\u8FDB\u672C\u5730\u7F13\u5B58\uFF08\u6821\u9A8C schemaVersion \u4E0E\u6761\u76EE\u7ED3\u6784\uFF0C\u975E\u6CD5\u6587\u4EF6\u62D2\u7EDD\uFF09\u3002\u4EC0\u4E48\u65F6\u5019\u7528\uFF1A\u6362\u673A\u8FC1\u79FB\u56DE\u6765\uFF0C\u6216\u63A5\u6536\u4ED6\u4EBA\u5206\u4EAB\u7684\u8BD1\u6587\u8BCD\u8868\u3002\u96F6 API \u6D88\u8017"
+    ).addButton(
       (b) => b.setButtonText("\u5BFC\u5165").onClick(async () => {
         var _a;
         const file = (_a = fileInput.files) == null ? void 0 : _a[0];
@@ -2418,9 +2882,144 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
         }
         const res = await this.plugin.importCache(await file.text());
         new import_obsidian6.Notice(`UUT\uFF1A${res.message}`);
-        await this.display();
+        await this.renderTabs();
       })
     );
+  }
+  /**
+   * 用量统计（v1.1.9 起）：本月汇总卡片 + 近 30 天逐日柱状图（纯 DOM/CSS 零依赖）。
+   * v1.3 双口径：token 实测（API usage 字段，账单口径，openai 通道）+ 字符折算估算（历史/其他引擎）。
+   * 新增：会话速率卡片、今日实测卡片、图表口径切换、用户单价成本卡片
+   */
+  async renderUsage(el) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q;
+    const month = await this.plugin.getUsageMonthStats();
+    const monthChars = await this.plugin.monthlyUsage();
+    const daily = await this.plugin.getUsageDaily(30);
+    const session = this.plugin.usageSessionStats();
+    const rate1 = this.plugin.usageRate(6e4);
+    const rate5 = this.plugin.usageRate(5 * 6e4);
+    const today = await this.plugin.usageToday();
+    const isTokenBasis = this.plugin.settings.activeProvider === "openai";
+    const price = (_a = this.plugin.settings.providers.openai) == null ? void 0 : _a.pricePerMillion;
+    const priceOn = !!price && price.input > 0 && price.output > 0;
+    const currency = (_c = (_b = this.plugin.settings.providers.openai) == null ? void 0 : _b.priceCurrency) != null ? _c : "\xA5";
+    const inTok = Math.ceil(month.inChars / 4);
+    const outTok = Math.ceil(month.outChars / 2.5);
+    const cost = this.estimateCostSplit(month.inChars, month.outChars);
+    new import_obsidian6.Setting(el).setName("\u8BA1\u8D39\u53E3\u5F84").setDesc(
+      isTokenBasis ? "\u5F53\u524D\u5F15\u64CE\uFF08OpenAI \u517C\u5BB9\u63A5\u53E3\uFF09\u6309 token \u8BA1\u8D39\uFF1Av1.3 \u8D77\u76F4\u63A5\u91C7\u96C6 API \u8FD4\u56DE\u7684 usage \u5B57\u6BB5\uFF08\u8D26\u5355\u53E3\u5F84\uFF0C\u542B\u6BCF\u8BF7\u6C42 system prompt \u5F00\u9500\uFF09\uFF1B\u72B6\u6001\u680F\u5E38\u9A7B\u300C\u901F\u7387 \xB7 \u4ECA\u65E5 \xB7 \u8D39\u7528\u300D\u6BB5\uFF08\u9AD8\u7EA7\u9875\u53EF\u5173\uFF09\u3002\u5207\u6362\u5176\u4ED6\u5F15\u64CE\u540E\u672C\u9875\u56DE\u843D\u5B57\u7B26\u53E3\u5F84" : "\u5F53\u524D\u5F15\u64CE\u6309\u5B57\u7B26\u8BA1\u8D39\uFF08DeepL/Google/Azure\uFF09\uFF1Atokens \u9879\u4E3A\u5B57\u7B26\u6298\u7B97\u4F30\u7B97\uFF08\u8F93\u5165 \u2248 \u5B57\u7B26/4\u3001\u8F93\u51FA \u2248 \u5B57\u7B26/2.5\uFF09\uFF0C\u4EC5\u91CF\u7EA7\u53C2\u8003"
+    );
+    new import_obsidian6.Setting(el).setName("\u672C\u6708\u7528\u91CF").setDesc(
+      `\u9001\u8BD1 ${month.calls.toLocaleString()} \u6761\uFF5C\u8F93\u5165 ${month.inChars.toLocaleString()} \u5B57\u7B26 \u2248 ${inTok.toLocaleString()} tokens\uFF5C\u8F93\u51FA ${month.outChars.toLocaleString()} \u5B57\u7B26 \u2248 ${outTok.toLocaleString()} tokens\uFF5C\u4F30\u7B97\u8D39\u7528 ${cost}\u3002\u672C\u6708\u7D2F\u8BA1\u53D1\u9001 ${monthChars.toLocaleString()} \u5B57\u7B26\uFF08\u4E0E\u6708\u5EA6\u9884\u7B97\u540C\u53E3\u5F84\uFF0Cusage.json \u6301\u4E45\u5316\uFF09\u3002\u9010\u65E5\u660E\u7EC6\u81EA v1.1.9 \u8D77\u8BB0\u5F55\uFF0C\u6B64\u524D\u5386\u53F2\u53EA\u6709\u6708\u7D2F\u8BA1`
+    );
+    const cards = el.createDiv("uut-usage-cards");
+    const addCard = (label, value) => {
+      const c = cards.createDiv("uut-usage-card");
+      c.createDiv("uut-usage-card-label").setText(label);
+      c.createDiv("uut-usage-card-value").setText(value);
+    };
+    addCard("\u672C\u4F1A\u8BDD tokens\uFF08\u5B9E\u6D4B\uFF09", session.tokens.toLocaleString());
+    addCard("\u672C\u4F1A\u8BDD\u9001\u8BD1", `${session.calls.toLocaleString()} \u6761 / ${fmtCompact(session.chars)} \u5B57`);
+    addCard("\u8FD1 1 \u5206\u949F", isTokenBasis ? `${fmtCompact(rate1.tokensPerMin)} tok/min` : `${fmtCompact(rate1.charsPerMin)} \u5B57/min`);
+    addCard("\u8FD1 5 \u5206\u949F", isTokenBasis ? `${fmtCompact(rate5.tokensPerMin)} tok/min` : `${fmtCompact(rate5.charsPerMin)} \u5B57/min`);
+    addCard("\u4F1A\u8BDD\u5CF0\u503C", `${fmtCompact(session.peakTokensPerMin)} tok/min`);
+    if (isTokenBasis) {
+      addCard("\u4ECA\u65E5 tokens\uFF08\u5B9E\u6D4B\uFF09", (today.inTokens + today.outTokens).toLocaleString());
+      if (priceOn && price) {
+        const todayCost = estimateTokenCost(today.inTokens, today.outTokens, {
+          inputPerMillion: price.input,
+          outputPerMillion: price.output
+        });
+        const monthCost = estimateTokenCost((_d = month.inTokens) != null ? _d : 0, (_e = month.outTokens) != null ? _e : 0, {
+          inputPerMillion: price.input,
+          outputPerMillion: price.output
+        });
+        addCard(`\u4ECA\u65E5\u8D39\u7528\uFF08\u2248${currency}\uFF09`, fmtCost(todayCost, currency));
+        addCard(`\u672C\u6708\u8D39\u7528\uFF08\u2248${currency}\uFF09`, fmtCost(monthCost, currency));
+      }
+    }
+    addCard("\u672C\u6708\u9001\u8BD1\u6761\u6570", month.calls.toLocaleString());
+    addCard("\u8F93\u5165 tokens\uFF08\u4F30\u7B97\uFF09", inTok.toLocaleString());
+    addCard("\u8F93\u51FA tokens\uFF08\u4F30\u7B97\uFF09", outTok.toLocaleString());
+    addCard("\u4F30\u7B97\u8D39\u7528", cost);
+    const tokenBasis = this.usageChartBasis === "token";
+    const barIn = (d) => {
+      var _a2;
+      return tokenBasis ? (_a2 = d.inTokens) != null ? _a2 : 0 : Math.ceil(d.inChars / 4);
+    };
+    const barOut = (d) => {
+      var _a2;
+      return tokenBasis ? (_a2 = d.outTokens) != null ? _a2 : 0 : Math.ceil(d.outChars / 2.5);
+    };
+    const maxTok = Math.max(1, ...daily.map((d) => barIn(d) + barOut(d)));
+    new import_obsidian6.Setting(el).setName(`\u8FD1 30 \u5929\u9010\u65E5\u7528\u91CF\uFF08${tokenBasis ? "tokens \u5B9E\u6D4B" : "tokens \u6298\u7B97\u4F30\u7B97"}\uFF09`).setHeading();
+    const toggle = el.createDiv("uut-tabbar");
+    for (const [id, label] of [
+      ["token", "tokens \u5B9E\u6D4B"],
+      ["chars", "\u5B57\u7B26\u6298\u7B97"]
+    ]) {
+      const btn = toggle.createDiv(`uut-tab${this.usageChartBasis === id ? " uut-tab-active" : ""}`);
+      btn.textContent = label;
+      btn.addEventListener("click", () => {
+        this.usageChartBasis = id;
+        void this.renderTabs();
+      });
+    }
+    const chart = el.createDiv("uut-chart");
+    for (const d of daily) {
+      const iV = barIn(d);
+      const oV = barOut(d);
+      const bar = chart.createDiv("uut-chart-bar");
+      bar.title = `${d.date}\uFF1A\u8C03\u7528 ${d.calls} \u6761
+\u8F93\u5165 ${d.inChars.toLocaleString()} \u5B57\u7B26 / \u5B9E\u6D4B ${((_f = d.inTokens) != null ? _f : 0).toLocaleString()} tokens
+\u8F93\u51FA ${d.outChars.toLocaleString()} \u5B57\u7B26 / \u5B9E\u6D4B ${((_g = d.outTokens) != null ? _g : 0).toLocaleString()} tokens`;
+      if (oV > 0)
+        bar.createDiv("uut-chart-out").style.height = `${oV / maxTok * 100}%`;
+      if (iV > 0)
+        bar.createDiv("uut-chart-in").style.height = `${iV / maxTok * 100}%`;
+    }
+    const axis = el.createDiv("uut-chart-axis");
+    axis.createSpan().setText((_i = (_h = daily[0]) == null ? void 0 : _h.date) != null ? _i : "");
+    axis.createSpan().setText((_k = (_j = daily[Math.floor(daily.length / 2)]) == null ? void 0 : _j.date) != null ? _k : "");
+    axis.createSpan().setText((_m = (_l = daily[daily.length - 1]) == null ? void 0 : _l.date) != null ? _m : "");
+    const legend = el.createDiv("uut-chart-legend");
+    const lg1 = legend.createSpan();
+    lg1.createSpan({ cls: "uut-chart-swatch uut-swatch-in" });
+    lg1.appendText(`\u8F93\u5165 tokens\uFF08${tokenBasis ? "\u5B9E\u6D4B" : "\u4F30\u7B97"}\uFF09`);
+    const lg2 = legend.createSpan();
+    lg2.createSpan({ cls: "uut-chart-swatch uut-swatch-out" });
+    lg2.appendText(`\u8F93\u51FA tokens\uFF08${tokenBasis ? "\u5B9E\u6D4B" : "\u4F30\u7B97"}\uFF09`);
+    const week = daily.slice(-7).reduce(
+      (acc, d) => {
+        var _a2, _b2, _c2, _d2;
+        return {
+          calls: acc.calls + d.calls,
+          inChars: acc.inChars + d.inChars,
+          outChars: acc.outChars + d.outChars,
+          inTokens: ((_a2 = acc.inTokens) != null ? _a2 : 0) + ((_b2 = d.inTokens) != null ? _b2 : 0),
+          outTokens: ((_c2 = acc.outTokens) != null ? _c2 : 0) + ((_d2 = d.outTokens) != null ? _d2 : 0)
+        };
+      },
+      { calls: 0, inChars: 0, outChars: 0, inTokens: 0, outTokens: 0 }
+    );
+    new import_obsidian6.Setting(el).setName("\u4ECA\u65E5 / \u8FD1 7 \u65E5").setDesc(
+      `\u4ECA\u65E5\uFF1A${(_o = (_n = daily[daily.length - 1]) == null ? void 0 : _n.calls) != null ? _o : 0} \u6761\uFF0C\u5B9E\u6D4B ${(today.inTokens + today.outTokens).toLocaleString()} tokens\uFF5C\u8FD1 7 \u65E5\uFF1A${week.calls.toLocaleString()} \u6761\uFF0C\u5B9E\u6D4B ${(((_p = week.inTokens) != null ? _p : 0) + ((_q = week.outTokens) != null ? _q : 0)).toLocaleString()} tokens\uFF08\u6298\u7B97\u4F30\u7B97 ${(Math.ceil(week.inChars / 4) + Math.ceil(week.outChars / 2.5)).toLocaleString()}\uFF09`
+    );
+    new import_obsidian6.Setting(el).setName("\u53E3\u5F84\u8BF4\u660E").setDesc(
+      "v1.3 \u8D77 OpenAI \u517C\u5BB9\u901A\u9053\u8BB0\u5F55 API \u8FD4\u56DE\u7684\u771F\u5B9E usage\uFF08\u8D26\u5355\u53E3\u5F84\uFF0C\u542B\u6BCF\u8BF7\u6C42 system prompt \u5F00\u9500\uFF09\uFF1B\u300C\u6298\u7B97\u4F30\u7B97\u300D\u7531\u5B57\u7B26\u6570\u4F30\u7B97\uFF08\u8F93\u5165 \u2248 \u5B57\u7B26/4\u3001\u8F93\u51FA \u2248 \u5B57\u7B26/2.5\uFF09\uFF0C\u670D\u52A1\u4E8E\u5386\u53F2\u6570\u636E\u4E0E\u975E token \u8BA1\u8D39\u5F15\u64CE\u3002" + COST_BASIS + "\u3002\u7F13\u5B58\u547D\u4E2D\u4E0E\u672F\u8BED\u8868\u547D\u4E2D\u4E0D\u6D88\u8017 API\u3001\u4E0D\u8BA1\u5165\u6B64\u7EDF\u8BA1\uFF1B\u6708\u5EA6\u9884\u7B97\u53E3\u5F84\u4ECD\u4E3A\u5B57\u7B26"
+    );
+  }
+  /** 按基准价把输入/输出字符拆分折算为费用（比单字符口径更准；高峰价，空闲减半） */
+  estimateCostSplit(inChars, outChars) {
+    if (inChars <= 0 && outChars <= 0)
+      return "\xA50";
+    const inTok = Math.ceil(inChars / 4);
+    const outTok = Math.ceil(outChars / 2.5);
+    const yuan = inTok * 2e-6 + outTok * 8e-6;
+    if (yuan < 0.01)
+      return "< \xA50.01\uFF08\u7A7A\u95F2\u534A\u4EF7\uFF09";
+    return `\u9AD8\u5CF0 \u2248 \xA5${yuan.toFixed(2)}\uFF08\u7A7A\u95F2 \u2248 \xA5${(yuan / 2).toFixed(2)}\uFF09`;
   }
   /** 高级：过滤正则、术语表、批量参数、调试模式（4.5） */
   renderAdvanced(el) {
@@ -2504,6 +3103,10 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
 };
 
 // src/core/usage-tracker.ts
+var DAY_RETENTION = 62;
+var WRITE_DEBOUNCE_MS = 5e3;
+var RECENT_WINDOW_MS = 10 * 60 * 1e3;
+var RECENT_MAX_ENTRIES = 2e3;
 var UsageTracker = class {
   constructor(io, filePath, now = () => /* @__PURE__ */ new Date()) {
     this.io = io;
@@ -2511,13 +3114,27 @@ var UsageTracker = class {
     this.now = now;
     this.month = "";
     this.chars = 0;
+    this.days = /* @__PURE__ */ new Map();
     this.loaded = false;
+    this.writeTimer = null;
+    /** v1.3：速率环形窗口（仅内存）与会话级计数 */
+    this.recent = [];
+    this.sessionTokens = 0;
+    this.sessionChars = 0;
+    this.sessionCalls = 0;
+    this.peakTokensPerMin = 0;
   }
   currentMonth() {
     const d = this.now();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
   }
+  dayKey(d) {
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(
+      d.getDate()
+    ).padStart(2, "0")}`;
+  }
   async load() {
+    var _a;
     if (this.loaded)
       return;
     this.loaded = true;
@@ -2529,35 +3146,203 @@ var UsageTracker = class {
         this.chars = raw.chars | 0;
         this.month = raw.month;
       }
+      for (const [k, v] of Object.entries((_a = raw.days) != null ? _a : {})) {
+        if (typeof (v == null ? void 0 : v.calls) === "number") {
+          this.days.set(k, {
+            calls: v.calls | 0,
+            inChars: v.inChars | 0,
+            outChars: v.outChars | 0,
+            // v1.3：token 实测字段透传（旧文件缺省视为 0）
+            ...typeof v.inTokens === "number" ? { inTokens: v.inTokens } : {},
+            ...typeof v.outTokens === "number" ? { outTokens: v.outTokens } : {}
+          });
+        }
+      }
+      this.pruneDays();
     } catch (e) {
     }
   }
-  /** 记录本次送译字符数并落盘 */
-  async record(chars) {
+  /**
+   * 记录本次送译字符数（outChars 为译文长度，v1.1.9 逐日明细）
+   * v1.2 B4：内存累加 + 去抖落盘（原每条翻译全量重写一次 usage.json，500 条 = 500 次写盘）；
+   * 预算判定读内存不受影响；崩溃最多丢一个去抖间隔的统计
+   */
+  async record(chars, outChars = 0) {
+    var _a;
     await this.load();
     if (this.month !== this.currentMonth()) {
       this.month = this.currentMonth();
       this.chars = 0;
     }
     this.chars += chars;
+    const key = this.dayKey(this.now());
+    const day = (_a = this.days.get(key)) != null ? _a : { calls: 0, inChars: 0, outChars: 0 };
+    day.calls++;
+    day.inChars += chars;
+    day.outChars += outChars;
+    this.days.set(key, day);
+    this.pruneDays();
+    this.pushRecent({ at: this.now().getTime(), tokens: 0, chars });
+    this.sessionChars += chars;
+    this.sessionCalls++;
+    this.scheduleWrite();
+  }
+  /**
+   * v1.3：记录一次请求 API 上报的真实 token（账单口径；合批一次调用即整批消耗）
+   * 与 record 同一去抖落盘路径，日桶按 in/out 分档（费用估算按档计价）
+   */
+  async recordTokens(promptTokens, completionTokens) {
+    var _a, _b, _c;
+    await this.load();
+    const key = this.dayKey(this.now());
+    const day = (_a = this.days.get(key)) != null ? _a : { calls: 0, inChars: 0, outChars: 0 };
+    day.inTokens = ((_b = day.inTokens) != null ? _b : 0) + promptTokens;
+    day.outTokens = ((_c = day.outTokens) != null ? _c : 0) + completionTokens;
+    this.days.set(key, day);
+    this.pushRecent({
+      at: this.now().getTime(),
+      tokens: promptTokens + completionTokens,
+      chars: 0
+    });
+    this.sessionTokens += promptTokens + completionTokens;
+    this.scheduleWrite();
+  }
+  /** v1.3：窗口内每分钟消耗速率；windowMs ≤ 60s 时顺带刷新峰值（供会话卡片展示） */
+  ratePerMinute(windowMs) {
+    const cutoff = this.now().getTime() - windowMs;
+    let tokens = 0;
+    let chars = 0;
+    for (const e of this.recent) {
+      if (e.at < cutoff)
+        continue;
+      tokens += e.tokens;
+      chars += e.chars;
+    }
+    const scale = windowMs / 6e4;
+    const rate = { tokensPerMin: tokens / scale, charsPerMin: chars / scale };
+    if (windowMs <= 6e4) {
+      this.peakTokensPerMin = Math.max(this.peakTokensPerMin, rate.tokensPerMin);
+    }
+    return rate;
+  }
+  /** v1.3：今日用量（in/out token 拆分——费用按档计价）；异步确保日桶已加载 */
+  async todayUsage() {
+    var _a, _b;
+    await this.load();
+    const day = this.days.get(this.dayKey(this.now()));
+    return {
+      inTokens: (_a = day == null ? void 0 : day.inTokens) != null ? _a : 0,
+      outTokens: (_b = day == null ? void 0 : day.outTokens) != null ? _b : 0,
+      chars: day ? day.inChars : 0
+    };
+  }
+  /** v1.3：会话级统计（自插件加载起） */
+  sessionStats() {
+    return {
+      tokens: this.sessionTokens,
+      chars: this.sessionChars,
+      calls: this.sessionCalls,
+      peakTokensPerMin: this.peakTokensPerMin
+    };
+  }
+  /** v1.3：最近一次活动时间戳（ms；无活动为 null）——状态栏空闲隐藏判定用 */
+  lastActivityAt() {
+    return this.recent.length > 0 ? this.recent[this.recent.length - 1].at : null;
+  }
+  /** 速率窗口追加 + 懒剪枝（>10 分钟）+ 容量硬顶（防御性） */
+  pushRecent(e) {
+    this.recent.push(e);
+    const cutoff = e.at - RECENT_WINDOW_MS;
+    while (this.recent.length > 0 && this.recent[0].at < cutoff)
+      this.recent.shift();
+    if (this.recent.length > RECENT_MAX_ENTRIES) {
+      this.recent.splice(0, this.recent.length - RECENT_MAX_ENTRIES);
+    }
+  }
+  scheduleWrite() {
+    if (this.writeTimer !== null)
+      return;
+    this.writeTimer = window.setTimeout(() => {
+      this.writeTimer = null;
+      void this.persist();
+    }, WRITE_DEBOUNCE_MS);
+  }
+  /** v1.2 B4：立即落盘（去抖兜底；onunload 调用） */
+  async flush() {
+    if (this.writeTimer !== null) {
+      window.clearTimeout(this.writeTimer);
+      this.writeTimer = null;
+    }
+    await this.persist();
+  }
+  async persist() {
     try {
       await this.io.write(
         this.filePath,
-        JSON.stringify({ month: this.month, chars: this.chars })
+        JSON.stringify({ month: this.month, chars: this.chars, days: Object.fromEntries(this.days) })
       );
     } catch (e) {
     }
   }
-  /** 本月已发送字符数 */
+  /** 本月已发送字符数（月度预算判定口径） */
   async monthChars() {
     await this.load();
     return this.month === this.currentMonth() ? this.chars : 0;
+  }
+  /** v1.1.9：本月日桶合计（送译条数/输入/输出字符；逐日明细自 v1.1.9 起记录，历史月份无明细） */
+  async monthStats() {
+    var _a, _b, _c, _d;
+    await this.load();
+    const prefix = this.currentMonth();
+    const sum = { calls: 0, inChars: 0, outChars: 0, inTokens: 0, outTokens: 0 };
+    for (const [k, v] of this.days) {
+      if (!k.startsWith(prefix))
+        continue;
+      sum.calls += v.calls;
+      sum.inChars += v.inChars;
+      sum.outChars += v.outChars;
+      sum.inTokens = ((_a = sum.inTokens) != null ? _a : 0) + ((_b = v.inTokens) != null ? _b : 0);
+      sum.outTokens = ((_c = sum.outTokens) != null ? _c : 0) + ((_d = v.outTokens) != null ? _d : 0);
+    }
+    return sum;
+  }
+  /** v1.1.9：近 N 天逐日明细（缺日补零、按日期升序——图表连续 X 轴） */
+  async dailyStats(days = 30) {
+    var _a, _b, _c, _d, _e;
+    await this.load();
+    const out = [];
+    const base = this.now();
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date(base.getFullYear(), base.getMonth(), base.getDate() - i);
+      const key = this.dayKey(d);
+      const v = this.days.get(key);
+      out.push({
+        date: key,
+        calls: (_a = v == null ? void 0 : v.calls) != null ? _a : 0,
+        inChars: (_b = v == null ? void 0 : v.inChars) != null ? _b : 0,
+        outChars: (_c = v == null ? void 0 : v.outChars) != null ? _c : 0,
+        inTokens: (_d = v == null ? void 0 : v.inTokens) != null ? _d : 0,
+        outTokens: (_e = v == null ? void 0 : v.outTokens) != null ? _e : 0
+      });
+    }
+    return out;
   }
   /** 是否超出月度预算（budget 为 null 表示不限） */
   async isOverBudget(budget) {
     if (budget === null)
       return false;
     return await this.monthChars() >= budget;
+  }
+  /** 日桶剪枝：只保留近 DAY_RETENTION 天（YYYY-MM-DD 字典序即时间序） */
+  pruneDays() {
+    const base = this.now();
+    const oldest = this.dayKey(
+      new Date(base.getFullYear(), base.getMonth(), base.getDate() - (DAY_RETENTION - 1))
+    );
+    for (const k of [...this.days.keys()]) {
+      if (k < oldest)
+        this.days.delete(k);
+    }
   }
 };
 
@@ -2573,8 +3358,13 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
     this.marketplacePatcher = null;
     this.windowHook = null;
     this.statusBarItem = null;
+    /** v1.3：用量速率状态栏段（与翻译进度段独立并存） */
+    this.usageBarItem = null;
+    this.lastUsageBarText = "";
     /** O-1：状态栏进度提示——在途时显示剩余/已译计数，归零时短暂显示完成（data-uut 标记防自家通道拾取） */
     this.statusHideTimer = null;
+    /** v1.2 A3：熔断倒计时定时器（状态栏常驻 mm:ss；到期/复位/卸载清除） */
+    this.circuitTimer = null;
   }
   async onload() {
     var _a;
@@ -2600,19 +3390,25 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
       write: (p, d) => this.app.vault.adapter.write(p, d),
       exists: (p) => this.app.vault.adapter.exists(p)
     };
+    this.requestSemaphore = new Semaphore(() => this.settings.maxConcurrentRequests);
     this.http = async (req) => {
-      const res = await withTimeout(
-        (0, import_obsidian7.requestUrl)({
-          url: req.url,
-          method: req.method,
-          headers: req.headers,
-          body: req.body,
-          throw: false
-        }),
-        this.settings.requestTimeoutMs,
-        "\u7FFB\u8BD1\u8BF7\u6C42"
-      );
-      return { status: res.status, text: res.text };
+      await this.requestSemaphore.acquire();
+      try {
+        const res = await withTimeout(
+          (0, import_obsidian7.requestUrl)({
+            url: req.url,
+            method: req.method,
+            headers: req.headers,
+            body: req.body,
+            throw: false
+          }),
+          this.settings.requestTimeoutMs,
+          "\u7FFB\u8BD1\u8BF7\u6C42"
+        );
+        return { status: res.status, text: res.text };
+      } finally {
+        this.requestSemaphore.release();
+      }
     };
     let safeStorage;
     try {
@@ -2625,6 +3421,8 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
     this.cache = new CacheManager(
       this.io,
       `${pluginDir}/translation-cache.json`,
+      // v1.1.9：内存=磁盘同上限（原双层设计的磁盘侧因 flush 只写内存而不可达）
+      this.settings.cacheMaxEntries,
       this.settings.cacheMaxEntries
     );
     await this.cache.load();
@@ -2633,20 +3431,32 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
       window.setInterval(() => {
         const now = Date.now();
         const pending = this.cache.pendingWrites;
-        if (pending >= 100 || pending > 0 && now - lastFlushMark >= 5 * 60 * 1e3) {
+        if (pending >= 100 || (pending > 0 || this.cache.accessedSinceFlush) && now - lastFlushMark >= 3e4) {
           lastFlushMark = now;
           void this.cache.flush();
         }
       }, 3e4)
     );
     this.filter = new FilterEngine(this.settings.skipPatterns, this.settings.targetLang);
-    this.provider = await createActiveProvider(this.settings, this.keyStorage, this.http);
+    this.provider = await createActiveProvider(
+      this.settings,
+      this.keyStorage,
+      this.http,
+      // v1.3：响应 usage 字段回传真实账单口径 token（合批一次即整批；网关缺失时静默）
+      (u) => void this.usageTracker.recordTokens(u.promptTokens, u.completionTokens)
+    );
     if (this.keyStorage.hasDecryptFailures()) {
       new import_obsidian7.Notice("UUT\uFF1A\u5DF2\u4FDD\u5B58\u7684 API Key \u5728\u672C\u673A\u89E3\u5BC6\u5931\u8D25\uFF0C\u8BF7\u5728\u8BBE\u7F6E\u9875\u91CD\u65B0\u8F93\u5165");
     }
     this.statusBarItem = this.addStatusBarItem();
     this.statusBarItem.setAttr("data-uut", "status");
     this.setStatusVisible(false);
+    this.usageBarItem = this.addStatusBarItem();
+    this.usageBarItem.setAttr("data-uut", "usage");
+    this.usageBarItem.toggleClass("uut-hidden", true);
+    this.registerInterval(
+      window.setInterval(() => void this.updateUsageStatusBar(), 1e3)
+    );
     this.batcher = new BatchTranslator(() => this.provider, {
       windowMs: this.settings.batchWindowMs,
       concurrency: this.settings.maxConcurrentRequests,
@@ -2660,7 +3470,6 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
         var _a2, _b;
         return (_b = (_a2 = this.provider) == null ? void 0 : _a2.modelId) != null ? _b : "";
       },
-      resolveFrom: (pluginId) => this.resolveFrom(pluginId),
       translateVia: (masked, context) => this.batcher.submit(masked, context),
       usageTracker: this.usageTracker,
       monthlyCharBudget: this.settings.monthlyCharBudget,
@@ -2679,8 +3488,12 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
       () => this.provider,
       this.coordinatorOptions,
       void 0,
-      // Provider 熔断提示（4.2.2：一次熔断只 Notice 一次）
-      () => new import_obsidian7.Notice("UUT\uFF1A\u7FFB\u8BD1\u670D\u52A1\u8FDE\u7EED\u5931\u8D25\uFF0C\u5DF2\u81EA\u52A8\u6682\u505C 10 \u5206\u949F\uFF08\u8BE6\u89C1\u8BBE\u7F6E\u9875\uFF09")
+      // Provider 熔断提示（4.2.2：一次熔断只 Notice 一次）；
+      // v1.2 A3：同时启动状态栏倒计时（此前只有一次性 Notice，用户不知道熔断还要多久）
+      () => {
+        new import_obsidian7.Notice("UUT\uFF1A\u7FFB\u8BD1\u670D\u52A1\u8FDE\u7EED\u5931\u8D25\uFF0C\u5DF2\u81EA\u52A8\u6682\u505C 10 \u5206\u949F\uFF08\u8BE6\u89C1\u8BBE\u7F6E\u9875\uFF09");
+        this.startCircuitCountdown();
+      }
     );
     if (this.settings.enabled && this.provider) {
       this.activateInterceptors();
@@ -2703,16 +3516,18 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
       }
     });
   }
-  async onunload() {
+  onunload() {
     var _a, _b, _c, _d, _e, _f;
+    this.stopCircuitCountdown();
     (_a = this.commandPatcher) == null ? void 0 : _a.deactivate();
     (_b = this.menuPatcher) == null ? void 0 : _b.deactivate();
     (_c = this.settingPatcher) == null ? void 0 : _c.deactivate();
     (_d = this.domPatcher) == null ? void 0 : _d.deactivate();
     (_e = this.marketplacePatcher) == null ? void 0 : _e.deactivate();
     (_f = this.windowHook) == null ? void 0 : _f.deactivate();
-    await this.batcher.flush();
-    await this.cache.flush();
+    void this.batcher.flush();
+    void this.cache.flush();
+    void this.usageTracker.flush();
   }
   async saveSettings() {
     await this.saveData(this.settings);
@@ -2742,9 +3557,116 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
     var _a;
     (_a = this.commandPatcher) == null ? void 0 : _a.resetRuntimeTranslations();
   }
-  /** 本月已发送字符数（4.5 用量展示） */
+  /** 本月已发送字符数（4.5 用量展示；月度预算同口径） */
   async monthlyUsage() {
     return this.usageTracker.monthChars();
+  }
+  /** 用量统计分页（v1.1.9）：近 N 天逐日明细（送译条数 + 输入/输出字符，缺日补零） */
+  async getUsageDaily(days) {
+    return this.usageTracker.dailyStats(days);
+  }
+  /** 用量统计分页（v1.1.9）：本月日桶合计（逐日明细自 v1.1.9 起记录，历史月份只有月累计） */
+  async getUsageMonthStats() {
+    return this.usageTracker.monthStats();
+  }
+  /** 用量分页转发（v1.3）：会话统计 / 窗口速率 / 今日用量（in/out token 拆分） */
+  usageSessionStats() {
+    return this.usageTracker.sessionStats();
+  }
+  usageRate(windowMs) {
+    return this.usageTracker.ratePerMinute(windowMs);
+  }
+  async usageToday() {
+    return this.usageTracker.todayUsage();
+  }
+  /**
+   * v1.3.1 用量文案统一供数（1Hz，状态栏与市场弹窗徽标同源）：
+   * - bar：主窗口状态栏文本——10 分钟无活动返回 null（隐藏），活动时含速率段
+   * - badge：市场弹窗常驻徽标——不设空闲门控（弹窗内唯一消耗视图），速率段仅活动时出现
+   */
+  async usageStatusTexts() {
+    var _a, _b, _c;
+    if (!this.settings.usageInStatusBar || !this.provider)
+      return { bar: null, badge: null };
+    const last = this.usageTracker.lastActivityAt();
+    const idle = last === null || Date.now() - last > 10 * 60 * 1e3;
+    const rate = this.usageTracker.ratePerMinute(6e4);
+    const today = await this.usageTracker.todayUsage();
+    const price = (_a = this.settings.providers["openai"]) == null ? void 0 : _a.pricePerMillion;
+    let badge;
+    let ratePart = "";
+    if (this.provider.id === "openai") {
+      const todayTokens = today.inTokens + today.outTokens;
+      if (rate.tokensPerMin >= 1)
+        ratePart = `\u25B2 ${fmtCompact(rate.tokensPerMin)} tok/min \xB7 `;
+      badge = `UUT \u4ECA\u65E5 ${fmtCompact(todayTokens)} tok`;
+      if (price && price.input > 0 && price.output > 0) {
+        const cost = estimateTokenCost(today.inTokens, today.outTokens, {
+          inputPerMillion: price.input,
+          outputPerMillion: price.output
+        });
+        const currency = (_c = (_b = this.settings.providers["openai"]) == null ? void 0 : _b.priceCurrency) != null ? _c : "\xA5";
+        badge += ` \xB7 \u2248${fmtCost(cost, currency)}`;
+      }
+    } else {
+      if (rate.charsPerMin >= 1)
+        ratePart = `\u25B2 ${fmtCompact(rate.charsPerMin)} \u5B57/min \xB7 `;
+      badge = `UUT \u4ECA\u65E5 ${fmtCompact(today.chars)} \u5B57`;
+    }
+    return { bar: idle ? null : `${ratePart}${badge}`, badge };
+  }
+  /**
+   * v1.3 用量速率状态栏段（1Hz）：openai 引擎 token 口径（配价时附今日费用估算），
+   * 其他引擎字符口径；10 分钟无活动隐藏。费用仅在用户配置单价后显示（口径可控）。
+   */
+  async updateUsageStatusBar() {
+    var _a;
+    if (!this.usageBarItem)
+      return;
+    const { bar, badge } = await this.usageStatusTexts();
+    (_a = this.marketplacePatcher) == null ? void 0 : _a.setUsageLine(badge);
+    if (bar === null) {
+      if (this.lastUsageBarText !== "") {
+        this.usageBarItem.toggleClass("uut-hidden", true);
+        this.lastUsageBarText = "";
+      }
+      return;
+    }
+    if (bar !== this.lastUsageBarText) {
+      this.usageBarItem.setText(bar);
+      this.usageBarItem.toggleClass("uut-hidden", false);
+      this.lastUsageBarText = bar;
+    }
+  }
+  /** 缓存 Tab 实况（v1.1.9）：磁盘缓存文件字节数；文件不存在或读取失败返回 null */
+  async cacheFileBytes() {
+    var _a;
+    try {
+      const st = await this.app.vault.adapter.stat(
+        `${this.manifest.dir}/translation-cache.json`
+      );
+      return (_a = st == null ? void 0 : st.size) != null ? _a : null;
+    } catch (e) {
+      return null;
+    }
+  }
+  /** 缓存 Tab「清理失效条目」（v1.1.9）：删除与当前 引擎+语言+模型 不匹配的条目（换模型后旧条目永不命中） */
+  async purgeStaleCacheEntries() {
+    var _a;
+    if (!this.provider) {
+      return { ok: false, message: "\u672A\u914D\u7F6E\u7FFB\u8BD1\u5F15\u64CE\uFF0C\u65E0\u6CD5\u5224\u5B9A\u5F53\u524D\u914D\u7F6E\uFF0C\u672A\u505A\u4EFB\u4F55\u6E05\u7406" };
+    }
+    const model = (_a = this.provider.modelId) != null ? _a : "";
+    const removed = this.cache.purgeMismatched(
+      this.provider.id,
+      this.settings.targetLang,
+      model
+    );
+    await this.cache.flush();
+    return {
+      ok: true,
+      message: `\u5DF2\u6E05\u7406 ${removed} \u6761\u4E0E\u5F53\u524D\u5F15\u64CE/\u8BED\u8A00/\u6A21\u578B\u4E0D\u5339\u914D\u7684\u7F13\u5B58\u6761\u76EE`
+    };
   }
   /** 缓存 Tab「立即落盘」（v1.1.5）：不等 30s/100 条/5 分钟保底策略，立即把内存缓存写入磁盘 */
   async flushCacheNow() {
@@ -2800,7 +3722,12 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
   /** 配置变更热生效：重建 Provider 与批量通道、同步 coordinator 参数、按需启停拦截器 */
   async refreshRuntime() {
     var _a, _b;
-    this.provider = await createActiveProvider(this.settings, this.keyStorage, this.http);
+    this.provider = await createActiveProvider(
+      this.settings,
+      this.keyStorage,
+      this.http,
+      (u) => void this.usageTracker.recordTokens(u.promptTokens, u.completionTokens)
+    );
     this.batcher = new BatchTranslator(() => this.provider, {
       windowMs: this.settings.batchWindowMs,
       concurrency: this.settings.maxConcurrentRequests,
@@ -2811,7 +3738,9 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
     this.coordinatorOptions.monthlyCharBudget = this.settings.monthlyCharBudget;
     this.filter.setTargetLang(this.settings.targetLang);
     this.filter.setSkipPatterns(this.settings.skipPatterns);
+    this.cache.setMaxEntries(this.settings.cacheMaxEntries);
     this.coordinator.resetFailures();
+    this.stopCircuitCountdown();
     (_a = this.commandPatcher) == null ? void 0 : _a.resetRuntimeTranslations();
     (_b = this.domPatcher) == null ? void 0 : _b.rescanAllText();
     if (this.settings.enabled && this.provider) {
@@ -2931,6 +3860,29 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
       void command.name;
     }
   }
+  startCircuitCountdown() {
+    if (this.circuitTimer !== null)
+      return;
+    const tick = () => {
+      const remain = this.coordinator.circuitRemainingMs();
+      if (remain <= 0 || !this.statusBarItem) {
+        this.stopCircuitCountdown();
+        return;
+      }
+      const mm = String(Math.floor(remain / 6e4)).padStart(2, "0");
+      const ss = String(Math.floor(remain % 6e4 / 1e3)).padStart(2, "0");
+      this.statusBarItem.setText(`UUT \u7194\u65AD\u4E2D ${mm}:${ss}`);
+      this.setStatusVisible(true);
+    };
+    tick();
+    this.circuitTimer = window.setInterval(tick, 1e3);
+  }
+  stopCircuitCountdown() {
+    if (this.circuitTimer !== null) {
+      window.clearInterval(this.circuitTimer);
+      this.circuitTimer = null;
+    }
+  }
   /** 状态栏显隐（官方审核禁内联 style 赋值，统一 CSS 类切换，v1.1.3） */
   setStatusVisible(visible) {
     var _a;
@@ -2961,21 +3913,8 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
       }
     }
   }
-  /** 缓存来源维度（4.2.3 / D5）：pluginId@version，核心文本为 core@appVersion */
-  resolveFrom(pluginId) {
-    var _a, _b, _c, _d, _e;
-    if (pluginId === "core") {
-      const v = resolveObsidianVersion(
-        this.app.appVersion,
-        // R-05 兜底：从 UA 取 Obsidian 版本号（非 OS 探测，Platform API 不提供版本信息；
-        // 计算属性访问以兼容官方 lint 对 navigator 标识符的静态限制）
-        (_b = (_a = globalThis["navigator"]) == null ? void 0 : _a["userAgent"]) != null ? _b : ""
-      );
-      return `core@${v}`;
-    }
-    const manifests = (_c = this.app.plugins) == null ? void 0 : _c.manifests;
-    return `${pluginId}@${(_e = (_d = manifests == null ? void 0 : manifests[pluginId]) == null ? void 0 : _d.version) != null ? _e : ""}`;
-  }
+  /** 缓存来源维度（4.2.3 / D5）已随 v1.2 B1 退役：缓存键已锚定原文文本，
+   *  来源版本失效只误伤升级后未变的条目（整批重译的根因），app-version 模块随之删除 */
 };
 
 /* nosourcemap */
