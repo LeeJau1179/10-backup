@@ -49,6 +49,9 @@
   "plotlineLightness": 0,
   "characterTaglineField": "auto",
   "hideFrontmatter": true,
+  "hideFrontmatterInManuscript": true,
+  "automaticQuoteReplacement": true,
+  "manuscriptPlainText": true,
   "hideToolbarTitle": true,
   "autoHideViewLabels": true,
   "docxSettings": {

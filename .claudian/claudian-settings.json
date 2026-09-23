@@ -25,6 +25,7 @@
   "providerConfigs": {
     "claude": {
       "enabled": true,
+      "responseStyle": "Default",
       "safeMode": "acceptEdits",
       "cliPath": "",
       "cliPathsByHost": {
@@ -38,7 +39,7 @@
       "modelEnvironmentType": "haiku",
       "titleModelEnvironmentType": "",
       "environmentVariables": "",
-      "environmentHash": "runtime-input:v1:2a2df9a7f2a74babe6fa614d61d01d3967e0db7f7da9d9e41678a20e08464bad"
+      "environmentHash": "runtime-input:v1:e3a3492dd19704352b6e2501d1a2b99adce7d5f569db6949d679b1043fb89aa1"
     },
     "codex": {
       "enabled": false,
@@ -50,6 +51,7 @@
       "modelAliases": {},
       "visibleModels": null,
       "enableUltraEffort": false,
+      "responseStyle": "pragmatic",
       "reasoningSummary": "detailed",
       "environmentVariables": "",
       "environmentHash": "",
