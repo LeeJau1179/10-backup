@@ -17,7 +17,7 @@
   "timelineSwimlaneMode": false,
   "timelineSwimlaneGroupBy": "pov",
   "researchActiveTag": null,
-  "researchActiveType": null,
+  "researchActiveType": "webclip",
   "characterSortBy": "name",
   "autoOpenNavigator": true,
   "showNotesInKanban": true,
