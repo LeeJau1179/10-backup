@@ -54,6 +54,8 @@
   "manuscriptPlainText": true,
   "hideToolbarTitle": true,
   "autoHideViewLabels": true,
+  "sectionDefaultState": "expanded",
+  "sectionCollapsedStates": {},
   "docxSettings": {
     "defaultFontFamily": "Calibri",
     "defaultFontSize": 11,

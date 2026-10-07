@@ -39,6 +39,562 @@ __export(main_exports, {
 module.exports = __toCommonJS(main_exports);
 var import_obsidian7 = require("obsidian");
 
+// src/i18n/zh-CN.ts
+var zhCN = {
+  // —— 主入口 Notice ——
+  "notice.migrate-v115": "UUT v1.1.5\uFF1A\u793E\u533A\u5E02\u573A\u9ED8\u8BA4\u4E0D\u518D\u81EA\u52A8\u7FFB\u8BD1\uFF08\u6B64\u524D\u8BE5\u5F00\u5173\u5B9E\u9645\u672A\u751F\u6548\uFF0C\u6EDA\u52A8\u5E02\u573A\u5217\u8868\u4F1A\u6301\u7EED\u6D88\u8017 API \u989D\u5EA6\uFF09\u3002",
+  "notice.migrate-v115-hint": "\u9010\u6761\u7FFB\u8BD1\u8BF7\u7528\u5E02\u573A\u6761\u76EE\u4E0A\u7684\u300C\u8BD1\u300D\u6309\u94AE\uFF08\u7F13\u5B58\u547D\u4E2D\u96F6\u6210\u672C\uFF09\uFF1B\u786E\u9700\u81EA\u52A8\u7FFB\u8BD1\u8BF7\u5230 \u8BBE\u7F6E \u2192 \u4F5C\u7528\u57DF \u624B\u52A8\u6253\u5F00",
+  "notice.key-decrypt-failed": "UUT\uFF1A\u5DF2\u4FDD\u5B58\u7684 API Key \u5728\u672C\u673A\u89E3\u5BC6\u5931\u8D25\uFF0C\u8BF7\u5728\u8BBE\u7F6E\u9875\u91CD\u65B0\u8F93\u5165",
+  "notice.auth-failed": "UUT\uFF1AAPI Key \u53EF\u80FD\u5931\u6548\uFF08401/403\uFF09\uFF0C\u8BF7\u68C0\u67E5\u8BBE\u7F6E\u9875 API \u914D\u7F6E",
+  "notice.budget-exceeded": "UUT\uFF1A\u672C\u6708\u5B57\u7B26\u9884\u7B97\u5DF2\u7528\u5B8C\uFF0C\u7FFB\u8BD1\u5DF2\u6682\u505C\u5E76\u56DE\u9000\u539F\u6587\uFF1B\u5982\u9700\u7EE7\u7EED\u8BF7\u5230 \u8BBE\u7F6E\u9875 \u2192 API \u914D\u7F6E \u8C03\u6574\u6708\u5EA6\u9884\u7B97",
+  "notice.circuit-open": "UUT\uFF1A\u7FFB\u8BD1\u670D\u52A1\u8FDE\u7EED\u5931\u8D25\uFF0C\u5DF2\u81EA\u52A8\u6682\u505C 10 \u5206\u949F\uFF08\u8BE6\u89C1\u8BBE\u7F6E\u9875\uFF09",
+  "notice.setup-required": "UUT\uFF1A\u8BF7\u5148\u5728\u8BBE\u7F6E\u9875\u914D\u7F6E\u7FFB\u8BD1\u5F15\u64CE\u4E0E API Key",
+  "notice.original-on": "UUT\uFF1A\u5DF2\u5207\u6362\u4E3A\u539F\u6587\u663E\u793A\uFF08\u65B0\u6E32\u67D3\u5185\u5BB9\u4E0D\u518D\u56DE\u5199\uFF1B\u7F13\u5B58\u7EE7\u7EED\u9884\u70ED\uFF09",
+  "notice.original-off": "UUT\uFF1A\u5DF2\u6062\u590D\u8BD1\u6587\u663E\u793A",
+  // —— 命令名 / 命令通道 ——
+  "command.toggle-original": "\u4E34\u65F6\u663E\u793A\u539F\u6587/\u6062\u590D\u8BD1\u6587",
+  "command.patcher.disabled": "UUT\uFF1A\u547D\u4EE4\u901A\u9053\u7FFB\u8BD1\u5DF2\u505C\u7528\uFF08addCommand \u7279\u5F81\u68C0\u6D4B\u5931\u8D25\uFF09",
+  "command.patcher.list-unavailable": "app.commands.listCommands \u4E0D\u53EF\u7528\uFF0C\u5B58\u91CF\u547D\u4EE4\u7559\u5F85 DOMPatcher \u515C\u5E95",
+  "command.patcher.activated": "CommandPatcher \u5DF2\u6FC0\u6D3B\uFF08addCommand \u589E\u91CF\u52AB\u6301\u5C31\u7EEA\uFF1B\u5B58\u91CF\u626B\u63CF\u5F85\u5E03\u5C40\u5C31\u7EEA\uFF09",
+  "command.patcher.swept": "CommandPatcher \u5B58\u91CF patch {n} \u6761",
+  "command.patcher.patch-failed": "patch \u547D\u4EE4\u5931\u8D25\uFF08\u5DF2\u8DF3\u8FC7\uFF09: {n}",
+  // —— 菜单通道 ——
+  "menu.patcher.disabled": "UUT\uFF1A\u83DC\u5355\u901A\u9053\u7FFB\u8BD1\u5DF2\u505C\u7528\uFF08addItem \u7279\u5F81\u68C0\u6D4B\u5931\u8D25\uFF09",
+  "menu.patcher.activated": "MenuPatcher \u5DF2\u6FC0\u6D3B",
+  // —— 设置面板通道 ——
+  "setting.patcher.disabled": "UUT\uFF1A\u8BBE\u7F6E\u9762\u677F\u901A\u9053\u7FFB\u8BD1\u5DF2\u505C\u7528\uFF08Setting \u7279\u5F81\u68C0\u6D4B\u5931\u8D25\uFF09",
+  "setting.patcher.activated": "SettingPatcher \u5DF2\u6FC0\u6D3B",
+  // —— DOM 兜底通道 ——
+  "dom.patcher.disabled": "UUT\uFF1ADOM \u515C\u5E95\u901A\u9053\u7FFB\u8BD1\u5DF2\u505C\u7528\uFF08MutationObserver \u4E0D\u53EF\u7528\uFF09",
+  "dom.patcher.activated": "DOMPatcher \u5DF2\u6FC0\u6D3B\uFF0C\u89C2\u5BDF {n} \u4E2A document",
+  "dom.patcher.adopted": "DOMPatcher \u7EB3\u7BA1\u65B0 document",
+  // —— 市场通道（按钮/徽标/消息）——
+  "market.activated": "MarketplacePatcher \u5DF2\u6FC0\u6D3B",
+  "market.adopted": "MarketplacePatcher \u7EB3\u7BA1\u65B0 document",
+  "market.button.glyph": "\u8BD1",
+  "market.button.title-item": "\u7FFB\u8BD1\u6B64\u63D2\u4EF6\u6761\u76EE",
+  "market.button.title-detail": "\u7FFB\u8BD1\u6B64\u63D2\u4EF6\u7684\u8BE6\u7EC6\u4ECB\u7ECD\uFF08README \u5168\u6587\uFF09\uFF1B\u4E2D\u6587\u754C\u9762\u6587\u672C\u81EA\u52A8\u8DF3\u8FC7\u3001\u96F6\u6D88\u8017",
+  "market.injected": "MarketplacePatcher \u6CE8\u5165 {n} \u4E2A\u6309\u94AE",
+  "market.notify.display-mode": "UUT\uFF1A\u5F53\u524D\u5904\u4E8E\u300C\u4E34\u65F6\u663E\u793A\u539F\u6587\u300D\u6A21\u5F0F\u2014\u2014\u8BD1\u6587\u5DF2\u8FDB\u7F13\u5B58\u4F46\u4E0D\u56DE\u5199\u754C\u9762\uFF1B\u6267\u884C\u547D\u4EE4\u300C\u4E34\u65F6\u663E\u793A\u539F\u6587/\u6062\u590D\u8BD1\u6587\u300D\u6062\u590D",
+  "market.notify.budget": "UUT\uFF1A\u672C\u6708\u5B57\u7B26\u9884\u7B97\u5DF2\u7528\u5B8C\uFF0C\u7FFB\u8BD1\u5DF2\u6682\u505C\uFF08\u8BBE\u7F6E\u9875 \u2192 API \u914D\u7F6E\u53EF\u8C03\u6574\u9884\u7B97\uFF09",
+  "market.notify.circuit": "UUT\uFF1A\u7FFB\u8BD1\u670D\u52A1\u8FDE\u7EED\u5931\u8D25\u3001\u7194\u65AD\u4FDD\u62A4\u4E2D\uFF08\u7EA6 10 \u5206\u949F\u81EA\u52A8\u6062\u590D\uFF09\uFF1B\u5230\u8BBE\u7F6E\u9875\u4FDD\u5B58\u4E00\u6B21\u914D\u7F6E\u53EF\u7ACB\u5373\u91CD\u7F6E",
+  "market.notify.no-provider": "UUT\uFF1A\u672A\u914D\u7F6E\u7FFB\u8BD1\u5F15\u64CE\u6216 API Key\uFF0C\u8BF7\u5230\u8BBE\u7F6E\u9875\u5B8C\u6210\u914D\u7F6E",
+  "market.notify.negative-cache": "UUT\uFF1A\u8BE5\u6587\u672C\u521A\u521A\u5931\u8D25\u8FC7\uFF0C5 \u5206\u949F\u5185\u4E0D\u518D\u81EA\u52A8\u91CD\u8BD5",
+  "market.error.unknown": "\u672A\u77E5\u9519\u8BEF",
+  "market.progress.label": "UUT \u7FFB\u8BD1\u4E2D {n}/{m}",
+  "market.progress.done": "UUT \u2713 \u5DF2\u5B8C\u6210",
+  "market.progress.ended": "UUT \u5DF2\u7ED3\u675F",
+  // —— 状态栏 ——
+  "status.today-tokens": "UUT \u4ECA\u65E5 {n} tok",
+  "status.rate-chars": "\u25B2 {n} \u5B57/min \xB7 ",
+  "status.circuit-countdown": "UUT \u7194\u65AD\u4E2D {n}:{m}",
+  "status.translating": "UUT \u7FFB\u8BD1\u4E2D\u2026 \u5269 {n}\uFF08\u5DF2\u8BD1 {m}\uFF09",
+  "status.session-done": "UUT \u2713 \u672C\u4F1A\u8BDD\u5DF2\u8BD1 {n} \u6761",
+  "status.cache-purged": "\u5DF2\u6E05\u7406 {n} \u6761\u4E0E\u5F53\u524D\u5F15\u64CE/\u8BED\u8A00/\u6A21\u578B\u4E0D\u5339\u914D\u7684\u7F13\u5B58\u6761\u76EE",
+  "status.flush-failed": "\u843D\u76D8\u5931\u8D25\uFF1A{n}",
+  "status.just-now": "\u521A\u521A",
+  "status.cache-exported": "\u7F13\u5B58\u5DF2\u5BFC\u51FA\u5230\u5E93\u6839\u76EE\u5F55\uFF1A{n}",
+  "status.import-bad-json": "\u5BFC\u5165\u5931\u8D25\uFF1A\u4E0D\u662F\u5408\u6CD5 JSON \u6587\u4EF6",
+  "status.import-schema-unsupported": "\u5BFC\u5165\u5931\u8D25\uFF1AschemaVersion \u4E0D\u53D7\u652F\u6301\uFF08\u5F53\u524D\u652F\u6301 \u2264 {n}\uFF09\u6216\u7F3A\u5C11 entries",
+  "status.import-done": "\u5BFC\u5165\u5B8C\u6210\uFF1A{n} \u6761\u7F13\u5B58\u6761\u76EE\u5DF2\u5408\u5E76",
+  // —— 通用（core / 装配层错误说明与日志）——
+  "common.timeout-request": "\u7FFB\u8BD1\u8BF7\u6C42",
+  "common.log-key-save-failed": "[uut] Key \u4FDD\u5B58\u5931\u8D25\uFF1A",
+  "common.log-translate-failed": "[uut] \u7FFB\u8BD1\u8BF7\u6C42\u5931\u8D25\uFF1A{n}",
+  "common.purge-no-engine": "\u672A\u914D\u7F6E\u7FFB\u8BD1\u5F15\u64CE\uFF0C\u65E0\u6CD5\u5224\u5B9A\u5F53\u524D\u914D\u7F6E\uFF0C\u672A\u505A\u4EFB\u4F55\u6E05\u7406",
+  "common.no-engine-or-key": "\u672A\u914D\u7F6E\u7FFB\u8BD1\u5F15\u64CE\u6216 API Key",
+  "common.provider-not-configured": "Provider \u672A\u914D\u7F6E",
+  "common.placeholder-rewritten": "\u8BD1\u6587\u5360\u4F4D\u7B26\u88AB\u6539\u5199",
+  // —— 设置页（settings-tab，批次四 163 条 + 界面语言设置项；值逐字取自源码字面量）——
+  "settings.tab.general": "\u57FA\u7840",
+  "settings.tab.api": "API \u914D\u7F6E",
+  "settings.tab.usage": "\u7528\u91CF\u7EDF\u8BA1",
+  "settings.tab.scope": "\u4F5C\u7528\u57DF",
+  "settings.tab.cache": "\u7F13\u5B58",
+  "settings.tab.advanced": "\u9AD8\u7EA7",
+  "settings.provider.openai": "OpenAI \u517C\u5BB9\u63A5\u53E3",
+  "settings.provider.deepl": "DeepL",
+  "settings.provider.google": "Google Cloud Translation",
+  "settings.provider.azure": "Azure Translator",
+  "settings.provider.custom": "\u81EA\u5B9A\u4E49\u7AEF\u70B9\uFF08\u672C\u5730\u6A21\u578B\uFF09",
+  "settings.cost-basis": "\u8D39\u7528\u57FA\u51C6\uFF1ADeepSeek flash \u65B0\u5B9A\u4EF7\uFF082026-09-10 \u8D77\uFF09\u6BCF\u767E\u4E07 tokens\uFF1A\u7A7A\u95F2 \u8F93\u5165 \xA51 / \u8F93\u51FA \xA54\uFF0C\u9AD8\u5CF0\u65F6\u6BB5\u7FFB\u500D\uFF1BAPI \u4FA7\u7F13\u5B58\u547D\u4E2D\u8F93\u5165\u4EC5 \xA50.02\u20130.04",
+  "settings.usage.cost-zero": "\u2248 0 tokens\uFF0C\xA50",
+  "settings.usage.cost-tokens": "{total} tokens\uFF08\u5165 {in} / \u51FA {out}\uFF09",
+  "settings.usage.cost-low": "\u2248 {tokens}\uFF0C\u8D39\u7528 < \xA50.01\uFF08\u7A7A\u95F2\u65F6\u6BB5\u534A\u4EF7\uFF09",
+  "settings.usage.cost-high": "\u2248 {tokens}\uFF0C\u9AD8\u5CF0 \u2248 \xA5{yuan}\uFF08\u7A7A\u95F2\u65F6\u6BB5\u534A\u4EF7\uFF09",
+  "settings.general.enable": "\u542F\u7528\u754C\u9762\u7FFB\u8BD1",
+  "settings.general.enable.desc": "\u603B\u5F00\u5173\uFF1B\u672A\u914D\u7F6E\u53EF\u7528\u7FFB\u8BD1\u5F15\u64CE\u65F6\u62E6\u622A\u5668\u4E0D\u6FC0\u6D3B\uFF08\u8BBE\u8BA1\u6587\u6863 4.4.2\uFF09\u3002\u5173\u95ED\u540E\u96F6 API \u6D88\u8017\uFF1B\u6253\u5F00\u671F\u95F4\u6309\u754C\u9762\u6E32\u67D3\u91CF\u6D88\u8017 API\uFF08\u5404\u901A\u9053\u6D88\u8017\u91CF\u7EA7\u89C1\u300C\u4F5C\u7528\u57DF\u300D\u5206\u9875\u6807\u6CE8\uFF09",
+  "settings.general.display-mode": "\u663E\u793A\u6A21\u5F0F",
+  "settings.general.display-mode.desc": "\u26A0\uFE0F \u53CC\u8BED\u5BF9\u7167\u6A21\u5F0F\u4E0B\u56DE\u5199\u6587\u672C\u66F4\u957F\uFF0CLLM \u8F93\u51FA tokens \u7EA6\u4E3A\u7EAF\u8BD1\u6587\u7684 2 \u500D\uFF08\u8F93\u51FA\u5355\u4EF7\u9AD8\u4E8E\u8F93\u5165\uFF09\uFF1B\u7EAF\u8BD1\u6587\u6700\u7701",
+  "settings.general.display-mode.replace": "\u7EAF\u8BD1\u6587",
+  "settings.general.display-mode.bilingual": "\u53CC\u8BED\u5BF9\u7167",
+  "settings.general.display-mode.original": "\u539F\u6587\uFF08\u6682\u505C\u56DE\u5199\uFF09",
+  "settings.general.bilingual-format": "\u53CC\u8BED\u683C\u5F0F",
+  "settings.general.bilingual-format.desc": "\u4EC5\u53CC\u8BED\u5BF9\u7167\u6A21\u5F0F\u751F\u6548\uFF1B\u5BF9 API \u6D88\u8017\u65E0\u5F71\u54CD\uFF08\u4EC5\u6539\u53D8\u56DE\u5199\u6392\u7248\uFF09",
+  "settings.general.bilingual-format.t-first": "\u8BD1\u6587 (\u539F\u6587)",
+  "settings.general.bilingual-format.o-first": "\u539F\u6587 | \u8BD1\u6587",
+  "settings.general.target-lang": "\u76EE\u6807\u8BED\u8A00",
+  "settings.general.target-lang.desc": "\u5982 zh-CN / zh-Hant / ja \u7B49\uFF08\u7F13\u5B58\u952E\u542B\u8BED\u8A00\u7EF4\u5EA6\uFF0C\u5207\u6362\u4E92\u4E0D\u5F71\u54CD\uFF09",
+  "settings.general.ui-lang": "\u63D2\u4EF6\u754C\u9762\u8BED\u8A00",
+  "settings.general.ui-lang.desc": "\u8DDF\u968F Obsidian \u754C\u9762\u8BED\u8A00\u6216\u56FA\u5B9A\u4E2D\u6587/\u82F1\u6587\uFF1B\u547D\u4EE4\u540D\u7B49\u6CE8\u518C\u671F\u6587\u6848\u91CD\u542F\u540E\u751F\u6548\uFF0C\u5DF2\u6E32\u67D3\u7684\u4ED6\u4EBA\u754C\u9762\u6587\u6848\u4E0D\u56DE\u6EAF",
+  "settings.general.ui-lang.auto": "\u8DDF\u968F Obsidian",
+  "settings.general.ui-lang.zh": "\u4E2D\u6587",
+  "settings.general.ui-lang.en": "English",
+  "settings.api.engine": "\u7FFB\u8BD1\u5F15\u64CE",
+  "settings.api.key.desc.encrypted": "safeStorage \u52A0\u5BC6\u5B58\u50A8\u4E8E secrets.bin\uFF0C\u4E0D\u5199\u5165 data.json\uFF084.4.1\uFF09",
+  "settings.api.key.desc.plain": "\u5F53\u524D\u7CFB\u7EDF\u4E0D\u652F\u6301\u7CFB\u7EDF\u7EA7\u52A0\u5BC6\uFF0CKey \u4EC5\u4EE5\u6DF7\u6DC6\u65B9\u5F0F\u5B58\u50A8\u4E8E secrets.bin\uFF0C\u8BF7\u52FF\u540C\u6B65\u8BE5\u6587\u4EF6\uFF084.4.1 \u964D\u7EA7\u5206\u652F\uFF09",
+  "settings.api.key.status": "\uFF5CKey \u72B6\u6001\uFF1A{s}",
+  "settings.api.key.status.saved": "\u5DF2\u4FDD\u5B58",
+  "settings.api.key.status.unsaved": "\u672A\u4FDD\u5B58",
+  "settings.api.key.placeholder.saved": "\u5DF2\u4FDD\u5B58\uFF0C\u8F93\u5165\u65B0 Key \u53EF\u8986\u76D6",
+  "settings.api.key.placeholder.empty": "\u8F93\u5165\u540E\u81EA\u52A8\u52A0\u5BC6\u4FDD\u5B58",
+  "settings.api.base-url.desc": "\u53EF\u6307\u5411\u672C\u5730\u6A21\u578B\uFF0C\u5982 http://localhost:11434/v1",
+  "settings.api.model": "\u6A21\u578B",
+  "settings.api.model.desc": "\u9ED8\u8BA4 gpt-4o-mini\uFF08\u4F4E\u6210\u672C\u6863\uFF09",
+  "settings.api.disable-thinking": "\u5173\u95ED\u601D\u8003\u6A21\u5F0F",
+  "settings.api.disable-thinking.desc": "DeepSeek V4 \u7B49\u9ED8\u8BA4\u5F00\u542F\u201C\u601D\u8003\u201D\u7684\u6A21\u578B\u5EFA\u8BAE\u6253\u5F00\uFF1AUI \u77ED\u6587\u672C\u65E0\u9700\u63A8\u7406\uFF0C\u5173\u6389\u540E\u66F4\u5FEB\u3001\u66F4\u7701 tokens",
+  "settings.api.price": "token \u5355\u4EF7\uFF08\u6BCF\u767E\u4E07\uFF09",
+  "settings.api.price.desc": "\u683C\u5F0F \u8F93\u5165\u4EF7/\u8F93\u51FA\u4EF7\uFF0C\u5982 2/8\uFF08\u6309\u4F60\u6240\u7528\u6A21\u578B\u540E\u53F0\u6807\u4EF7\u586B\uFF09\u3002\u586B\u597D\u540E\u72B6\u6001\u680F\u4E0E\u7528\u91CF\u9875\u6309 \u5B9E\u6D4B token \xD7 \u5355\u4EF7 \u5C55\u793A\u8D39\u7528\u4F30\u7B97\uFF1B\u7559\u7A7A\u5173\u95ED\u3002\u4EC5\u5F71\u54CD\u5C55\u793A\uFF0C\u4E0D\u5F71\u54CD\u9884\u7B97\u7194\u65AD",
+  "settings.api.price.notice-enabled": "UUT\uFF1A\u8D39\u7528\u4F30\u7B97\u5DF2\u542F\u7528\uFF08\u72B6\u6001\u680F\u4E0E\u7528\u91CF\u9875\u53EF\u89C1\uFF09",
+  "settings.api.region.desc": "\u5982 eastasia",
+  "settings.api.custom.endpoint": "\u7AEF\u70B9 URL",
+  "settings.api.custom.endpoint.desc": "\u5982 http://localhost:11434/v1/chat/completions",
+  "settings.api.custom.model": "\u6A21\u578B\u540D",
+  "settings.api.custom.request-template": "\u8BF7\u6C42\u4F53\u6A21\u677F",
+  "settings.api.custom.request-template.desc": "\u5360\u4F4D\u7B26 {{text}} {{targetLang}} {{model}}\uFF1B\u7559\u7A7A\u4F7F\u7528 OpenAI \u517C\u5BB9\u6A21\u677F",
+  "settings.api.custom.response-path": "\u54CD\u5E94\u8DEF\u5F84",
+  "settings.api.custom.response-path.desc": "\u70B9\u5206\u9694\u8DEF\u5F84\uFF0C\u5982 choices.0.message.content\uFF1B\u7559\u7A7A\u4E3A\u9ED8\u8BA4\u503C",
+  "settings.api.connectivity": "\u8FDE\u901A\u6027\u6D4B\u8BD5",
+  "settings.api.connectivity.desc": "\u5411\u5F53\u524D\u5F15\u64CE\u53D1\u9001\u4E00\u6B21\u6D4B\u8BD5\u8BF7\u6C42\uFF08\u6D88\u8017\u6781\u5C11\u989D\u5EA6\uFF1A\u4E00\u6761\u77ED\u6587\u672C\u7EA6\u51E0\u5341 tokens\uFF0C\u6309\u57FA\u51C6\u4EF7 < \xA50.001\uFF09",
+  "settings.api.connectivity.button": "\u6D4B\u8BD5\u8FDE\u63A5",
+  "settings.api.usage": "\u7528\u91CF\u7EDF\u8BA1",
+  "settings.api.monthly-usage.desc": "\u672C\u6708\u5DF2\u53D1\u9001 {usage} \u5B57\u7B26\uFF08usage.json \u6301\u4E45\u5316\uFF09\u3002{basis}\uFF1B\u6309\u6B64\u6298\u7B97\u672C\u6708\u5DF2\u6D88\u8017 {cost}\uFF08\u4EC5\u91CF\u7EA7\u53C2\u8003\uFF09",
+  "settings.api.budget": "\u6708\u5EA6\u5B57\u7B26\u9884\u7B97",
+  "settings.api.budget.desc": "\u9632\u610F\u5916\u70E7\u989D\u5EA6\u7684\u786C\u95F8\u95E8\uFF1A\u8D85\u9650\u81EA\u52A8\u6682\u505C\u9001\u8BD1\u3001\u754C\u9762\u56DE\u9000\u539F\u6587\uFF084.5 \u7194\u65AD\uFF09\u3002\u4ED8\u8D39\u5F15\u64CE\u5F3A\u70C8\u5EFA\u8BAE\u8BBE\u7F6E\uFF1B\u7559\u7A7A\u4E3A\u4E0D\u9650\u3002\u53C2\u8003\u91CF\u7EA7\uFF1A\u6838\u5FC3\u754C\u9762\u4E00\u6B21\u6027\u7EA6 5\u201310 \u4E07\u5B57\u7B26\uFF1B\u793E\u533A\u5E02\u573A\u5168\u91CF\u7EA6 30 \u4E07\u5B57\u7B26/\u8F6E",
+  "settings.api.budget.placeholder": "\u4E0D\u9650",
+  "settings.scope.note": "\u63A8\u8350\u7528\u6CD5\u2014\u2014\u793E\u533A\u63D2\u4EF6\u5E02\u573A\u7684\u300C\u8BD1\u300D\u6309\u94AE\u6709\u4E24\u4E2A\uFF1A\u2460 \u5DE6\u4FA7\u5217\u8868\uFF1A\u6BCF\u4E2A\u63D2\u4EF6\u6761\u76EE\u7684\u3010\u53F3\u4E0A\u89D2\u3011\uFF0C\u7FFB\u8BD1\u8BE5\u6761\u76EE\u7684\u540D\u79F0+\u7B80\u4ECB\uFF08\u7EA6 150 \u5B57\u7B26\uFF0C\u8D39\u7528\u4E0D\u8DB3 0.1 \u5206\u94B1\uFF09\uFF1B\u2461 \u53F3\u4FA7\u8BE6\u60C5\uFF1A\u70B9\u5F00\u4EFB\u610F\u63D2\u4EF6\u540E\uFF0C\u8BE6\u60C5\u533A\u3010\u6700\u9876\u7AEF\u3011\u7684\u300C\u8BD1\u300D\u6309\u94AE\uFF0C\u7FFB\u8BD1\u8BE5\u63D2\u4EF6\u7684 README \u5168\u6587\uFF08\u6570\u5343\u5B57\u7B26 \u2248 2,600 tokens\uFF0C\u9AD8\u5CF0\u4EF7\u7EA6 1.5 \u5206\u94B1\uFF0C\u7A7A\u95F2\u65F6\u6BB5\u534A\u4EF7\uFF09\u3002\u4E24\u8005\u8BD1\u8FC7\u5373\u7F13\u5B58\u3001\u91CD\u590D\u70B9\u51FB\u96F6\u6210\u672C\u3002\u7EDD\u5927\u591A\u6570\u8981\u8BFB\u7684\u82F1\u6587\u5185\u5BB9\u662F\u63D2\u4EF6\u8BF4\u660E\u4E0E\u4ECB\u7ECD\uFF0C\u7528\u300C\u8BD1\u300D\u6309\u94AE\u5373\u53EF\u8986\u76D6\uFF0C\u65E0\u9700\u6253\u5F00\u4E0B\u9762\u7684\u81EA\u52A8\u7FFB\u8BD1\u5F00\u5173\u3002",
+  "settings.scope.core": "\u7FFB\u8BD1 Obsidian \u6838\u5FC3\u754C\u9762",
+  "settings.scope.core.desc": "\u4F4E\u98CE\u9669\uFF1A\u6838\u5FC3\u754C\u9762\u6587\u672C\u91CF\u56FA\u5B9A\uFF08\u7EA6 5\u201310 \u4E07\u5B57\u7B26\uFF09\uFF0C\u4E00\u6B21\u6027\u6210\u672C\u6309\u57FA\u51C6\u4EF7 \u2248 \xA50.30 \u4EE5\u5185\uFF08\u7A7A\u95F2\u65F6\u6BB5\u534A\u4EF7\uFF09\uFF0C\u7F13\u5B58\u540E\u96F6\u6210\u672C\u3002\u751F\u6548\u901A\u9053\uFF1A\u6838\u5FC3\u547D\u4EE4\uFF08\u8BBE\u7F6E\u9762\u677F / DOM \u515C\u5E95\u901A\u9053\u6280\u672F\u4E0A\u65E0\u6CD5\u533A\u5206\u754C\u9762\u5F52\u5C5E\u6838\u5FC3\u8FD8\u662F\u793E\u533A\u63D2\u4EF6\uFF0C\u4E0D\u53D7\u6B64\u5F00\u5173\u63A7\u5236\uFF09",
+  "settings.scope.community": "\u7FFB\u8BD1\u793E\u533A\u63D2\u4EF6\u754C\u9762",
+  "settings.scope.community.desc": "\u26A0\uFE0F \u9AD8\u98CE\u9669\uFF08API \u6D88\u8017\uFF09\uFF1A\u5F00\u542F\u540E\u793E\u533A\u5E02\u573A\u6D4F\u89C8\u5668\u7684\u53EF\u89C1\u6761\u76EE\u4F1A\u88AB\u81EA\u52A8\u7FFB\u8BD1\uFF0C\u6EDA\u52A8\u5217\u8868\u5373\u6301\u7EED\u9001\u8BD1\uFF1B\u5E02\u573A\u6570\u5343\u6761\u76EE\u5168\u91CF\u7EA6 30 \u4E07\u5B57\u7B26/\u8F6E\uFF08\u6309\u57FA\u51C6\u4EF7\u9AD8\u5CF0 \u2248 \xA51.1\u3001\u7A7A\u95F2 \u2248 \xA50.55\uFF09\uFF0C\u9875\u9762\u5E38\u9A7B\u671F\u95F4\u53CD\u590D\u89E6\u53D1\u2014\u2014v1.1.5 \u8D77\u9ED8\u8BA4\u5173\u95ED\uFF0C\u5EFA\u8BAE\u6539\u7528\u6761\u76EE\u300C\u8BD1\u300D\u6309\u94AE\u3002\u751F\u6548\u901A\u9053\uFF1A\u793E\u533A\u63D2\u4EF6\u547D\u4EE4\u3001\u5E02\u573A\u6D4F\u89C8\u5668\u81EA\u52A8\u7FFB\u8BD1\uFF08\u8BBE\u7F6E\u9762\u677F / DOM \u515C\u5E95\u65E0\u6CD5\u5F52\u56E0\u63D2\u4EF6\uFF0C\u4E0D\u53D7\u6B64\u5F00\u5173\u63A7\u5236\uFF09",
+  "settings.scope.interceptors": "\u62E6\u622A\u5668\u72EC\u7ACB\u5F00\u5173",
+  "settings.scope.interceptors.desc": "\u5355\u901A\u9053\u5F02\u5E38\u65F6\u5173\u95ED\u5BF9\u5E94\u901A\u9053\uFF08D1 \u7194\u65AD\u624B\u52A8\u5165\u53E3\uFF09\u3002\u5404\u901A\u9053\u7684 API \u6D88\u8017\u91CF\u7EA7\u89C1\u9010\u9879\u6807\u6CE8",
+  "settings.scope.ic.command": "\u547D\u4EE4\u9762\u677F",
+  "settings.scope.ic.command.risk": "\u4F4E\u98CE\u9669\uFF1A\u547D\u4EE4\u6E05\u5355\u56FA\u5B9A\uFF0C\u542F\u52A8\u65F6\u9884\u70ED\u4E00\u6B21\uFF0C\u7F13\u5B58\u540E\u96F6\u6210\u672C",
+  "settings.scope.ic.menu": "\u83DC\u5355",
+  "settings.scope.ic.menu.risk": "\u4F4E\u98CE\u9669\uFF1A\u83DC\u5355\u9879\u77ED\u4E14\u91CD\u590D\u7387\u9AD8\uFF0C\u7F13\u5B58\u547D\u4E2D\u7387\u901A\u5E38 >90%",
+  "settings.scope.ic.setting": "\u8BBE\u7F6E\u9762\u677F",
+  "settings.scope.ic.setting.risk": "\u4F4E\u98CE\u9669\uFF1A\u5404\u63D2\u4EF6\u8BBE\u7F6E\u9879\u6587\u672C\u91CF\u56FA\u5B9A\uFF0C\u7FFB\u8FC7\u4E00\u6B21\u5373\u7F13\u5B58",
+  "settings.scope.ic.dom": "DOM \u515C\u5E95",
+  "settings.scope.ic.dom.risk": "\u26A0\uFE0F \u4E2D\u98CE\u9669\uFF1A\u5168\u5C40 MutationObserver \u89C2\u5BDF\uFF0C\u52A8\u6001\u754C\u9762\uFF08\u72B6\u6001\u680F\u3001\u5F39\u7A97\u3001\u81EA\u5B9A\u4E49\u89C6\u56FE\uFF09\u4F1A\u6301\u7EED\u9001\u8BD1\uFF1B\u5173\u95ED\u540E Notice/\u5F39\u7A97\u7B49\u4E0D\u518D\u7FFB\u8BD1",
+  "settings.scope.ic.market": "\u793E\u533A\u5E02\u573A\u300C\u8BD1\u300D\u6309\u94AE",
+  "settings.scope.ic.market.risk": "\u2705 \u63A8\u8350\uFF1A\u96F6\u81EA\u52A8\u6D88\u8017\u2014\u2014\u6309\u94AE\u4F4D\u7F6E\uFF1A\u5217\u8868\u6761\u76EE\u3010\u53F3\u4E0A\u89D2\u3011+ \u70B9\u5F00\u63D2\u4EF6\u540E\u8BE6\u60C5\u533A\u3010\u6700\u9876\u7AEF\u3011\uFF1B\u70B9\u51FB\u624D\u7FFB\u8BD1\uFF0C\u7F13\u5B58\u547D\u4E2D\u540E\u91CD\u590D\u70B9\u51FB\u96F6\u6210\u672C\uFF1B\u5931\u8D25\u65F6\u6309\u94AE\u53D8\u7EA2 \xD7 \u5E76\u5F39\u51FA\u5177\u4F53\u539F\u56E0\uFF08\u9884\u7B97\u8D85\u9650 / \u7194\u65AD\u4E2D / \u7F51\u7EDC\u9519\u8BEF\uFF09\uFF0Cv1.1.8 \u8D77\u4E0D\u518D\u9759\u9ED8",
+  "settings.scope.whitelist": "\u63D2\u4EF6\u767D\u540D\u5355",
+  "settings.scope.whitelist.desc": "\u975E\u7A7A\u65F6\u4EC5\u7FFB\u8BD1\u8FD9\u4E9B\u63D2\u4EF6\uFF08\u6BCF\u884C\u4E00\u4E2A\u63D2\u4EF6 id\uFF09\u3002\u26A0\uFE0F \u5F53\u524D\u7248\u672C\u4E3A\u9884\u7559\u914D\u7F6E\uFF0C\u8FD0\u884C\u65F6\u5C1A\u672A\u751F\u6548",
+  "settings.scope.blacklist": "\u63D2\u4EF6\u9ED1\u540D\u5355",
+  "settings.scope.blacklist.desc": "\u8FD9\u4E9B\u63D2\u4EF6\u7684\u547D\u4EE4\u4E0D\u7FFB\u8BD1\uFF08\u9ED8\u8BA4\u542B\u672C\u63D2\u4EF6\u81EA\u8EAB\uFF09\u3002\u26A0\uFE0F \u5F53\u524D\u7248\u672C\u4EC5\u547D\u4EE4\u901A\u9053\u751F\u6548\uFF1B\u8BBE\u7F6E\u9762\u677F / DOM \u515C\u5E95\u65E0\u6CD5\u5F52\u56E0\u63D2\u4EF6\u5F52\u5C5E",
+  "settings.scope.installed-ids": "\u5DF2\u5B89\u88C5\u63D2\u4EF6 id \u53C2\u8003",
+  "settings.cache.enable": "\u542F\u7528\u672C\u5730\u7F13\u5B58",
+  "settings.cache.enable.desc": "\u662F\u4EC0\u4E48\uFF1A\u8BD1\u6587\u6301\u4E45\u5316\u5230\u63D2\u4EF6\u76EE\u5F55 translation-cache.json\u2014\u2014\u540C\u4E00\u6587\u672C\u53EA\u4ED8\u4E00\u6B21 API \u8D39\u7528\uFF0C\u91CD\u542F Obsidian \u540E\u4ECD\u7136\u6709\u6548\u3002\u4EC0\u4E48\u65F6\u5019\u5173\uFF1A\u53EA\u6709\u6392\u67E5\u7FFB\u8BD1\u5F02\u5E38\u65F6\u624D\u9700\u8981\u5173\u3002\u26A0\uFE0F \u5173\u95ED\u540E\u6BCF\u6B21\u6E32\u67D3\u754C\u9762\u90FD\u91CD\u65B0\u8C03 API\uFF0C\u540C\u4E00\u754C\u9762\u4F1A\u53CD\u590D\u6D88\u8017\u989D\u5EA6",
+  "settings.cache.max-entries": "\u7F13\u5B58\u6761\u76EE\u4E0A\u9650",
+  "settings.cache.max-entries.desc": "\u662F\u4EC0\u4E48\uFF1A\u5185\u5B58\u4E0E\u78C1\u76D8\u5171\u7528\u6B64\u4E0A\u9650\uFF08\u9ED8\u8BA4 50000\uFF0C\u8303\u56F4 1000\u2013200000\uFF1B\u78C1\u76D8\u53E6\u6709 64MB \u5B57\u8282\u786C\u9876\uFF0C\u5148\u5230\u5148\u622A\uFF09\uFF0C\u8D85\u51FA\u540E\u6DD8\u6C70\u6700\u4E45\u672A\u7528\u7684\u6761\u76EE\u3002\u4EC0\u4E48\u65F6\u5019\u8C03\uFF1A\u793E\u533A\u5E02\u573A README \u5168\u6587\u7FFB\u8BD1\u6761\u76EE\u91CF\u5927\uFF0C\u4E0A\u9650\u592A\u4F4E\u4F1A\u63D0\u524D\u6DD8\u6C70\u8BD1\u6587\u3001\u4E0B\u6B21\u6253\u5F00\u91CD\u590D\u6D88\u8017 API\u2014\u2014\u8BD1\u6587\u662F\u7EAF\u6587\u672C\u4E0D\u5360\u7A7A\u95F4\uFF0C\u5EFA\u8BAE\u5F80\u5BBD\u4E86\u8BBE\u3002\u4EE3\u4EF7\uFF1A\u5BB9\u91CF\u8D8A\u5927\uFF0C\u542F\u52A8\u65F6\u52A0\u8F7D\u7F13\u5B58\u8D8A\u4E45\uFF08\u6BEB\u79D2\u7EA7\uFF09\u3001\u5360\u5185\u5B58\u8D8A\u591A\u3002\u4FEE\u6539\u5373\u65F6\u751F\u6548\uFF1B\u8C03\u5C0F\u4F1A\u7ACB\u5373\u6DD8\u6C70\u6700\u65E7\u6761\u76EE",
+  "settings.cache.disk-absent": "\u78C1\u76D8\u6587\u4EF6\u5C1A\u672A\u521B\u5EFA",
+  "settings.cache.disk-size": "\u78C1\u76D8\u6587\u4EF6\u7EA6 {mb} MB",
+  "settings.cache.last-flush": "\u6700\u540E\u843D\u76D8 {time}",
+  "settings.cache.flush-pending": "\u672C\u4F1A\u8BDD\u5C1A\u672A\u843D\u76D8\uFF08\u6BCF 30s \u68C0\u67E5\uFF0C\u7D2F\u8BA1 100 \u6761\u6216 5 \u5206\u949F\u81EA\u52A8\u843D\u76D8\uFF1B\u4E5F\u53EF\u70B9\u4E0B\u65B9\u300C\u7ACB\u5373\u843D\u76D8\u300D\uFF09",
+  "settings.cache.stats": "\u7F13\u5B58\u7EDF\u8BA1",
+  "settings.cache.stats.desc": "\u6761\u76EE {n}\uFF08\u5185\u5B58=\u78C1\u76D8\u540C\u4E0A\u9650\uFF09\uFF5C\u547D\u4E2D\u7387 {rate}%\uFF08\u672C\u4F1A\u8BDD\u7EDF\u8BA1\u2014\u2014\u547D\u4E2D\u7387\u8D8A\u9AD8\uFF0C\u8D8A\u591A\u5185\u5BB9\u8D70\u4E86\u672C\u5730\u7F13\u5B58\u3001\u8D8A\u7701\u94B1\uFF09\uFF5C{size}\uFF5C{flush}",
+  "settings.cache.flush-now": "\u7ACB\u5373\u843D\u76D8",
+  "settings.cache.flush-now.desc": "\u662F\u4EC0\u4E48\uFF1A\u65B0\u8BD1\u7684\u8BD1\u6587\u5148\u5B58\u5728\u5185\u5B58\u91CC\uFF0C\u63D2\u4EF6\u6BCF 30 \u79D2\u68C0\u67E5\u4E00\u6B21\u2014\u2014\u7D2F\u8BA1\u6EE1 100 \u6761\u65B0\u8BD1\u6587\u3001\u6216\u8DDD\u4E0A\u6B21\u843D\u76D8\u6EE1 5 \u5206\u949F\uFF0C\u624D\u5199\u5165\u78C1\u76D8\u6587\u4EF6\uFF1B\u63D2\u4EF6\u6B63\u5E38\u5378\u8F7D/\u5173\u5E93\u65F6\u4E5F\u4F1A\u5F3A\u5236\u5199\u5165\u3002\u4EC0\u4E48\u65F6\u5019\u70B9\uFF1A\u521A\u7FFB\u5B8C\u4E00\u5927\u6279\u5E02\u573A README\u3001\u6216\u51C6\u5907\u5173\u673A/\u91CD\u542F Obsidian \u524D\u70B9\u4E00\u4E0B\uFF0C\u7ACB\u523B\u628A\u5185\u5B58\u91CC\u7684\u65B0\u8BD1\u6587\u5199\u5165\u78C1\u76D8\u3002\u4E0D\u70B9\u4F1A\u600E\u6837\uFF1A\u5D29\u6E83/\u5F3A\u6740\u4F1A\u4E22\u6389\u300C\u4E0A\u6B21\u843D\u76D8\u4EE5\u6765\u300D\u7684\u65B0\u8BD1\u6587\uFF08\u6700\u591A 5 \u5206\u949F\u7684\u91CF\uFF09\uFF0C\u6B63\u5E38\u9000\u51FA\u4E0D\u53D7\u5F71\u54CD\u3002\u96F6 API \u6D88\u8017",
+  "settings.cache.purge-stale": "\u6E05\u7406\u5931\u6548\u6761\u76EE",
+  "settings.cache.purge-stale.desc": "\u662F\u4EC0\u4E48\uFF1A\u5220\u9664\u4E0E\u5F53\u524D\u300C\u5F15\u64CE + \u76EE\u6807\u8BED\u8A00 + \u6A21\u578B\u300D\u4E0D\u5339\u914D\u7684\u7F13\u5B58\u6761\u76EE\u2014\u2014\u7F13\u5B58\u952E\u5305\u542B\u8FD9\u4E09\u4E2A\u7EF4\u5EA6\uFF0C\u6362\u8FC7\u6A21\u578B\u6216\u5F15\u64CE\u540E\uFF0C\u65E7\u6761\u76EE\u6C38\u8FDC\u4E0D\u4F1A\u518D\u547D\u4E2D\uFF0C\u7EAF\u5360\u7A7A\u95F4\u3002\u4EC0\u4E48\u65F6\u5019\u70B9\uFF1A\u6362\u8FC7\u6A21\u578B/\u5F15\u64CE/\u76EE\u6807\u8BED\u8A00\u4E4B\u540E\u70B9\u4E00\u6B21\u3002\u6CE8\u610F\uFF1Av1.1.9 \u4E4B\u524D\u5199\u5165\u7684\u65E7\u6761\u76EE\u6CA1\u6709\u6A21\u578B\u6807\u8BB0\uFF0C\u53EA\u80FD\u6309\u5F15\u64CE+\u8BED\u8A00\u5224\u5B9A\u3002\u96F6 API \u6D88\u8017",
+  "settings.cache.clear": "\u6E05\u7A7A\u7F13\u5B58",
+  "settings.cache.clear.desc": "\u662F\u4EC0\u4E48\uFF1A\u5220\u9664\u5168\u90E8\u7F13\u5B58\u8BD1\u6587\uFF08\u5185\u5B58+\u78C1\u76D8\uFF09\uFF0C\u540C\u65F6\u91CD\u7F6E\u754C\u9762\u5DF2\u663E\u793A\u7684\u8BD1\u6587\uFF08R-07 \u8054\u52A8\uFF09\u3002\u4EC0\u4E48\u65F6\u5019\u7528\uFF1A\u8BD1\u6587\u51FA\u73B0\u5F02\u5E38\uFF08\u5982\u5D4C\u5957\u4E71\u7801\uFF09\u3001\u6216\u6362\u4E86\u672F\u8BED\u8868\u60F3\u5168\u90E8\u91CD\u8BD1\u65F6\u3002\u26A0\uFE0F \u4EE3\u4EF7\uFF1A\u6E05\u7A7A\u540E\u6240\u6709\u754C\u9762\u5C06\u5728\u4E0B\u6B21\u6253\u5F00\u65F6\u91CD\u65B0\u6D88\u8017 API \u7FFB\u8BD1\u4E00\u904D\uFF08\u6309\u57FA\u51C6\u4EF7\uFF1A\u6838\u5FC3\u754C\u9762 \u2248 \xA50.30 \u4EE5\u5185\uFF0C\u7A7A\u95F2\u65F6\u6BB5\u534A\u4EF7\uFF09",
+  "settings.cache.clear.notice": "UUT\uFF1A\u7F13\u5B58\u5DF2\u6E05\u7A7A\uFF0C\u754C\u9762\u8BD1\u6587\u5C06\u5728\u4E0B\u6B21\u8BBF\u95EE\u65F6\u91CD\u65B0\u7FFB\u8BD1",
+  "settings.cache.export": "\u5BFC\u51FA\u7F13\u5B58",
+  "settings.cache.export.desc": "\u662F\u4EC0\u4E48\uFF1A\u628A\u7F13\u5B58\u5B8C\u6574\u5BFC\u51FA\u5230\u5E93\u6839\u76EE\u5F55 universal-ui-translator-cache-export.json\u3002\u4EC0\u4E48\u65F6\u5019\u7528\uFF1A\u6362\u7535\u8111\u8FC1\u79FB\uFF0C\u6216\u628A\u81EA\u5DF1\u79EF\u7D2F\u7684\u8BD1\u6587\u5206\u4EAB\u7ED9\u4ED6\u4EBA\u2014\u2014\u5BF9\u65B9\u5BFC\u5165\u540E\u96F6 API \u6D88\u8017\u76F4\u63A5\u590D\u7528\uFF08FR-12\uFF09\u3002\u96F6 API \u6D88\u8017",
+  "settings.cache.export.button": "\u5BFC\u51FA",
+  "settings.cache.import": "\u5BFC\u5165\u7F13\u5B58",
+  "settings.cache.import.desc": "\u662F\u4EC0\u4E48\uFF1A\u4ECE\u7F13\u5B58 JSON \u6587\u4EF6\u5408\u5E76\u6761\u76EE\u8FDB\u672C\u5730\u7F13\u5B58\uFF08\u6821\u9A8C schemaVersion \u4E0E\u6761\u76EE\u7ED3\u6784\uFF0C\u975E\u6CD5\u6587\u4EF6\u62D2\u7EDD\uFF09\u3002\u4EC0\u4E48\u65F6\u5019\u7528\uFF1A\u6362\u673A\u8FC1\u79FB\u56DE\u6765\uFF0C\u6216\u63A5\u6536\u4ED6\u4EBA\u5206\u4EAB\u7684\u8BD1\u6587\u8BCD\u8868\u3002\u96F6 API \u6D88\u8017",
+  "settings.cache.import.button": "\u5BFC\u5165",
+  "settings.cache.import.no-file": "UUT\uFF1A\u8BF7\u5148\u9009\u62E9\u7F13\u5B58 JSON \u6587\u4EF6",
+  "settings.usage.basis": "\u8BA1\u8D39\u53E3\u5F84",
+  "settings.usage.basis.token.desc": "\u5F53\u524D\u5F15\u64CE\uFF08OpenAI \u517C\u5BB9\u63A5\u53E3\uFF09\u6309 token \u8BA1\u8D39\uFF1Av1.3 \u8D77\u76F4\u63A5\u91C7\u96C6 API \u8FD4\u56DE\u7684 usage \u5B57\u6BB5\uFF08\u8D26\u5355\u53E3\u5F84\uFF0C\u542B\u6BCF\u8BF7\u6C42 system prompt \u5F00\u9500\uFF09\uFF1B\u72B6\u6001\u680F\u5E38\u9A7B\u300C\u901F\u7387 \xB7 \u4ECA\u65E5 \xB7 \u8D39\u7528\u300D\u6BB5\uFF08\u9AD8\u7EA7\u9875\u53EF\u5173\uFF09\u3002\u5207\u6362\u5176\u4ED6\u5F15\u64CE\u540E\u672C\u9875\u56DE\u843D\u5B57\u7B26\u53E3\u5F84",
+  "settings.usage.basis.chars.desc": "\u5F53\u524D\u5F15\u64CE\u6309\u5B57\u7B26\u8BA1\u8D39\uFF08DeepL/Google/Azure\uFF09\uFF1Atokens \u9879\u4E3A\u5B57\u7B26\u6298\u7B97\u4F30\u7B97\uFF08\u8F93\u5165 \u2248 \u5B57\u7B26/4\u3001\u8F93\u51FA \u2248 \u5B57\u7B26/2.5\uFF09\uFF0C\u4EC5\u91CF\u7EA7\u53C2\u8003",
+  "settings.usage.month": "\u672C\u6708\u7528\u91CF",
+  "settings.usage.month.desc": "\u9001\u8BD1 {calls} \u6761\uFF5C\u8F93\u5165 {inChars} \u5B57\u7B26 \u2248 {inTok} tokens\uFF5C\u8F93\u51FA {outChars} \u5B57\u7B26 \u2248 {outTok} tokens\uFF5C\u4F30\u7B97\u8D39\u7528 {cost}\u3002\u672C\u6708\u7D2F\u8BA1\u53D1\u9001 {total} \u5B57\u7B26\uFF08\u4E0E\u6708\u5EA6\u9884\u7B97\u540C\u53E3\u5F84\uFF0Cusage.json \u6301\u4E45\u5316\uFF09\u3002\u9010\u65E5\u660E\u7EC6\u81EA v1.1.9 \u8D77\u8BB0\u5F55\uFF0C\u6B64\u524D\u5386\u53F2\u53EA\u6709\u6708\u7D2F\u8BA1",
+  "settings.usage.card.session-tokens": "\u672C\u4F1A\u8BDD tokens\uFF08\u5B9E\u6D4B\uFF09",
+  "settings.usage.card.session-calls": "\u672C\u4F1A\u8BDD\u9001\u8BD1",
+  "settings.usage.card.session-calls.value": "{n} \u6761 / {chars} \u5B57",
+  "settings.usage.card.rate1": "\u8FD1 1 \u5206\u949F",
+  "settings.usage.card.rate5": "\u8FD1 5 \u5206\u949F",
+  "settings.usage.card.rate-chars.value": "{n} \u5B57/min",
+  "settings.usage.card.peak": "\u4F1A\u8BDD\u5CF0\u503C",
+  "settings.usage.card.today-tokens": "\u4ECA\u65E5 tokens\uFF08\u5B9E\u6D4B\uFF09",
+  "settings.usage.card.today-cost": "\u4ECA\u65E5\u8D39\u7528\uFF08\u2248{currency}\uFF09",
+  "settings.usage.card.month-cost": "\u672C\u6708\u8D39\u7528\uFF08\u2248{currency}\uFF09",
+  "settings.usage.card.month-calls": "\u672C\u6708\u9001\u8BD1\u6761\u6570",
+  "settings.usage.card.in-tokens": "\u8F93\u5165 tokens\uFF08\u4F30\u7B97\uFF09",
+  "settings.usage.card.out-tokens": "\u8F93\u51FA tokens\uFF08\u4F30\u7B97\uFF09",
+  "settings.usage.card.cost": "\u4F30\u7B97\u8D39\u7528",
+  "settings.usage.chart.title": "\u8FD1 30 \u5929\u9010\u65E5\u7528\u91CF\uFF08{basis}\uFF09",
+  "settings.usage.chart.basis-token": "tokens \u5B9E\u6D4B",
+  "settings.usage.chart.basis-est": "tokens \u6298\u7B97\u4F30\u7B97",
+  "settings.usage.chart.toggle-chars": "\u5B57\u7B26\u6298\u7B97",
+  "settings.usage.chart.bar-title": "{date}\uFF1A\u8C03\u7528 {calls} \u6761\n\u8F93\u5165 {inChars} \u5B57\u7B26 / \u5B9E\u6D4B {inTok} tokens\n\u8F93\u51FA {outChars} \u5B57\u7B26 / \u5B9E\u6D4B {outTok} tokens",
+  "settings.usage.legend.in": "\u8F93\u5165 tokens\uFF08{basis}\uFF09",
+  "settings.usage.legend.out": "\u8F93\u51FA tokens\uFF08{basis}\uFF09",
+  "settings.usage.legend.actual": "\u5B9E\u6D4B",
+  "settings.usage.legend.est": "\u4F30\u7B97",
+  "settings.usage.today-week": "\u4ECA\u65E5 / \u8FD1 7 \u65E5",
+  "settings.usage.today-week.desc": "\u4ECA\u65E5\uFF1A{todayCalls} \u6761\uFF0C\u5B9E\u6D4B {todayTok} tokens\uFF5C\u8FD1 7 \u65E5\uFF1A{weekCalls} \u6761\uFF0C\u5B9E\u6D4B {weekTok} tokens\uFF08\u6298\u7B97\u4F30\u7B97 {weekEst}\uFF09",
+  "settings.usage.basis-note": "\u53E3\u5F84\u8BF4\u660E",
+  "settings.usage.basis-note.desc": "v1.3 \u8D77 OpenAI \u517C\u5BB9\u901A\u9053\u8BB0\u5F55 API \u8FD4\u56DE\u7684\u771F\u5B9E usage\uFF08\u8D26\u5355\u53E3\u5F84\uFF0C\u542B\u6BCF\u8BF7\u6C42 system prompt \u5F00\u9500\uFF09\uFF1B\u300C\u6298\u7B97\u4F30\u7B97\u300D\u7531\u5B57\u7B26\u6570\u4F30\u7B97\uFF08\u8F93\u5165 \u2248 \u5B57\u7B26/4\u3001\u8F93\u51FA \u2248 \u5B57\u7B26/2.5\uFF09\uFF0C\u670D\u52A1\u4E8E\u5386\u53F2\u6570\u636E\u4E0E\u975E token \u8BA1\u8D39\u5F15\u64CE\u3002{basis}\u3002\u7F13\u5B58\u547D\u4E2D\u4E0E\u672F\u8BED\u8868\u547D\u4E2D\u4E0D\u6D88\u8017 API\u3001\u4E0D\u8BA1\u5165\u6B64\u7EDF\u8BA1\uFF1B\u6708\u5EA6\u9884\u7B97\u53E3\u5F84\u4ECD\u4E3A\u5B57\u7B26",
+  "settings.usage.split-low": "< \xA50.01\uFF08\u7A7A\u95F2\u534A\u4EF7\uFF09",
+  "settings.usage.split-high": "\u9AD8\u5CF0 \u2248 \xA5{peak}\uFF08\u7A7A\u95F2 \u2248 \xA5{off}\uFF09",
+  "settings.advanced.skip-patterns": "\u8DF3\u8FC7\u89C4\u5219\uFF08\u6B63\u5219\uFF09",
+  "settings.advanced.skip-patterns.desc": "\u6BCF\u884C\u4E00\u6761\u6B63\u5219\uFF1B\u547D\u4E2D\u6587\u672C\u4E0D\u9001\u8BD1\uFF084.2.1 \u89C4\u5219 1\uFF09\u3002\u51CF\u5C11\u4E0D\u5FC5\u8981\u7684 API \u6D88\u8017\uFF1B\u96F6\u81EA\u8EAB\u6210\u672C",
+  "settings.advanced.glossary": "\u672F\u8BED\u8868\uFF08\u56FA\u5B9A\u8BD1\u6CD5\uFF09",
+  "settings.advanced.glossary.desc": "\u6BCF\u884C\u4E00\u6761\uFF1A\u539F\u6587=\u8BD1\u6587\uFF1B\u547D\u4E2D\u76F4\u63A5\u8FD4\u56DE\uFF0C\u4E0D\u8FDB\u7F13\u5B58\u4E0E API\uFF08FR-15\uFF09\u2014\u2014\u7701\u989D\u5EA6\uFF1A\u547D\u4E2D\u8BCD\u6761\u96F6\u6D88\u8017",
+  "settings.advanced.batch-window": "\u6279\u91CF\u805A\u5408\u7A97\u53E3\uFF08\u6BEB\u79D2\uFF09",
+  "settings.advanced.batch-window.desc": "\u9ED8\u8BA4 100\uFF0C\u53EF\u914D\u7F6E 50\u2013500\uFF084.2.2\uFF09\u3002\u7A97\u53E3\u5185\u76F8\u540C\u6587\u672C\u53BB\u91CD\u5171\u4EAB\u4E00\u6B21\u8BF7\u6C42\u2014\u2014\u8C03\u5927\u53EF\u7565\u5FAE\u51CF\u5C11\u91CD\u590D\u8BF7\u6C42\uFF1B\u5BF9\u603B\u5B57\u7B26\u6D88\u8017\u65E0\u5F71\u54CD",
+  "settings.advanced.max-concurrent": "\u6700\u5927\u5E76\u53D1\u8BF7\u6C42\u6570",
+  "settings.advanced.max-concurrent.desc": "\u9ED8\u8BA4 3\uFF0C\u907F\u514D\u89E6\u53D1 API \u9650\u6D41\uFF084.2.2\uFF09\u3002\u26A0\uFE0F \u8C03\u5927\u4E0D\u7701\u94B1\uFF08\u603B\u5B57\u7B26\u91CF\u4E0D\u53D8\uFF09\uFF0C\u53EA\u5F71\u54CD\u901F\u5EA6\uFF1B\u89E6\u53D1\u9650\u6D41\u53CD\u800C\u53EF\u80FD\u56E0\u91CD\u8BD5\u591A\u8017\u989D\u5EA6",
+  "settings.advanced.timeout": "\u5355\u8BF7\u6C42\u8D85\u65F6\uFF08\u6BEB\u79D2\uFF09",
+  "settings.advanced.timeout.desc": "\u9ED8\u8BA4 30000\uFF08R-23\uFF1A\u6162\u5F15\u64CE\u4E0A\u8C03\uFF09\uFF1B\u53EF\u914D\u7F6E 5000\u2013120000\uFF084.2.2\uFF09\u3002\u8D85\u65F6\u7684\u8BF7\u6C42\u6309\u5931\u8D25\u5904\u7406\uFF1A\u5DF2\u53D1\u9001\u7684\u5B57\u7B26\u901A\u5E38\u4ECD\u4F1A\u8BA1\u8D39",
+  "settings.advanced.debug": "\u8C03\u8BD5\u6A21\u5F0F",
+  "settings.advanced.debug.desc": "Console \u8F93\u51FA\u62E6\u622A\u65E5\u5FD7\u3002\u7EAF\u672C\u5730\u884C\u4E3A\uFF0C\u96F6 API \u6D88\u8017",
+  // —— Provider 错误消息（批次五 33 条：值逐字取自源码字面量；消息构造时刻 t() 解析）——
+  "provider.http-not-injected": "HttpClient \u672A\u6CE8\u5165",
+  "provider.request": "\u8BF7\u6C42",
+  "provider.timeout": "{label}\u8D85\u65F6\uFF08{ms}ms\uFF09",
+  "provider.connect-probe-ok": "\u8FDE\u63A5\u6210\u529F\uFF08\u8BD5\u8BD1\uFF1A{n}\uFF09",
+  "provider.validate-failed": "\u8FDE\u901A\u6027\u6D4B\u8BD5\u5931\u8D25\uFF1A{n}",
+  "provider.azure.count-mismatch": "Azure \u54CD\u5E94\u6761\u6570\u4E0E\u8BF7\u6C42\u4E0D\u7B26",
+  "provider.azure.missing-translation": "Azure \u54CD\u5E94\u7B2C {n} \u6761\u7F3A\u5C11 translations[0].text",
+  "provider.azure.empty-response": "\u54CD\u5E94\u4E3A\u7A7A\uFF0C\u8BF7\u68C0\u67E5 Key \u4E0E Region",
+  "provider.custom.name": "\u81EA\u5B9A\u4E49\u7AEF\u70B9",
+  "provider.custom.empty-response": "\u54CD\u5E94\u4E3A\u7A7A\uFF0C\u8BF7\u68C0\u67E5\u54CD\u5E94\u8DEF\u5F84\u914D\u7F6E",
+  "provider.custom.path-no-text": "Custom \u54CD\u5E94\u6309\u8DEF\u5F84 {path} \u672A\u63D0\u53D6\u5230\u8BD1\u6587",
+  "provider.deepl.count-mismatch": "DeepL \u54CD\u5E94 translations \u6570\u91CF\u4E0E\u8BF7\u6C42\u4E0D\u7B26",
+  "provider.deepl.missing-text": "DeepL \u54CD\u5E94\u7B2C {n} \u6761\u7F3A\u5C11 text",
+  "provider.deepl.usage-ok": "\u8FDE\u63A5\u6210\u529F\uFF08DeepL \u7528\u91CF\u67E5\u8BE2\u6B63\u5E38\uFF09",
+  "provider.deepl.network-error": "\u7F51\u7EDC\u9519\u8BEF\uFF1A{n}",
+  "provider.deepl.http-status": "HTTP {n}\uFF1A\u8BF7\u68C0\u67E5 API Key",
+  "provider.google.count-mismatch": "Google \u54CD\u5E94 translations \u6570\u91CF\u4E0E\u8BF7\u6C42\u4E0D\u7B26",
+  "provider.google.missing-text": "Google \u54CD\u5E94\u7B2C {n} \u6761\u7F3A\u5C11 translatedText",
+  "provider.google.empty-response": "\u54CD\u5E94\u4E3A\u7A7A\uFF0C\u8BF7\u68C0\u67E5 API Key",
+  "provider.openai.name": "OpenAI \u517C\u5BB9\u63A5\u53E3",
+  "provider.openai.batch-index-misaligned": "\u6279\u91CF\u54CD\u5E94\u5E8F\u53F7\u9519\u4F4D",
+  "provider.openai.batch-line-invalid": "\u6279\u91CF\u54CD\u5E94\u884C\u683C\u5F0F\u4E0D\u7B26\uFF1A{n}",
+  "provider.openai.batch-count-mismatch": "\u6279\u91CF\u54CD\u5E94\u884C\u6570\u4E0D\u7B26\uFF08{seen}/{total}\uFF09",
+  "provider.openai.missing-content": "OpenAI \u54CD\u5E94\u7F3A\u5C11 choices[0].message.content",
+  "provider.openai.auth-failed": "API Key \u65E0\u6548\u6216\u5DF2\u5931\u6548\uFF08401/403\uFF09",
+  "provider.openai.insufficient-balance": "\u8D26\u6237\u4F59\u989D\u4E0D\u8DB3\uFF08402\uFF09\uFF0C\u8BF7\u5230\u670D\u52A1\u5546\u540E\u53F0\u5145\u503C\u6216\u7EED\u8D39",
+  "provider.openai.model-not-found": "\u6A21\u578B\u4E0D\u5B58\u5728\uFF08404\uFF09\uFF1A\u8BF7\u68C0\u67E5\u6A21\u578B\u540D\u300C{model}\u300D",
+  "provider.openai.rate-limited": "\u89E6\u53D1\u9650\u6D41\uFF08429\uFF09\uFF0C\u8BF7\u7A0D\u540E\u91CD\u8BD5",
+  "provider.openai.connect-ok": "\u8FDE\u63A5\u6210\u529F\uFF08\u6A21\u578B\uFF1A{model}\uFF0C\u8BD5\u8BD1\uFF1A{probe}\uFF09",
+  // —— 批次三遗留补抽（扫描器 ≤2 行去重漏收项，主脑裁定补抽；值逐字取自源码字面量）——
+  "notice.key-save-failed": "UUT\uFF1AKey \u4FDD\u5B58\u5931\u8D25\uFF1A{n}",
+  "status.today-chars": "UUT \u4ECA\u65E5 {n} \u5B57",
+  "status.cache-flushed": "\u7F13\u5B58\u5DF2\u843D\u76D8\uFF08{time}\uFF09\uFF0C\u5171 {n} \u6761",
+  "status.export-failed": "\u5BFC\u51FA\u5931\u8D25\uFF1A{n}",
+  "market.log.translate-error": "[uut] \u5E02\u573A\u300C\u8BD1\u300D\u6309\u94AE\u7FFB\u8BD1\u5F02\u5E38\uFF1A{n}",
+  "market.notify.failed": "UUT\uFF1A\u7FFB\u8BD1\u8BF7\u6C42\u5931\u8D25\uFF08{reason}\uFF09\uFF0C\u5DF2\u81EA\u52A8\u8DF3\u8FC7\uFF1B\u53EF\u7A0D\u540E\u91CD\u8BD5",
+  // —— 目标语言切换提示（批次五唯一允许新撰的中文文案）——
+  "notice.lang.switched": "UUT\uFF1A\u76EE\u6807\u8BED\u8A00\u5DF2\u5207\u6362\uFF08\u7F13\u5B58\u6309\u8BED\u8A00\u9694\u79BB\uFF0C\u5207\u56DE\u96F6\u6210\u672C\uFF09"
+};
+
+// src/i18n/en.ts
+var en = {
+  // —— 主入口 Notice ——
+  "notice.migrate-v115": "UUT v1.1.5: The community market no longer auto-translates by default (that toggle never took effect, and scrolling the market list kept consuming API quota).",
+  "notice.migrate-v115-hint": "Use the per-item Translate button in the market (free on cache hit); to enable auto-translation, turn it on under Settings \u2192 Scope",
+  "notice.key-decrypt-failed": "UUT: A saved API key failed to decrypt on this device. Please re-enter it in the settings",
+  "notice.auth-failed": "UUT: The API key may be invalid (401/403). Check the API settings",
+  "notice.budget-exceeded": "UUT: Monthly character budget exhausted; translation paused and originals restored. Adjust the monthly budget under Settings \u2192 API to continue",
+  "notice.circuit-open": "UUT: Translation service kept failing; paused automatically for 10 minutes (see settings)",
+  "notice.setup-required": "UUT: Configure a translation engine and API key in the settings first",
+  "notice.original-on": "UUT: Switched to original text (new content is no longer written back; the cache keeps warming)",
+  "notice.original-off": "UUT: Translations restored",
+  // —— 命令名 / 命令通道 ——
+  "command.toggle-original": "Toggle original/translated text",
+  "command.patcher.disabled": "UUT: Command channel translation disabled (addCommand signature check failed)",
+  "command.patcher.list-unavailable": "app.commands.listCommands unavailable; existing commands left to the DOMPatcher fallback",
+  "command.patcher.activated": "CommandPatcher activated (addCommand hooking ready; existing scan awaits layout ready)",
+  "command.patcher.swept": "CommandPatcher patched {n} existing commands",
+  "command.patcher.patch-failed": "Failed to patch command (skipped): {n}",
+  // —— 菜单通道 ——
+  "menu.patcher.disabled": "UUT: Menu channel translation disabled (addItem signature check failed)",
+  "menu.patcher.activated": "MenuPatcher activated",
+  // —— 设置面板通道 ——
+  "setting.patcher.disabled": "UUT: Settings panel channel translation disabled (Setting signature check failed)",
+  "setting.patcher.activated": "SettingPatcher activated",
+  // —— DOM 兜底通道 ——
+  "dom.patcher.disabled": "UUT: DOM fallback channel translation disabled (MutationObserver unavailable)",
+  "dom.patcher.activated": "DOMPatcher activated, watching {n} documents",
+  "dom.patcher.adopted": "DOMPatcher adopted a new document",
+  // —— 市场通道（按钮/徽标/消息）——
+  "market.activated": "MarketplacePatcher activated",
+  "market.adopted": "MarketplacePatcher adopted a new document",
+  "market.button.glyph": "TR",
+  "market.button.title-item": "Translate this plugin entry",
+  "market.button.title-detail": "Translate this plugin's full description (README); Chinese UI text is skipped automatically at zero cost",
+  "market.injected": "MarketplacePatcher injected {n} buttons",
+  "market.notify.display-mode": "UUT: 'Show original text' mode is on \u2014 translations are cached but not written back; run the command 'Toggle original/translated text' to restore",
+  "market.notify.budget": "UUT: Monthly character budget exhausted, translation paused (Settings \u2192 API to adjust the budget)",
+  "market.notify.circuit": "UUT: Translation failing repeatedly, circuit breaker active (auto-recovery in ~10 minutes); saving the settings once resets it immediately",
+  "market.notify.no-provider": "UUT: No translation engine or API key configured. Please finish setup in the settings",
+  "market.notify.negative-cache": "UUT: This text just failed; no auto-retry within 5 minutes",
+  "market.error.unknown": "unknown error",
+  "market.progress.label": "UUT translating {n}/{m}",
+  "market.progress.done": "UUT \u2713 done",
+  "market.progress.ended": "UUT finished",
+  // —— 状态栏 ——
+  "status.today-tokens": "UUT today {n} tok",
+  "status.rate-chars": "\u25B2 {n} chars/min \xB7 ",
+  "status.circuit-countdown": "UUT circuit {n}:{m}",
+  "status.translating": "UUT translating\u2026 {n} left ({m} done)",
+  "status.session-done": "UUT \u2713 {n} translated this session",
+  "status.cache-purged": "Purged {n} cache entries mismatched with the current engine/language/model",
+  "status.flush-failed": "Flush failed: {n}",
+  "status.just-now": "just now",
+  "status.cache-exported": "Cache exported to vault root: {n}",
+  "status.import-bad-json": "Import failed: not a valid JSON file",
+  "status.import-schema-unsupported": "Import failed: unsupported schemaVersion (supported \u2264 {n}) or missing entries",
+  "status.import-done": "Import done: {n} cache entries merged",
+  // —— 通用（core / 装配层错误说明与日志）——
+  "common.timeout-request": "Translation request",
+  "common.log-key-save-failed": "[uut] Failed to save key: ",
+  "common.log-translate-failed": "[uut] Translation request failed: {n}",
+  "common.purge-no-engine": "No translation engine configured; cannot determine the current config, nothing purged",
+  "common.no-engine-or-key": "No translation engine or API key configured",
+  "common.provider-not-configured": "Provider not configured",
+  "common.placeholder-rewritten": "Translation placeholders were rewritten",
+  // —— Settings tab (batch 4: 163 entries + UI-language setting; keys mirror zh-CN 1:1) ——
+  "settings.tab.general": "General",
+  "settings.tab.api": "API",
+  "settings.tab.usage": "Usage",
+  "settings.tab.scope": "Scope",
+  "settings.tab.cache": "Cache",
+  "settings.tab.advanced": "Advanced",
+  "settings.provider.openai": "OpenAI-compatible",
+  "settings.provider.deepl": "DeepL",
+  "settings.provider.google": "Google Cloud Translation",
+  "settings.provider.azure": "Azure Translator",
+  "settings.provider.custom": "Custom endpoint (local model)",
+  "settings.cost-basis": "Cost basis: DeepSeek flash new pricing (since 2026-09-10) per million tokens: off-peak input \xA51 / output \xA54, peak time doubled; API-side cache-hit input only \xA50.02\u20130.04",
+  "settings.usage.cost-zero": "\u2248 0 tokens, \xA50",
+  "settings.usage.cost-tokens": "{total} tokens (in {in} / out {out})",
+  "settings.usage.cost-low": "\u2248 {tokens}, cost < \xA50.01 (half price off-peak)",
+  "settings.usage.cost-high": "\u2248 {tokens}, peak \u2248 \xA5{yuan} (half price off-peak)",
+  "settings.general.enable": "Enable UI translation",
+  "settings.general.enable.desc": "Master switch; interceptors stay inactive while no usable engine is configured (design doc 4.4.2). Zero API cost while off; while on, API usage scales with rendered UI (per-channel scale notes on the Scope tab)",
+  "settings.general.display-mode": "Display mode",
+  "settings.general.display-mode.desc": "\u26A0\uFE0F Bilingual mode writes back longer text \u2014 LLM output tokens are about 2x pure translation (output unit price is higher); translation-only is cheapest",
+  "settings.general.display-mode.replace": "Translation only",
+  "settings.general.display-mode.bilingual": "Bilingual",
+  "settings.general.display-mode.original": "Original (paused)",
+  "settings.general.bilingual-format": "Bilingual format",
+  "settings.general.bilingual-format.desc": "Applies in bilingual mode only; no API impact (layout of the written-back text only)",
+  "settings.general.bilingual-format.t-first": "Translation (original)",
+  "settings.general.bilingual-format.o-first": "Original | Translation",
+  "settings.general.target-lang": "Target language",
+  "settings.general.target-lang.desc": "e.g. zh-CN / zh-Hant / ja (language is part of the cache key; switches don't interfere)",
+  "settings.general.ui-lang": "Plugin UI language",
+  "settings.general.ui-lang.desc": "Follow Obsidian's UI language or pin Chinese/English; registration-time strings such as command names apply after restart; already rendered third-party UI is not retranslated",
+  "settings.general.ui-lang.auto": "Follow Obsidian",
+  "settings.general.ui-lang.zh": "Chinese",
+  "settings.general.ui-lang.en": "English",
+  "settings.api.engine": "Translation engine",
+  "settings.api.key.desc.encrypted": "Stored encrypted via safeStorage in secrets.bin; not written to data.json (4.4.1)",
+  "settings.api.key.desc.plain": "System-level encryption unavailable; the Key is stored obfuscated in secrets.bin \u2014 do not sync that file (4.4.1 fallback)",
+  "settings.api.key.status": " | Key status: {s}",
+  "settings.api.key.status.saved": "saved",
+  "settings.api.key.status.unsaved": "not saved",
+  "settings.api.key.placeholder.saved": "Saved \u2014 enter a new Key to overwrite",
+  "settings.api.key.placeholder.empty": "Enter to encrypt and save",
+  "settings.api.base-url.desc": "Can point to a local model, e.g. http://localhost:11434/v1",
+  "settings.api.model": "Model",
+  "settings.api.model.desc": "Default gpt-4o-mini (low-cost tier)",
+  "settings.api.disable-thinking": "Disable thinking mode",
+  "settings.api.disable-thinking.desc": "Recommended for models like DeepSeek V4 that enable \u201Cthinking\u201D by default: short UI texts need no reasoning; turning it off is faster and saves tokens",
+  "settings.api.price": "Token price (per million)",
+  "settings.api.price.desc": "Format input/output, e.g. 2/8 (per your model's listed pricing). Once set, the status bar and usage page show cost estimates as measured tokens \xD7 price; leave empty to disable. Display only; does not affect the budget breaker",
+  "settings.api.price.notice-enabled": "UUT: cost estimation enabled (visible in status bar and usage page)",
+  "settings.api.region.desc": "e.g. eastasia",
+  "settings.api.custom.endpoint": "Endpoint URL",
+  "settings.api.custom.endpoint.desc": "e.g. http://localhost:11434/v1/chat/completions",
+  "settings.api.custom.model": "Model name",
+  "settings.api.custom.request-template": "Request body template",
+  "settings.api.custom.request-template.desc": "Placeholders {{text}} {{targetLang}} {{model}}; leave empty for the OpenAI-compatible template",
+  "settings.api.custom.response-path": "Response path",
+  "settings.api.custom.response-path.desc": "Dot-separated path, e.g. choices.0.message.content; empty for default",
+  "settings.api.connectivity": "Connectivity test",
+  "settings.api.connectivity.desc": "Sends one test request to the current engine (negligible cost: a short text is a few dozen tokens, < \xA50.001 at basis price)",
+  "settings.api.connectivity.button": "Test connection",
+  "settings.api.usage": "Usage",
+  "settings.api.monthly-usage.desc": "Sent {usage} chars this month (persisted in usage.json). {basis}; estimated cost this month {cost} (order-of-magnitude reference)",
+  "settings.api.budget": "Monthly character budget",
+  "settings.api.budget.desc": "Hard gate against accidental spend: over limit, translation pauses and the UI falls back to originals (4.5 breaker). Strongly recommended for paid engines; empty = unlimited. Scale reference: core UI \u2248 50\u2013100k chars one-shot; full community market \u2248 300k chars per round",
+  "settings.api.budget.placeholder": "unlimited",
+  "settings.scope.note": "Recommended usage \u2014 the community market has two \u201CTR\u201D buttons: (1) the left list: the top-right corner of each entry translates that entry's name + description (about 150 chars, well under 0.1 cent); (2) the right detail pane: the \u201CTR\u201D button at the very top of the detail area translates the plugin's full README (thousands of chars \u2248 2,600 tokens, about 1.5 cents at peak price, half off-peak). Both are cached once translated; repeat clicks are free. Most English content you read is plugin descriptions \u2014 the \u201CTR\u201D button covers it without turning on the auto-translate switches below.",
+  "settings.scope.core": "Translate Obsidian core UI",
+  "settings.scope.core.desc": "Low risk: core UI text is fixed (\u2248 50\u2013100k chars), one-shot cost \u2248 within \xA50.30 at basis price (half off-peak), zero after caching. Channels: core commands (settings panel / DOM fallback technically cannot attribute UI to core vs community plugins; not controlled by this switch)",
+  "settings.scope.community": "Translate community plugin UI",
+  "settings.scope.community.desc": "\u26A0\uFE0F High risk (API usage): visible entries in the community browser get auto-translated; scrolling keeps sending; full market \u2248 300k chars/round (\u2248 \xA51.1 peak, \u2248 \xA50.55 off-peak at basis), re-triggered while the page stays open \u2014 off by default since v1.1.5; prefer per-entry \u201CTR\u201D buttons. Channels: community plugin commands, market browser auto-translation (settings panel / DOM fallback cannot attribute plugins; not controlled by this switch)",
+  "settings.scope.interceptors": "Per-interceptor switches",
+  "settings.scope.interceptors.desc": "Disable a channel when it misbehaves (D1 breaker manual entry). Per-channel API scale in each note",
+  "settings.scope.ic.command": "Command palette",
+  "settings.scope.ic.command.risk": "Low risk: command list is fixed, prewarmed once at startup, zero after caching",
+  "settings.scope.ic.menu": "Menus",
+  "settings.scope.ic.menu.risk": "Low risk: menu items are short and repetitive; cache hit rate usually >90%",
+  "settings.scope.ic.setting": "Settings panels",
+  "settings.scope.ic.setting.risk": "Low risk: each plugin's setting texts are fixed; cached after the first pass",
+  "settings.scope.ic.dom": "DOM fallback",
+  "settings.scope.ic.dom.risk": "\u26A0\uFE0F Medium risk: global MutationObserver; dynamic UI (status bar, popups, custom views) keeps sending; Notice/popups are no longer translated when off",
+  "settings.scope.ic.market": "Market \u201CTR\u201D buttons",
+  "settings.scope.ic.market.risk": "\u2705 Recommended: zero automatic cost \u2014 button locations: entry top-right corner in the list + very top of the detail pane after opening an entry; translates on click only, free on repeat cache hits; on failure the button turns red \xD7 with the exact reason (budget exceeded / breaker active / network error), no longer silent since v1.1.8",
+  "settings.scope.whitelist": "Plugin whitelist",
+  "settings.scope.whitelist.desc": "When non-empty, only these plugins are translated (one plugin id per line). \u26A0\uFE0F Reserved in the current version; not yet effective",
+  "settings.scope.blacklist": "Plugin blacklist",
+  "settings.scope.blacklist.desc": "Commands of these plugins are not translated (includes this plugin by default). \u26A0\uFE0F Command channel only in the current version; settings panel / DOM fallback cannot attribute plugins",
+  "settings.scope.installed-ids": "Installed plugin ids (reference)",
+  "settings.cache.enable": "Enable local cache",
+  "settings.cache.enable.desc": "What: translations persist to translation-cache.json in the plugin folder \u2014 each text costs API once and survives Obsidian restarts. When to turn off: only while troubleshooting translation issues. \u26A0\uFE0F While off, every render re-calls the API and the same UI repeatedly spends quota",
+  "settings.cache.max-entries": "Cache entry limit",
+  "settings.cache.max-entries.desc": "What: shared by memory and disk (default 50000, range 1000\u2013200000; disk also has a 64MB byte cap, first-come first-trimmed); oldest entries evicted beyond it. When to adjust: market README translations add many entries; a low limit evicts early and re-spends API next time \u2014 translations are plain text and small, set generously. Trade-off: a bigger cache loads longer at startup (milliseconds) and uses more memory. Changes apply immediately; lowering evicts the oldest entries right away",
+  "settings.cache.disk-absent": "Disk file not created yet",
+  "settings.cache.disk-size": "Disk file \u2248 {mb} MB",
+  "settings.cache.last-flush": "Last flush {time}",
+  "settings.cache.flush-pending": "Not flushed this session (checked every 30s; auto-flush after 100 entries or 5 minutes; or click \u201CFlush now\u201D below)",
+  "settings.cache.stats": "Cache stats",
+  "settings.cache.stats.desc": "Entries {n} (memory=disk same cap) | hit rate {rate}% (this session \u2014 the higher, the more served by the local cache and the cheaper) | {size} | {flush}",
+  "settings.cache.flush-now": "Flush now",
+  "settings.cache.flush-now.desc": "What: new translations stay in memory; every 30 seconds the plugin checks \u2014 after 100 new entries or 5 minutes since the last flush it writes the disk file; forced on normal unload/vault close. When to click: after translating many market READMEs, or before shutting down/restarting Obsidian, to persist new translations immediately. If you don't: a crash/force-kill loses translations since the last flush (up to 5 minutes); normal exit is unaffected. Zero API cost",
+  "settings.cache.purge-stale": "Purge stale entries",
+  "settings.cache.purge-stale.desc": "What: removes cache entries mismatching the current \u201Cengine + target language + model\u201D \u2014 the cache key includes all three; after switching models or engines, old entries never hit again, pure dead weight. When to click: once after changing model/engine/target language. Note: entries written before v1.1.9 lack the model marker and are judged by engine+language only. Zero API cost",
+  "settings.cache.clear": "Clear cache",
+  "settings.cache.clear.desc": "What: deletes all cached translations (memory+disk) and resets translations shown on screen (R-07 linkage). When: translations misbehave (e.g. nested garble), or after changing the glossary and wanting a full re-translation. \u26A0\uFE0F Cost: after clearing, all UI re-translates via API on next open (at basis price: core UI \u2248 within \xA50.30, half off-peak)",
+  "settings.cache.clear.notice": "UUT: cache cleared; UI translations will be re-translated on next access",
+  "settings.cache.export": "Export cache",
+  "settings.cache.export.desc": "What: exports the full cache to universal-ui-translator-cache-export.json in the vault root. When: migrating computers, or sharing your accumulated translations \u2014 the importer reuses them with zero API cost (FR-12). Zero API cost",
+  "settings.cache.export.button": "Export",
+  "settings.cache.import": "Import cache",
+  "settings.cache.import.desc": "What: merges entries from a cache JSON file into the local cache (validates schemaVersion and entry structure; rejects invalid files). When: migrating back, or receiving a shared translation glossary. Zero API cost",
+  "settings.cache.import.button": "Import",
+  "settings.cache.import.no-file": "UUT: select a cache JSON file first",
+  "settings.usage.basis": "Billing basis",
+  "settings.usage.basis.token.desc": "Current engine (OpenAI-compatible) bills by token: since v1.3 the usage field returned by the API is captured directly (billing basis, incl. per-request system prompt overhead); the status bar keeps a \u201Crate \xB7 today \xB7 cost\u201D segment (toggle on the Advanced tab). Switching engines falls this page back to the character basis",
+  "settings.usage.basis.chars.desc": "Current engine bills by characters (DeepL/Google/Azure): token figures are character-based estimates (input \u2248 chars/4, output \u2248 chars/2.5), order-of-magnitude reference",
+  "settings.usage.month": "This month",
+  "settings.usage.month.desc": "Sent {calls} entries | input {inChars} chars \u2248 {inTok} tokens | output {outChars} chars \u2248 {outTok} tokens | estimated cost {cost}. Month total sent {total} chars (same basis as the monthly budget, persisted in usage.json). Daily details recorded since v1.1.9; earlier history has month totals only",
+  "settings.usage.card.session-tokens": "Session tokens (measured)",
+  "settings.usage.card.session-calls": "Session entries",
+  "settings.usage.card.session-calls.value": "{n} entries / {chars} chars",
+  "settings.usage.card.rate1": "Last 1 min",
+  "settings.usage.card.rate5": "Last 5 min",
+  "settings.usage.card.rate-chars.value": "{n} chars/min",
+  "settings.usage.card.peak": "Session peak",
+  "settings.usage.card.today-tokens": "Today tokens (measured)",
+  "settings.usage.card.today-cost": "Today cost (\u2248{currency})",
+  "settings.usage.card.month-cost": "Month cost (\u2248{currency})",
+  "settings.usage.card.month-calls": "Entries this month",
+  "settings.usage.card.in-tokens": "Input tokens (est.)",
+  "settings.usage.card.out-tokens": "Output tokens (est.)",
+  "settings.usage.card.cost": "Estimated cost",
+  "settings.usage.chart.title": "Last 30 days ({basis})",
+  "settings.usage.chart.basis-token": "tokens measured",
+  "settings.usage.chart.basis-est": "tokens estimated",
+  "settings.usage.chart.toggle-chars": "chars estimate",
+  "settings.usage.chart.bar-title": "{date}: {calls} calls\ninput {inChars} chars / measured {inTok} tokens\noutput {outChars} chars / measured {outTok} tokens",
+  "settings.usage.legend.in": "Input tokens ({basis})",
+  "settings.usage.legend.out": "Output tokens ({basis})",
+  "settings.usage.legend.actual": "measured",
+  "settings.usage.legend.est": "estimated",
+  "settings.usage.today-week": "Today / last 7 days",
+  "settings.usage.today-week.desc": "Today: {todayCalls} entries, measured {todayTok} tokens | last 7 days: {weekCalls} entries, measured {weekTok} tokens (estimated {weekEst})",
+  "settings.usage.basis-note": "Basis notes",
+  "settings.usage.basis-note.desc": "Since v1.3 the OpenAI-compatible channel records the real usage returned by the API (billing basis, incl. per-request system prompt overhead); \u201Cestimated\u201D derives from character counts (input \u2248 chars/4, output \u2248 chars/2.5), serving historical data and non-token-billed engines. {basis}. Cache hits and glossary hits consume no API and are excluded here; the monthly budget basis remains characters",
+  "settings.usage.split-low": "< \xA50.01 (half off-peak)",
+  "settings.usage.split-high": "peak \u2248 \xA5{peak} (off-peak \u2248 \xA5{off})",
+  "settings.advanced.skip-patterns": "Skip rules (regex)",
+  "settings.advanced.skip-patterns.desc": "One regex per line; matched text is not sent (4.2.1 rule 1). Reduces unnecessary API usage; zero own cost",
+  "settings.advanced.glossary": "Glossary (fixed translations)",
+  "settings.advanced.glossary.desc": "One per line: source=translation; hits return directly, bypassing cache and API (FR-15) \u2014 savings: glossary hits cost nothing",
+  "settings.advanced.batch-window": "Batch aggregation window (ms)",
+  "settings.advanced.batch-window.desc": "Default 100, configurable 50\u2013500 (4.2.2). Identical texts within the window dedupe into one request \u2014 larger windows slightly reduce duplicate requests; no effect on total character usage",
+  "settings.advanced.max-concurrent": "Max concurrent requests",
+  "settings.advanced.max-concurrent.desc": "Default 3 to avoid API rate limits (4.2.2). \u26A0\uFE0F Raising it saves no money (total chars unchanged), it only affects speed; rate limiting may instead cost extra via retries",
+  "settings.advanced.timeout": "Request timeout (ms)",
+  "settings.advanced.timeout.desc": "Default 30000 (R-23: raise for slow engines); configurable 5000\u2013120000 (4.2.2). Timed-out requests count as failed: sent characters are usually still billed",
+  "settings.advanced.debug": "Debug mode",
+  "settings.advanced.debug.desc": "Console interception logs. Purely local, zero API cost",
+  // —— Provider error messages (batch 5: 33 entries, resolved via t() at message-construction time) ——
+  "provider.http-not-injected": "HttpClient not injected",
+  "provider.request": "request",
+  "provider.timeout": "{label} timed out ({ms}ms)",
+  "provider.connect-probe-ok": "Connected (probe: {n})",
+  "provider.validate-failed": "Connection test failed: {n}",
+  "provider.azure.count-mismatch": "Azure response count does not match the request",
+  "provider.azure.missing-translation": "Azure response item {n} is missing translations[0].text",
+  "provider.azure.empty-response": "Empty response; check the Key and Region",
+  "provider.custom.name": "Custom endpoint",
+  "provider.custom.empty-response": "Empty response; check the response path setting",
+  "provider.custom.path-no-text": "Custom response: no translation extracted at path {path}",
+  "provider.deepl.count-mismatch": "DeepL response translations count does not match the request",
+  "provider.deepl.missing-text": "DeepL response item {n} is missing text",
+  "provider.deepl.usage-ok": "Connected (DeepL usage query works)",
+  "provider.deepl.network-error": "Network error: {n}",
+  "provider.deepl.http-status": "HTTP {n}: check the API Key",
+  "provider.google.count-mismatch": "Google response translations count does not match the request",
+  "provider.google.missing-text": "Google response item {n} is missing translatedText",
+  "provider.google.empty-response": "Empty response; check the API Key",
+  "provider.openai.name": "OpenAI-compatible",
+  "provider.openai.batch-index-misaligned": "Batch response indices are misaligned",
+  "provider.openai.batch-line-invalid": "Batch response line format invalid: {n}",
+  "provider.openai.batch-count-mismatch": "Batch response line count mismatch ({seen}/{total})",
+  "provider.openai.missing-content": "OpenAI response is missing choices[0].message.content",
+  "provider.openai.auth-failed": "API key invalid or expired (401/403)",
+  "provider.openai.insufficient-balance": "Insufficient balance (402); top up or renew at the provider console",
+  "provider.openai.model-not-found": 'Model not found (404): check the model name "{model}"',
+  "provider.openai.rate-limited": "Rate limited (429); retry later",
+  "provider.openai.connect-ok": "Connected (model: {model}, probe: {probe})",
+  // —— Batch-3 leftover pickups (scanner ≤2-line dedup misses; batch-5 master ruling) ——
+  "notice.key-save-failed": "UUT: Failed to save key: {n}",
+  "status.today-chars": "UUT today {n} chars",
+  "status.cache-flushed": "Cache flushed ({time}), {n} entries in total",
+  "status.export-failed": "Export failed: {n}",
+  "market.log.translate-error": '[uut] Market "TR" button translation error: {n}',
+  "market.notify.failed": "UUT: Translation request failed ({reason}); skipped automatically. Retry later",
+  // —— Target language switch notice (batch 5) ——
+  "notice.lang.switched": "UUT: Target language switched (caches are isolated per language; switching back costs nothing)"
+};
+
+// src/i18n/index.ts
+var currentLocale = "zh-CN";
+function setUiLocale(locale) {
+  currentLocale = locale;
+}
+function resolveUiLocale(uiLanguage, momentLocale) {
+  if (uiLanguage === "zh-CN")
+    return "zh-CN";
+  if (uiLanguage === "en")
+    return "en";
+  return momentLocale.trim().toLowerCase().startsWith("zh") ? "zh-CN" : "en";
+}
+function t(key, vars) {
+  var _a, _b;
+  const dict = currentLocale === "en" ? en : zhCN;
+  let value = (_b = (_a = dict[key]) != null ? _a : zhCN[key]) != null ? _b : key;
+  if (vars) {
+    for (const [name, v] of Object.entries(vars)) {
+      value = value.split(`{${name}}`).join(String(v));
+    }
+  }
+  return value;
+}
+
 // src/core/batch-translator.ts
 var BatchTranslator = class _BatchTranslator {
   constructor(getProvider, options = {}) {
@@ -55,7 +611,7 @@ var BatchTranslator = class _BatchTranslator {
   /** 提交一条文本进入聚合窗口；同窗口内相同文本去重共享结果 */
   submit(text, context) {
     if (!this.getProvider()) {
-      return Promise.reject(new Error("Provider \u672A\u914D\u7F6E"));
+      return Promise.reject(new Error(t("common.provider-not-configured")));
     }
     return new Promise((resolve, reject) => {
       var _a, _b;
@@ -103,7 +659,7 @@ var BatchTranslator = class _BatchTranslator {
       const provider = this.getProvider();
       if (!provider || entries.length === 0) {
         for (const e of entries)
-          e.reject(new Error("Provider \u672A\u914D\u7F6E"));
+          e.reject(new Error(t("common.provider-not-configured")));
         return;
       }
       const batches = this.splitBatches([...groups.keys()], provider);
@@ -142,14 +698,14 @@ var BatchTranslator = class _BatchTranslator {
     const batches = [];
     let cur = [];
     let curChars = 0;
-    for (const t of texts) {
-      if (cur.length >= maxItems || cur.length > 0 && curChars + t.length > maxChars) {
+    for (const t2 of texts) {
+      if (cur.length >= maxItems || cur.length > 0 && curChars + t2.length > maxChars) {
         batches.push(cur);
         cur = [];
         curChars = 0;
       }
-      cur.push(t);
-      curChars += t.length;
+      cur.push(t2);
+      curChars += t2.length;
     }
     if (cur.length > 0)
       batches.push(cur);
@@ -226,6 +782,7 @@ var DEFAULT_SETTINGS = {
   },
   interceptors: { command: true, menu: true, setting: true, dom: true, marketplace: true },
   usageInStatusBar: true,
+  uiLanguage: "auto",
   debugMode: false
 };
 var CACHE_SCHEMA_VERSION = 1;
@@ -457,6 +1014,20 @@ var CacheManager = class {
 };
 
 // src/filters/filter-engine.ts
+var SCRIPT_RANGES = {
+  zh: /[\u4e00-\u9fff\u3400-\u4dbf]/g,
+  ja: /[\u4e00-\u9fff\u3400-\u4dbf\u3040-\u309f\u30a0-\u30ff\u31f0-\u31ff]/g,
+  ko: /[\uac00-\ud7af\u1100-\u11ff\u3130-\u318f]/g,
+  ar: /[\u0600-\u06ff\u0750-\u077f\ufb50-\ufc0f\ufe70-\ufefc]/g
+};
+function scriptFamilyOf(lang) {
+  const l = lang.trim().toLowerCase();
+  for (const key of Object.keys(SCRIPT_RANGES)) {
+    if (l.startsWith(key))
+      return key;
+  }
+  return null;
+}
 var _FilterEngine = class _FilterEngine {
   constructor(skipPatterns = [], targetLang = "") {
     this.userPatterns = [];
@@ -480,31 +1051,37 @@ var _FilterEngine = class _FilterEngine {
   }
   /** 规则 1–5、7：是否需要翻译 */
   shouldTranslate(text) {
-    var _a, _b;
-    const t = text.trim();
-    if (this.userPatterns.some((re) => re.test(t)))
+    var _a, _b, _c;
+    const t2 = text.trim();
+    if (this.userPatterns.some((re) => re.test(t2)))
       return false;
-    if (t.length < 2)
+    if (t2.length < 2)
       return false;
-    if (/^[\d\s\p{P}\p{S}]+$/u.test(t))
+    if (/^[\d\s\p{P}\p{S}]+$/u.test(t2))
       return false;
-    if (t.length > _FilterEngine.MAX_TRANSLATABLE_CHARS)
+    if (t2.length > _FilterEngine.MAX_TRANSLATABLE_CHARS)
       return false;
-    if (/^([a-zA-Z]:[\\/]|[\\/]|~[\\/]|\.{1,2}[\\/])/.test(t))
+    if (/^([a-zA-Z]:[\\/]|[\\/]|~[\\/]|\.{1,2}[\\/])/.test(t2))
       return false;
-    if (/^[\w.-]+([\\/][\w .-]+)+$/.test(t))
+    if (/^[\w.-]+([\\/][\w .-]+)+$/.test(t2))
       return false;
-    if (/^[\w-]+\.[a-zA-Z0-9]{1,5}$/.test(t))
+    if (/^[\w-]+\.[a-zA-Z0-9]{1,5}$/.test(t2))
       return false;
-    if (/^(https?|ftp|obsidian|mailto|tel):/i.test(t))
+    if (/^(https?|ftp|obsidian|mailto|tel):/i.test(t2))
       return false;
-    if (!/[A-Za-z]{2}/.test(t))
+    if (!/[A-Za-z]{2}/.test(t2))
       return false;
-    const latinCount = ((_a = t.match(/[A-Za-z]/g)) != null ? _a : []).length;
-    const cjkCount = ((_b = t.match(/[\u4e00-\u9fff\u3400-\u4dbf]/g)) != null ? _b : []).length;
+    const latinCount = ((_a = t2.match(/[A-Za-z]/g)) != null ? _a : []).length;
+    const cjkCount = ((_b = t2.match(/[\u4e00-\u9fff\u3400-\u4dbf]/g)) != null ? _b : []).length;
     if (cjkCount >= 2 && cjkCount >= latinCount)
       return false;
-    if (this.targetLang.startsWith("zh") && cjkCount >= 2)
+    const family = scriptFamilyOf(this.targetLang);
+    if (family !== null) {
+      const targetScriptCount = ((_c = t2.match(SCRIPT_RANGES[family])) != null ? _c : []).length;
+      if (targetScriptCount >= 2)
+        return false;
+    }
+    if (/\([^()]*\)\s*$/.test(t2) && /[^\x20-\x7e]/.test(t2))
       return false;
     return true;
   }
@@ -610,7 +1187,7 @@ var TranslationCoordinator = class {
       const restored = FilterEngine.restorePlaceholders(raw.trim(), tokens);
       void ((_j = this.options.usageTracker) == null ? void 0 : _j.record(masked.length, restored.length));
       if (!FilterEngine.placeholdersIntact(text, restored)) {
-        return { text, outcome: "failed", error: "\u8BD1\u6587\u5360\u4F4D\u7B26\u88AB\u6539\u5199" };
+        return { text, outcome: "failed", error: t("common.placeholder-rewritten") };
       }
       if (cacheOn) {
         this.cache.set(key, {
@@ -632,7 +1209,7 @@ var TranslationCoordinator = class {
         (_l = (_k = this.options).onAuthFailure) == null ? void 0 : _l.call(_k);
       }
       if (this.consecutiveFailures < 3) {
-        console.warn(`[uut] \u7FFB\u8BD1\u8BF7\u6C42\u5931\u8D25\uFF1A${String(e).slice(0, 160)}`);
+        console.warn(t("common.log-translate-failed", { n: String(e).slice(0, 160) }));
       }
       this.noteFailure(text, e);
       return { text, outcome: "failed", error: String(e).slice(0, 160) };
@@ -794,7 +1371,7 @@ function estimateTokenCost(inTokens, outTokens, price) {
 var import_obsidian = require("obsidian");
 var CommandPatcher = class {
   constructor(app, coordinator, isPluginExcluded, debug = () => {
-  }, format = (t) => t) {
+  }, format = (t2) => t2) {
     this.app = app;
     this.coordinator = coordinator;
     this.isPluginExcluded = isPluginExcluded;
@@ -809,7 +1386,7 @@ var CommandPatcher = class {
   activate() {
     const proto = import_obsidian.Plugin.prototype;
     if (typeof proto.addCommand !== "function") {
-      new import_obsidian.Notice("UUT\uFF1A\u547D\u4EE4\u901A\u9053\u7FFB\u8BD1\u5DF2\u505C\u7528\uFF08addCommand \u7279\u5F81\u68C0\u6D4B\u5931\u8D25\uFF09");
+      new import_obsidian.Notice(t("command.patcher.disabled"));
       return false;
     }
     const sweep = () => {
@@ -818,9 +1395,9 @@ var CommandPatcher = class {
         for (const command of commandsApi.listCommands()) {
           this.patchCommand(command, this.resolvePluginId(command));
         }
-        this.debug(`CommandPatcher \u5B58\u91CF patch ${this.patched.size} \u6761`);
+        this.debug(t("command.patcher.swept", { n: this.patched.size }));
       } else {
-        this.debug("app.commands.listCommands \u4E0D\u53EF\u7528\uFF0C\u5B58\u91CF\u547D\u4EE4\u7559\u5F85 DOMPatcher \u515C\u5E95");
+        this.debug(t("command.patcher.list-unavailable"));
       }
     };
     const workspace = this.app.workspace;
@@ -837,7 +1414,7 @@ var CommandPatcher = class {
       patchCommand(command, (_b = (_a = this.manifest) == null ? void 0 : _a.id) != null ? _b : "unknown");
       return original.call(this, command);
     };
-    this.debug("CommandPatcher \u5DF2\u6FC0\u6D3B\uFF08addCommand \u589E\u91CF\u52AB\u6301\u5C31\u7EEA\uFF1B\u5B58\u91CF\u626B\u63CF\u5F85\u5E03\u5C40\u5C31\u7EEA\uFF09");
+    this.debug(t("command.patcher.activated"));
     return true;
   }
   deactivate() {
@@ -891,8 +1468,8 @@ var CommandPatcher = class {
             var _a;
             if (!requested) {
               requested = true;
-              this.coordinator.translate(original, { source: "command", pluginId }).then((t) => {
-                translated = t;
+              this.coordinator.translate(original, { source: "command", pluginId }).then((t2) => {
+                translated = t2;
               }).catch(() => void 0);
             }
             if (translated === null)
@@ -916,7 +1493,7 @@ var CommandPatcher = class {
         this.patched.set(command, originals);
       }
     } catch (e) {
-      this.debug(`patch \u547D\u4EE4\u5931\u8D25\uFF08\u5DF2\u8DF3\u8FC7\uFF09: ${String(e)}`);
+      this.debug(t("command.patcher.patch-failed", { n: String(e) }));
     }
   }
 };
@@ -983,7 +1560,7 @@ var DOMPatcher = class {
   activate() {
     var _a;
     if (typeof MutationObserver !== "function" || !document.body) {
-      new import_obsidian2.Notice("UUT\uFF1ADOM \u515C\u5E95\u901A\u9053\u7FFB\u8BD1\u5DF2\u505C\u7528\uFF08MutationObserver \u4E0D\u53EF\u7528\uFF09");
+      new import_obsidian2.Notice(t("dom.patcher.disabled"));
       return false;
     }
     this.rescanDocuments();
@@ -999,7 +1576,7 @@ var DOMPatcher = class {
       () => this.rescanDocuments(),
       this.rescanIntervalMs
     );
-    this.debug(`DOMPatcher \u5DF2\u6FC0\u6D3B\uFF0C\u89C2\u5BDF ${this.observers.length} \u4E2A document`);
+    this.debug(t("dom.patcher.activated", { n: this.observers.length }));
     return true;
   }
   deactivate() {
@@ -1065,7 +1642,7 @@ var DOMPatcher = class {
       this.collectTextNodes(doc.body);
       this.scheduleIdle();
     }
-    this.debug("DOMPatcher \u7EB3\u7BA1\u65B0 document");
+    this.debug(t("dom.patcher.adopted"));
   }
   onMutations(records) {
     if (this.writing)
@@ -1221,7 +1798,7 @@ var MarketplacePatcher = class {
       return false;
     this.rescanDocuments();
     this.rescanInterval = window.setInterval(() => this.rescanDocuments(), 3e3);
-    this.debug("MarketplacePatcher \u5DF2\u6FC0\u6D3B");
+    this.debug(t("market.activated"));
     return true;
   }
   deactivate() {
@@ -1299,7 +1876,7 @@ var MarketplacePatcher = class {
     const obs = new MutationObserver(() => this.injectButtons(doc));
     obs.observe(doc.body, { childList: true, subtree: true });
     this.observers.push(obs);
-    this.debug("MarketplacePatcher \u7EB3\u7BA1\u65B0 document");
+    this.debug(t("market.adopted"));
   }
   /** 为未注入的市场条目追加「译」按钮（幂等：已有按钮的条目跳过）；同时处理右侧详情面板 */
   injectButtons(doc) {
@@ -1313,9 +1890,9 @@ var MarketplacePatcher = class {
         return;
       const btn = doc.createElement("button");
       btn.className = "uut-mkt-btn";
-      btn.textContent = "\u8BD1";
+      btn.textContent = t("market.button.glyph");
       btn.setAttribute("data-no-translate", "true");
-      btn.setAttribute("title", "\u7FFB\u8BD1\u6B64\u63D2\u4EF6\u6761\u76EE");
+      btn.setAttribute("title", t("market.button.title-item"));
       btn.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -1327,7 +1904,7 @@ var MarketplacePatcher = class {
     if (this.injectDetailButton(doc))
       added++;
     if (added > 0)
-      this.debug(`MarketplacePatcher \u6CE8\u5165 ${added} \u4E2A\u6309\u94AE`);
+      this.debug(t("market.injected", { n: added }));
   }
   /**
    * v1.1.5 详情面板「译」按钮：绝大多数待读英文内容是插件的完整介绍（README），在右侧详情区。
@@ -1356,9 +1933,9 @@ var MarketplacePatcher = class {
       return false;
     const btn = doc.createElement("button");
     btn.className = "uut-mkt-detail-btn";
-    btn.textContent = "\u8BD1";
+    btn.textContent = t("market.button.glyph");
     btn.setAttribute("data-no-translate", "true");
-    btn.setAttribute("title", "\u7FFB\u8BD1\u6B64\u63D2\u4EF6\u7684\u8BE6\u7EC6\u4ECB\u7ECD\uFF08README \u5168\u6587\uFF09\uFF1B\u4E2D\u6587\u754C\u9762\u6587\u672C\u81EA\u52A8\u8DF3\u8FC7\u3001\u96F6\u6D88\u8017");
+    btn.setAttribute("title", t("market.button.title-detail"));
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -1402,24 +1979,21 @@ var MarketplacePatcher = class {
           btn.classList.add("uut-mkt-btn-failed");
           this.notifyThrottled(blocked.key, blocked.message);
           window.setTimeout(() => {
-            btn.textContent = "\u8BD1";
+            btn.textContent = t("market.button.glyph");
             btn.classList.remove("uut-mkt-btn-failed");
           }, 3e3);
         } else if (stats.modeSuppressed > 0) {
-          btn.textContent = "\u8BD1";
-          this.notifyThrottled(
-            "display-mode",
-            "UUT\uFF1A\u5F53\u524D\u5904\u4E8E\u300C\u4E34\u65F6\u663E\u793A\u539F\u6587\u300D\u6A21\u5F0F\u2014\u2014\u8BD1\u6587\u5DF2\u8FDB\u7F13\u5B58\u4F46\u4E0D\u56DE\u5199\u754C\u9762\uFF1B\u6267\u884C\u547D\u4EE4\u300C\u4E34\u65F6\u663E\u793A\u539F\u6587/\u6062\u590D\u8BD1\u6587\u300D\u6062\u590D"
-          );
+          btn.textContent = t("market.button.glyph");
+          this.notifyThrottled("display-mode", t("market.notify.display-mode"));
         } else if (stats.detached > 0) {
-          btn.textContent = "\u8BD1";
+          btn.textContent = t("market.button.glyph");
         } else {
           btn.textContent = "\u2713";
         }
       }
     } catch (e) {
-      console.warn(`[uut] \u5E02\u573A\u300C\u8BD1\u300D\u6309\u94AE\u7FFB\u8BD1\u5F02\u5E38\uFF1A${String(e).slice(0, 160)}`);
-      btn.textContent = "\u8BD1";
+      console.warn(t("market.log.translate-error", { n: String(e).slice(0, 160) }));
+      btn.textContent = t("market.button.glyph");
     } finally {
       btn.removeAttribute("disabled");
       btn.classList.remove("uut-mkt-progressing");
@@ -1471,11 +2045,11 @@ var MarketplacePatcher = class {
         const trimmed = original.trim();
         try {
           const parent = node.parentElement;
-          let t = null;
+          let t2 = null;
           if (parent) {
-            t = (_b = tally.get(parent)) != null ? _b : { total: 0, ok: 0 };
-            t.total++;
-            tally.set(parent, t);
+            t2 = (_b = tally.get(parent)) != null ? _b : { total: 0, ok: 0 };
+            t2.total++;
+            tally.set(parent, t2);
           }
           const res = await this.coordinator.translateWithOutcome(
             trimmed,
@@ -1491,8 +2065,8 @@ var MarketplacePatcher = class {
           if (formatted === null || formatted === trimmed) {
             if (formatted === null && res.text !== trimmed) {
               modeSuppressed++;
-            } else if (t) {
-              t.ok++;
+            } else if (t2) {
+              t2.ok++;
             }
             return;
           }
@@ -1502,8 +2076,8 @@ var MarketplacePatcher = class {
           }
           node.nodeValue = original.replace(trimmed, formatted);
           (_c = this.onWriteBack) == null ? void 0 : _c.call(this, node);
-          if (t)
-            t.ok++;
+          if (t2)
+            t2.ok++;
           done++;
         } finally {
           settled++;
@@ -1515,8 +2089,8 @@ var MarketplacePatcher = class {
         }
       })
     );
-    for (const [parent, t] of tally) {
-      if (t.ok === t.total && parent !== item && parent.isConnected) {
+    for (const [parent, t2] of tally) {
+      if (t2.ok === t2.total && parent !== item && parent.isConnected) {
         parent.setAttribute("data-uut", "mkt");
       }
     }
@@ -1554,7 +2128,7 @@ var MarketplacePatcher = class {
       total += r.total;
     }
     const el = this.ensureProgressEl(doc);
-    el.label.textContent = `UUT \u7FFB\u8BD1\u4E2D ${settled}/${total}`;
+    el.label.textContent = t("market.progress.label", { n: settled, m: total });
     const step = total === 0 ? 0 : Math.min(10, Math.floor(settled / total * 10));
     const pulse = settled < total ? " uut-pulse" : "";
     el.fill.className = `uut-mkt-progress-fill uut-p-${step}${pulse}`;
@@ -1576,7 +2150,7 @@ var MarketplacePatcher = class {
     this.activeProgress.delete(doc);
     const el = this.progressEls.get(doc);
     if (el == null ? void 0 : el.root.isConnected) {
-      el.label.textContent = done > 0 ? "UUT \u2713 \u5DF2\u5B8C\u6210" : "UUT \u5DF2\u7ED3\u675F";
+      el.label.textContent = done > 0 ? t("market.progress.done") : t("market.progress.ended");
       el.root.classList.add("uut-mkt-progress-done");
     }
     const view = (_a = doc.defaultView) != null ? _a : window;
@@ -1618,28 +2192,25 @@ var MarketplacePatcher = class {
       return null;
     const has = (o) => outcomes.includes(o);
     if (has("budget")) {
-      return {
-        key: "budget",
-        message: "UUT\uFF1A\u672C\u6708\u5B57\u7B26\u9884\u7B97\u5DF2\u7528\u5B8C\uFF0C\u7FFB\u8BD1\u5DF2\u6682\u505C\uFF08\u8BBE\u7F6E\u9875 \u2192 API \u914D\u7F6E\u53EF\u8C03\u6574\u9884\u7B97\uFF09"
-      };
+      return { key: "budget", message: t("market.notify.budget") };
     }
     if (has("circuit")) {
-      return {
-        key: "circuit",
-        message: "UUT\uFF1A\u7FFB\u8BD1\u670D\u52A1\u8FDE\u7EED\u5931\u8D25\u3001\u7194\u65AD\u4FDD\u62A4\u4E2D\uFF08\u7EA6 10 \u5206\u949F\u81EA\u52A8\u6062\u590D\uFF09\uFF1B\u5230\u8BBE\u7F6E\u9875\u4FDD\u5B58\u4E00\u6B21\u914D\u7F6E\u53EF\u7ACB\u5373\u91CD\u7F6E"
-      };
+      return { key: "circuit", message: t("market.notify.circuit") };
     }
     if (has("no-provider")) {
-      return { key: "no-provider", message: "UUT\uFF1A\u672A\u914D\u7F6E\u7FFB\u8BD1\u5F15\u64CE\u6216 API Key\uFF0C\u8BF7\u5230\u8BBE\u7F6E\u9875\u5B8C\u6210\u914D\u7F6E" };
+      return { key: "no-provider", message: t("market.notify.no-provider") };
     }
     if (has("failed")) {
       return {
         key: "failed",
-        message: `UUT\uFF1A\u7FFB\u8BD1\u8BF7\u6C42\u5931\u8D25\uFF08${firstError != null ? firstError : "\u672A\u77E5\u9519\u8BEF"}\uFF09\uFF0C\u5DF2\u81EA\u52A8\u8DF3\u8FC7\uFF1B\u53EF\u7A0D\u540E\u91CD\u8BD5`
+        // 1.4 批次五补抽：外层模板入键表；内层「未知错误」沿用批次三的 market.error.unknown
+        message: t("market.notify.failed", {
+          reason: firstError != null ? firstError : t("market.error.unknown")
+        })
       };
     }
     if (has("negative-cache")) {
-      return { key: "negative-cache", message: "UUT\uFF1A\u8BE5\u6587\u672C\u521A\u521A\u5931\u8D25\u8FC7\uFF0C5 \u5206\u949F\u5185\u4E0D\u518D\u81EA\u52A8\u91CD\u8BD5" };
+      return { key: "negative-cache", message: t("market.notify.negative-cache") };
     }
     return null;
   }
@@ -1669,7 +2240,7 @@ var MenuPatcher = class {
   activate() {
     const proto = import_obsidian4.Menu.prototype;
     if (typeof proto.addItem !== "function") {
-      new import_obsidian4.Notice("UUT\uFF1A\u83DC\u5355\u901A\u9053\u7FFB\u8BD1\u5DF2\u505C\u7528\uFF08addItem \u7279\u5F81\u68C0\u6D4B\u5931\u8D25\uFF09");
+      new import_obsidian4.Notice(t("menu.patcher.disabled"));
       return false;
     }
     const originalAddItem = proto.addItem;
@@ -1681,7 +2252,7 @@ var MenuPatcher = class {
         return cb(item);
       });
     };
-    this.debug("MenuPatcher \u5DF2\u6FC0\u6D3B");
+    this.debug(t("menu.patcher.activated"));
     return true;
   }
   deactivate() {
@@ -1697,8 +2268,8 @@ var MenuPatcher = class {
         return originalSetTitle(title);
       }
       const result = originalSetTitle(title);
-      this.coordinator.translate(title, { source: "menu", pluginId: "unknown" }).then((t) => {
-        const formatted = this.format(t, title);
+      this.coordinator.translate(title, { source: "menu", pluginId: "unknown" }).then((t2) => {
+        const formatted = this.format(t2, title);
         if (formatted === null)
           return;
         originalSetTitle(formatted);
@@ -1726,14 +2297,14 @@ var SettingPatcher = class {
     const proto = import_obsidian5.Setting.prototype;
     for (const key of ["setName", "setDesc", "setHeading"]) {
       if (typeof proto[key] !== "function") {
-        new import_obsidian5.Notice("UUT\uFF1A\u8BBE\u7F6E\u9762\u677F\u901A\u9053\u7FFB\u8BD1\u5DF2\u505C\u7528\uFF08Setting \u7279\u5F81\u68C0\u6D4B\u5931\u8D25\uFF09");
+        new import_obsidian5.Notice(t("setting.patcher.disabled"));
         return false;
       }
     }
     this.wrapNameLike("setName");
     this.wrapNameLike("setHeading");
     this.wrapSetDesc();
-    this.debug("SettingPatcher \u5DF2\u6FC0\u6D3B");
+    this.debug(t("setting.patcher.activated"));
     return true;
   }
   deactivate() {
@@ -1806,8 +2377,8 @@ var SettingPatcher = class {
   }
   /** 翻译并在存活/自我防护检查后回写（5.2 / [data-no-translate]） */
   translateText(text, writeBack, setting) {
-    this.coordinator.translate(text, { source: "setting", pluginId: "unknown" }).then((t) => {
-      const formatted = this.format(t, text);
+    this.coordinator.translate(text, { source: "setting", pluginId: "unknown" }).then((t2) => {
+      const formatted = this.format(t2, text);
       if (formatted === null)
         return;
       const settingEl = setting.settingEl;
@@ -1846,8 +2417,8 @@ var WindowOpenHook = class {
       window.open = this.original;
       this.original = null;
     }
-    for (const t of this.timers)
-      window.clearInterval(t);
+    for (const t2 of this.timers)
+      window.clearInterval(t2);
     this.timers.clear();
   }
   /** about:blank 起步：轮询至 body 有内容（最多 10s）；窗口关闭/跨进程不可达即停 */
@@ -1881,11 +2452,11 @@ var WindowOpenHook = class {
 };
 
 // src/providers/base-provider.ts
-function withTimeout(p, ms, label = "\u8BF7\u6C42") {
+function withTimeout(p, ms, label = t("provider.request")) {
   return Promise.race([
     p,
     new Promise(
-      (_, reject) => window.setTimeout(() => reject(new Error(`${label}\u8D85\u65F6\uFF08${ms}ms\uFF09`)), ms)
+      (_, reject) => window.setTimeout(() => reject(new Error(t("provider.timeout", { label, ms }))), ms)
     )
   ]);
 }
@@ -1902,8 +2473,8 @@ var TranslationProvider = class {
   async translateBatch(texts) {
     const out = new Array(texts.length);
     await Promise.all(
-      texts.map(async (t, i) => {
-        out[i] = await this.translate(t);
+      texts.map(async (t2, i) => {
+        out[i] = await this.translate(t2);
       })
     );
     return out;
@@ -1932,7 +2503,7 @@ var AzureProvider = class extends TranslationProvider {
   }
   async translateBatch(texts) {
     if (!this.http)
-      throw new Error("HttpClient \u672A\u6CE8\u5165");
+      throw new Error(t("provider.http-not-injected"));
     if (texts.length === 0)
       return [];
     const res = await this.http({
@@ -1943,20 +2514,20 @@ var AzureProvider = class extends TranslationProvider {
         "Ocp-Apim-Subscription-Key": this.options.apiKey,
         "Ocp-Apim-Subscription-Region": this.options.region
       },
-      body: JSON.stringify(texts.map((t) => ({ Text: t })))
+      body: JSON.stringify(texts.map((t2) => ({ Text: t2 })))
     });
     if (res.status !== 200) {
       throw new Error(`Azure HTTP ${res.status}: ${res.text.slice(0, 200)}`);
     }
     const data = JSON.parse(res.text);
     if (!Array.isArray(data) || data.length !== texts.length) {
-      throw new Error("Azure \u54CD\u5E94\u6761\u6570\u4E0E\u8BF7\u6C42\u4E0D\u7B26");
+      throw new Error(t("provider.azure.count-mismatch"));
     }
     return data.map((item, i) => {
       var _a, _b;
       const out = (_b = (_a = item.translations) == null ? void 0 : _a[0]) == null ? void 0 : _b.text;
       if (typeof out !== "string" || !out) {
-        throw new Error(`Azure \u54CD\u5E94\u7B2C ${i} \u6761\u7F3A\u5C11 translations[0].text`);
+        throw new Error(t("provider.azure.missing-translation", { n: i }));
       }
       return out;
     });
@@ -1964,19 +2535,37 @@ var AzureProvider = class extends TranslationProvider {
   async validateConfig() {
     try {
       const out = await this.translate("Hello");
-      return out ? { ok: true, message: `\u8FDE\u63A5\u6210\u529F\uFF08\u8BD5\u8BD1\uFF1A${out.slice(0, 20)}\uFF09` } : { ok: false, message: "\u54CD\u5E94\u4E3A\u7A7A\uFF0C\u8BF7\u68C0\u67E5 Key \u4E0E Region" };
+      return out ? { ok: true, message: t("provider.connect-probe-ok", { n: out.slice(0, 20) }) } : { ok: false, message: t("provider.azure.empty-response") };
     } catch (e) {
-      return { ok: false, message: `\u8FDE\u901A\u6027\u6D4B\u8BD5\u5931\u8D25\uFF1A${String(e)}` };
+      return { ok: false, message: t("provider.validate-failed", { n: String(e) }) };
     }
   }
 };
 
 // src/providers/openai-provider.ts
+var PROMPT_RULE1 = {
+  zh: "Keep it concise (menu/command labels \u2264 6 Chinese characters when possible)",
+  ja: "Keep it concise (menu/command labels \u2264 6 Japanese characters; prefer standard kanji UI terms)",
+  ko: "Keep it concise (menu/command labels \u2264 8 Korean characters)",
+  fr: "Keep it concise (avoid redundant articles; keep menu/command labels short)",
+  es: "Keep it concise (avoid redundant articles; keep menu/command labels short)",
+  de: "Keep it concise (prefer compact compound nouns; keep labels short)",
+  ar: "Keep it concise and use standard Arabic UI punctuation"
+};
+var PROMPT_RULE1_DEFAULT = "Keep it concise (menu/command labels as short as possible)";
+function resolveRule1(targetLang) {
+  var _a;
+  const family = scriptFamilyOf(targetLang);
+  if (family !== null && PROMPT_RULE1[family])
+    return PROMPT_RULE1[family];
+  const primary = targetLang.trim().toLowerCase().split("-")[0];
+  return (_a = PROMPT_RULE1[primary]) != null ? _a : PROMPT_RULE1_DEFAULT;
+}
 function buildUiTranslationPrompt(targetLang) {
   return [
     `You are a UI localization expert. Translate the following interface text into ${targetLang}.`,
     "Rules:",
-    "1. Keep it concise (menu/command labels \u2264 6 Chinese characters when possible)",
+    `1. ${resolveRule1(targetLang)}`,
     "2. Preserve placeholders exactly: {0}, %s, {{variable}}",
     "3. Preserve keyboard shortcuts exactly: Ctrl+P, Cmd+Shift+S",
     "4. Preserve brand names, plugin names and proper nouns",
@@ -1993,15 +2582,16 @@ function parseNumberedResponse(raw, n) {
       continue;
     const m = /^(\d+)[.:)]?\s?(.*)$/.exec(line);
     if (!m)
-      throw new Error(`\u6279\u91CF\u54CD\u5E94\u884C\u683C\u5F0F\u4E0D\u7B26\uFF1A${line.slice(0, 40)}`);
+      throw new Error(t("provider.openai.batch-line-invalid", { n: line.slice(0, 40) }));
     const idx = Number(m[1]);
     if (idx < 1 || idx > n || seen.has(idx))
-      throw new Error("\u6279\u91CF\u54CD\u5E94\u5E8F\u53F7\u9519\u4F4D");
+      throw new Error(t("provider.openai.batch-index-misaligned"));
     seen.add(idx);
     out[idx - 1] = m[2];
   }
-  if (seen.size !== n)
-    throw new Error(`\u6279\u91CF\u54CD\u5E94\u884C\u6570\u4E0D\u7B26\uFF08${seen.size}/${n}\uFF09`);
+  if (seen.size !== n) {
+    throw new Error(t("provider.openai.batch-count-mismatch", { seen: seen.size, total: n }));
+  }
   return out;
 }
 var OpenAIProvider = class extends TranslationProvider {
@@ -2010,7 +2600,8 @@ var OpenAIProvider = class extends TranslationProvider {
     super(http);
     this.options = options;
     this.id = "openai";
-    this.name = "OpenAI \u517C\u5BB9\u63A5\u53E3";
+    /** 1.4 批次五：name 改 t()（构造期解析，随 refreshRuntime 重建热生效） */
+    this.name = t("provider.openai.name");
     /** A1 合批：单请求可承载条数（上游 BatchTranslator 每批 ≤50 条，40 留解析余量） */
     this.maxBatchSize = 40;
     this.baseUrl = ((_a = options.baseUrl) != null ? _a : "https://api.openai.com/v1").replace(/\/+$/, "");
@@ -2034,7 +2625,7 @@ var OpenAIProvider = class extends TranslationProvider {
   async translate(text, ctx) {
     var _a, _b, _c;
     if (!this.http)
-      throw new Error("HttpClient \u672A\u6CE8\u5165");
+      throw new Error(t("provider.http-not-injected"));
     const messages = [
       { role: "system", content: buildUiTranslationPrompt(this.options.targetLang) },
       // D7：context 仅作 prompt 参考，不进缓存键
@@ -2063,7 +2654,7 @@ var OpenAIProvider = class extends TranslationProvider {
     this.emitUsage(data);
     const out = (_c = (_b = (_a = data.choices) == null ? void 0 : _a[0]) == null ? void 0 : _b.message) == null ? void 0 : _c.content;
     if (typeof out !== "string" || !out.trim()) {
-      throw new Error("OpenAI \u54CD\u5E94\u7F3A\u5C11 choices[0].message.content");
+      throw new Error(t("provider.openai.missing-content"));
     }
     return out.trim();
   }
@@ -2076,14 +2667,14 @@ var OpenAIProvider = class extends TranslationProvider {
    */
   async translateBatch(texts) {
     if (!this.http)
-      throw new Error("HttpClient \u672A\u6CE8\u5165");
+      throw new Error(t("provider.http-not-injected"));
     if (texts.length === 0)
       return [];
     const out = new Array(texts.length);
     const batchIdx = [];
     const singleIdx = [];
-    texts.forEach((t, i) => {
-      if (t.length > 0 && t.length <= BATCH_MAX_ITEM_CHARS && !t.includes("\n")) {
+    texts.forEach((t2, i) => {
+      if (t2.length > 0 && t2.length <= BATCH_MAX_ITEM_CHARS && !t2.includes("\n")) {
         batchIdx.push(i);
       } else {
         singleIdx.push(i);
@@ -2109,7 +2700,7 @@ var OpenAIProvider = class extends TranslationProvider {
   async translateNumbered(lines) {
     var _a, _b, _c;
     if (!this.http)
-      throw new Error("HttpClient \u672A\u6CE8\u5165");
+      throw new Error(t("provider.http-not-injected"));
     const system = buildUiTranslationPrompt(this.options.targetLang) + [
       "",
       "Batch rules:",
@@ -2131,7 +2722,7 @@ var OpenAIProvider = class extends TranslationProvider {
         max_tokens: 4096,
         messages: [
           { role: "system", content: system },
-          { role: "user", content: lines.map((t, i) => `${i + 1}. ${t}`).join("\n") }
+          { role: "user", content: lines.map((t2, i) => `${i + 1}. ${t2}`).join("\n") }
         ],
         // R-34：思考模式默认开启的模型（DeepSeek V4 系列）会拖慢并放大计费，按需关闭
         ...this.options.disableThinking ? { thinking: { type: "disabled" } } : {}
@@ -2144,28 +2735,34 @@ var OpenAIProvider = class extends TranslationProvider {
     this.emitUsage(data);
     const content = (_c = (_b = (_a = data.choices) == null ? void 0 : _a[0]) == null ? void 0 : _b.message) == null ? void 0 : _c.content;
     if (typeof content !== "string" || !content.trim()) {
-      throw new Error("OpenAI \u54CD\u5E94\u7F3A\u5C11 choices[0].message.content");
+      throw new Error(t("provider.openai.missing-content"));
     }
     return parseNumberedResponse(content.trim(), lines.length);
   }
   /** 连通性测试：真实试译一个词（/models 浅探测测不出模型名错误与账户欠费 402，R-33 教训） */
   async validateConfig() {
     if (!this.http)
-      return { ok: false, message: "HttpClient \u672A\u6CE8\u5165" };
+      return { ok: false, message: t("provider.http-not-injected") };
     try {
       const out = await this.translate("OK");
-      return { ok: true, message: `\u8FDE\u63A5\u6210\u529F\uFF08\u6A21\u578B\uFF1A${this.model}\uFF0C\u8BD5\u8BD1\uFF1A${out.slice(0, 20)}\uFF09` };
+      return {
+        ok: true,
+        message: t("provider.openai.connect-ok", { model: this.model, probe: out.slice(0, 20) })
+      };
     } catch (e) {
       const msg = String(e);
       if (/HTTP 40[13]/.test(msg))
-        return { ok: false, message: "API Key \u65E0\u6548\u6216\u5DF2\u5931\u6548\uFF08401/403\uFF09" };
+        return { ok: false, message: t("provider.openai.auth-failed") };
       if (/HTTP 402/.test(msg))
-        return { ok: false, message: "\u8D26\u6237\u4F59\u989D\u4E0D\u8DB3\uFF08402\uFF09\uFF0C\u8BF7\u5230\u670D\u52A1\u5546\u540E\u53F0\u5145\u503C\u6216\u7EED\u8D39" };
+        return { ok: false, message: t("provider.openai.insufficient-balance") };
       if (/HTTP 404/.test(msg))
-        return { ok: false, message: `\u6A21\u578B\u4E0D\u5B58\u5728\uFF08404\uFF09\uFF1A\u8BF7\u68C0\u67E5\u6A21\u578B\u540D\u300C${this.model}\u300D` };
+        return {
+          ok: false,
+          message: t("provider.openai.model-not-found", { model: this.model })
+        };
       if (/HTTP 429/.test(msg))
-        return { ok: false, message: "\u89E6\u53D1\u9650\u6D41\uFF08429\uFF09\uFF0C\u8BF7\u7A0D\u540E\u91CD\u8BD5" };
-      return { ok: false, message: `\u8FDE\u901A\u6027\u6D4B\u8BD5\u5931\u8D25\uFF1A${msg.slice(0, 150)}` };
+        return { ok: false, message: t("provider.openai.rate-limited") };
+      return { ok: false, message: t("provider.validate-failed", { n: msg.slice(0, 150) }) };
     }
   }
 };
@@ -2197,7 +2794,8 @@ var CustomProvider = class extends TranslationProvider {
     super(http);
     this.options = options;
     this.id = "custom";
-    this.name = "\u81EA\u5B9A\u4E49\u7AEF\u70B9";
+    /** 1.4 批次五：name 改 t()（构造期解析，随 refreshRuntime 重建热生效） */
+    this.name = t("provider.custom.name");
     this.maxBatchSize = 1;
   }
   get modelId() {
@@ -2207,7 +2805,7 @@ var CustomProvider = class extends TranslationProvider {
   async translate(text, ctx) {
     var _a;
     if (!this.http)
-      throw new Error("HttpClient \u672A\u6CE8\u5165");
+      throw new Error(t("provider.http-not-injected"));
     const req = this.buildRequest(text, ctx);
     const res = await this.http(req);
     if (res.status !== 200) {
@@ -2215,7 +2813,9 @@ var CustomProvider = class extends TranslationProvider {
     }
     const out = extractByPath(JSON.parse(res.text), (_a = this.options.responsePath) != null ? _a : "choices.0.message.content");
     if (!out || !out.trim()) {
-      throw new Error(`Custom \u54CD\u5E94\u6309\u8DEF\u5F84 ${this.options.responsePath} \u672A\u63D0\u53D6\u5230\u8BD1\u6587`);
+      throw new Error(
+        t("provider.custom.path-no-text", { path: String(this.options.responsePath) })
+      );
     }
     return out.trim();
   }
@@ -2251,9 +2851,9 @@ var CustomProvider = class extends TranslationProvider {
   async validateConfig() {
     try {
       const out = await this.translate("Hello");
-      return out ? { ok: true, message: `\u8FDE\u63A5\u6210\u529F\uFF08\u8BD5\u8BD1\uFF1A${out.slice(0, 20)}\uFF09` } : { ok: false, message: "\u54CD\u5E94\u4E3A\u7A7A\uFF0C\u8BF7\u68C0\u67E5\u54CD\u5E94\u8DEF\u5F84\u914D\u7F6E" };
+      return out ? { ok: true, message: t("provider.connect-probe-ok", { n: out.slice(0, 20) }) } : { ok: false, message: t("provider.custom.empty-response") };
     } catch (e) {
-      return { ok: false, message: `\u8FDE\u901A\u6027\u6D4B\u8BD5\u5931\u8D25\uFF1A${String(e)}` };
+      return { ok: false, message: t("provider.validate-failed", { n: String(e) }) };
     }
   }
 };
@@ -2284,7 +2884,7 @@ var DeepLProvider = class extends TranslationProvider {
   }
   async translateBatch(texts) {
     if (!this.http)
-      throw new Error("HttpClient \u672A\u6CE8\u5165");
+      throw new Error(t("provider.http-not-injected"));
     if (texts.length === 0)
       return [];
     const res = await this.http({
@@ -2304,18 +2904,18 @@ var DeepLProvider = class extends TranslationProvider {
     }
     const data = JSON.parse(res.text);
     if (!data.translations || data.translations.length !== texts.length) {
-      throw new Error("DeepL \u54CD\u5E94 translations \u6570\u91CF\u4E0E\u8BF7\u6C42\u4E0D\u7B26");
+      throw new Error(t("provider.deepl.count-mismatch"));
     }
-    return data.translations.map((t, i) => {
-      if (typeof t.text !== "string" || !t.text) {
-        throw new Error(`DeepL \u54CD\u5E94\u7B2C ${i} \u6761\u7F3A\u5C11 text`);
+    return data.translations.map((tr, i) => {
+      if (typeof tr.text !== "string" || !tr.text) {
+        throw new Error(t("provider.deepl.missing-text", { n: i }));
       }
-      return t.text;
+      return tr.text;
     });
   }
   async validateConfig() {
     if (!this.http)
-      return { ok: false, message: "HttpClient \u672A\u6CE8\u5165" };
+      return { ok: false, message: t("provider.http-not-injected") };
     try {
       const res = await this.http({
         url: `${this.baseUrl}/v2/usage`,
@@ -2323,11 +2923,11 @@ var DeepLProvider = class extends TranslationProvider {
         headers: { Authorization: `DeepL-Auth-Key ${this.options.apiKey}` }
       });
       if (res.status === 200) {
-        return { ok: true, message: "\u8FDE\u63A5\u6210\u529F\uFF08DeepL \u7528\u91CF\u67E5\u8BE2\u6B63\u5E38\uFF09" };
+        return { ok: true, message: t("provider.deepl.usage-ok") };
       }
-      return { ok: false, message: `HTTP ${res.status}\uFF1A\u8BF7\u68C0\u67E5 API Key` };
+      return { ok: false, message: t("provider.deepl.http-status", { n: res.status }) };
     } catch (e) {
-      return { ok: false, message: `\u7F51\u7EDC\u9519\u8BEF\uFF1A${String(e)}` };
+      return { ok: false, message: t("provider.deepl.network-error", { n: String(e) }) };
     }
   }
 };
@@ -2358,7 +2958,7 @@ var GoogleProvider = class extends TranslationProvider {
   async translateBatch(texts) {
     var _a;
     if (!this.http)
-      throw new Error("HttpClient \u672A\u6CE8\u5165");
+      throw new Error(t("provider.http-not-injected"));
     if (texts.length === 0)
       return [];
     const res = await this.http({
@@ -2377,21 +2977,21 @@ var GoogleProvider = class extends TranslationProvider {
     const data = JSON.parse(res.text);
     const translations = (_a = data.data) == null ? void 0 : _a.translations;
     if (!translations || translations.length !== texts.length) {
-      throw new Error("Google \u54CD\u5E94 translations \u6570\u91CF\u4E0E\u8BF7\u6C42\u4E0D\u7B26");
+      throw new Error(t("provider.google.count-mismatch"));
     }
-    return translations.map((t, i) => {
-      if (typeof t.translatedText !== "string" || !t.translatedText) {
-        throw new Error(`Google \u54CD\u5E94\u7B2C ${i} \u6761\u7F3A\u5C11 translatedText`);
+    return translations.map((tr, i) => {
+      if (typeof tr.translatedText !== "string" || !tr.translatedText) {
+        throw new Error(t("provider.google.missing-text", { n: i }));
       }
-      return htmlUnescape(t.translatedText);
+      return htmlUnescape(tr.translatedText);
     });
   }
   async validateConfig() {
     try {
       const out = await this.translate("Hello");
-      return out ? { ok: true, message: `\u8FDE\u63A5\u6210\u529F\uFF08\u8BD5\u8BD1\uFF1A${out.slice(0, 20)}\uFF09` } : { ok: false, message: "\u54CD\u5E94\u4E3A\u7A7A\uFF0C\u8BF7\u68C0\u67E5 API Key" };
+      return out ? { ok: true, message: t("provider.connect-probe-ok", { n: out.slice(0, 20) }) } : { ok: false, message: t("provider.google.empty-response") };
     } catch (e) {
-      return { ok: false, message: `\u8FDE\u901A\u6027\u6D4B\u8BD5\u5931\u8D25\uFF1A${String(e)}` };
+      return { ok: false, message: t("provider.validate-failed", { n: String(e) }) };
     }
   }
 };
@@ -2451,31 +3051,51 @@ async function createActiveProvider(settings, keyStorage, http, usageSink) {
 // src/ui/settings-tab.ts
 var import_obsidian6 = require("obsidian");
 var TABS = [
-  { id: "general", label: "\u57FA\u7840" },
-  { id: "api", label: "API \u914D\u7F6E" },
-  { id: "usage", label: "\u7528\u91CF\u7EDF\u8BA1" },
-  { id: "scope", label: "\u4F5C\u7528\u57DF" },
-  { id: "cache", label: "\u7F13\u5B58" },
-  { id: "advanced", label: "\u9AD8\u7EA7" }
+  { id: "general", key: "settings.tab.general" },
+  { id: "api", key: "settings.tab.api" },
+  { id: "usage", key: "settings.tab.usage" },
+  { id: "scope", key: "settings.tab.scope" },
+  { id: "cache", key: "settings.tab.cache" },
+  { id: "advanced", key: "settings.tab.advanced" }
 ];
 var PROVIDERS = [
-  { id: "openai", label: "OpenAI \u517C\u5BB9\u63A5\u53E3" },
-  { id: "deepl", label: "DeepL" },
-  { id: "google", label: "Google Cloud Translation" },
-  { id: "azure", label: "Azure Translator" },
-  { id: "custom", label: "\u81EA\u5B9A\u4E49\u7AEF\u70B9\uFF08\u672C\u5730\u6A21\u578B\uFF09" }
+  { id: "openai", key: "settings.provider.openai" },
+  { id: "deepl", key: "settings.provider.deepl" },
+  { id: "google", key: "settings.provider.google" },
+  { id: "azure", key: "settings.provider.azure" },
+  { id: "custom", key: "settings.provider.custom" }
 ];
-var COST_BASIS = "\u8D39\u7528\u57FA\u51C6\uFF1ADeepSeek flash \u65B0\u5B9A\u4EF7\uFF082026-09-10 \u8D77\uFF09\u6BCF\u767E\u4E07 tokens\uFF1A\u7A7A\u95F2 \u8F93\u5165 \xA51 / \u8F93\u51FA \xA54\uFF0C\u9AD8\u5CF0\u65F6\u6BB5\u7FFB\u500D\uFF1BAPI \u4FA7\u7F13\u5B58\u547D\u4E2D\u8F93\u5165\u4EC5 \xA50.02\u20130.04";
+var QUICK_LANGS = [
+  "zh-CN",
+  "zh-Hant",
+  "en",
+  "ja",
+  "ko",
+  "fr",
+  "de",
+  "es",
+  "pt",
+  "ru",
+  "ar",
+  "hi"
+];
+function costBasis() {
+  return t("settings.cost-basis");
+}
 function estimateCost(chars) {
   if (chars <= 0)
-    return "\u2248 0 tokens\uFF0C\xA50";
+    return t("settings.usage.cost-zero");
   const inTok = Math.ceil(chars / 4);
   const outTok = Math.ceil(chars / 2.5);
   const yuan = inTok * 2e-6 + outTok * 8e-6;
-  const tokText = `${(inTok + outTok).toLocaleString()} tokens\uFF08\u5165 ${inTok.toLocaleString()} / \u51FA ${outTok.toLocaleString()}\uFF09`;
+  const tokText = t("settings.usage.cost-tokens", {
+    total: (inTok + outTok).toLocaleString(),
+    in: inTok.toLocaleString(),
+    out: outTok.toLocaleString()
+  });
   if (yuan < 0.01)
-    return `\u2248 ${tokText}\uFF0C\u8D39\u7528 < \xA50.01\uFF08\u7A7A\u95F2\u65F6\u6BB5\u534A\u4EF7\uFF09`;
-  return `\u2248 ${tokText}\uFF0C\u9AD8\u5CF0 \u2248 \xA5${yuan.toFixed(2)}\uFF08\u7A7A\u95F2\u65F6\u6BB5\u534A\u4EF7\uFF09`;
+    return t("settings.usage.cost-low", { tokens: tokText });
+  return t("settings.usage.cost-high", { tokens: tokText, yuan: yuan.toFixed(2) });
 }
 var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
   constructor(app, plugin) {
@@ -2497,7 +3117,7 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
     for (const tab of TABS) {
       const btn = tabBar.createEl("button", {
         cls: `uut-tab${tab.id === this.activeTab ? " uut-tab-active" : ""}`,
-        text: tab.label
+        text: t(tab.key)
       });
       btn.addEventListener("click", () => {
         this.activeTab = tab.id;
@@ -2521,31 +3141,58 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
   /** 基础：总开关、显示模式、双语格式、目标语言（4.5） */
   renderGeneral(el) {
     const s = this.plugin.settings;
-    new import_obsidian6.Setting(el).setName("\u542F\u7528\u754C\u9762\u7FFB\u8BD1").setDesc(
-      "\u603B\u5F00\u5173\uFF1B\u672A\u914D\u7F6E\u53EF\u7528\u7FFB\u8BD1\u5F15\u64CE\u65F6\u62E6\u622A\u5668\u4E0D\u6FC0\u6D3B\uFF08\u8BBE\u8BA1\u6587\u6863 4.4.2\uFF09\u3002\u5173\u95ED\u540E\u96F6 API \u6D88\u8017\uFF1B\u6253\u5F00\u671F\u95F4\u6309\u754C\u9762\u6E32\u67D3\u91CF\u6D88\u8017 API\uFF08\u5404\u901A\u9053\u6D88\u8017\u91CF\u7EA7\u89C1\u300C\u4F5C\u7528\u57DF\u300D\u5206\u9875\u6807\u6CE8\uFF09"
-    ).addToggle(
-      (t) => t.setValue(s.enabled).onChange(async (v) => {
+    new import_obsidian6.Setting(el).setName(t("settings.general.enable")).setDesc(t("settings.general.enable.desc")).addToggle(
+      (toggle) => toggle.setValue(s.enabled).onChange(async (v) => {
         s.enabled = v;
         await this.plugin.saveSettings();
       })
     );
-    new import_obsidian6.Setting(el).setName("\u663E\u793A\u6A21\u5F0F").setDesc(
-      "\u26A0\uFE0F \u53CC\u8BED\u5BF9\u7167\u6A21\u5F0F\u4E0B\u56DE\u5199\u6587\u672C\u66F4\u957F\uFF0CLLM \u8F93\u51FA tokens \u7EA6\u4E3A\u7EAF\u8BD1\u6587\u7684 2 \u500D\uFF08\u8F93\u51FA\u5355\u4EF7\u9AD8\u4E8E\u8F93\u5165\uFF09\uFF1B\u7EAF\u8BD1\u6587\u6700\u7701"
-    ).addDropdown(
-      (d) => d.addOption("replace", "\u7EAF\u8BD1\u6587").addOption("bilingual", "\u53CC\u8BED\u5BF9\u7167").addOption("original", "\u539F\u6587\uFF08\u6682\u505C\u56DE\u5199\uFF09").setValue(s.displayMode).onChange(async (v) => {
+    new import_obsidian6.Setting(el).setName(t("settings.general.display-mode")).setDesc(t("settings.general.display-mode.desc")).addDropdown(
+      (d) => d.addOption("replace", t("settings.general.display-mode.replace")).addOption("bilingual", t("settings.general.display-mode.bilingual")).addOption("original", t("settings.general.display-mode.original")).setValue(s.displayMode).onChange(async (v) => {
         s.displayMode = v;
         await this.plugin.saveSettings();
       })
     );
-    new import_obsidian6.Setting(el).setName("\u53CC\u8BED\u683C\u5F0F").setDesc("\u4EC5\u53CC\u8BED\u5BF9\u7167\u6A21\u5F0F\u751F\u6548\uFF1B\u5BF9 API \u6D88\u8017\u65E0\u5F71\u54CD\uFF08\u4EC5\u6539\u53D8\u56DE\u5199\u6392\u7248\uFF09").addDropdown(
-      (d) => d.addOption("{t} ({o})", "\u8BD1\u6587 (\u539F\u6587)").addOption("{o} | {t}", "\u539F\u6587 | \u8BD1\u6587").setValue(s.bilingualFormat).onChange(async (v) => {
+    new import_obsidian6.Setting(el).setName(t("settings.general.bilingual-format")).setDesc(t("settings.general.bilingual-format.desc")).addDropdown(
+      (d) => d.addOption("{t} ({o})", t("settings.general.bilingual-format.t-first")).addOption("{o} | {t}", t("settings.general.bilingual-format.o-first")).setValue(s.bilingualFormat).onChange(async (v) => {
         s.bilingualFormat = v;
         await this.plugin.saveSettings();
       })
     );
-    new import_obsidian6.Setting(el).setName("\u76EE\u6807\u8BED\u8A00").setDesc("\u5982 zh-CN / zh-Hant / ja \u7B49\uFF08\u7F13\u5B58\u952E\u542B\u8BED\u8A00\u7EF4\u5EA6\uFF0C\u5207\u6362\u4E92\u4E0D\u5F71\u54CD\uFF09").addText(
-      (text) => text.setValue(s.targetLang).setPlaceholder("zh-CN").onChange(async (v) => {
+    let quickLangComp = null;
+    let targetLangComp = null;
+    const quickLangSetting = new import_obsidian6.Setting(el);
+    quickLangSetting.addDropdown((d) => {
+      quickLangComp = d;
+      d.addOption("", "");
+      for (const lang of QUICK_LANGS)
+        d.addOption(lang, lang);
+      d.setValue(
+        QUICK_LANGS.includes(s.targetLang) ? s.targetLang : ""
+      );
+      d.onChange(async (v) => {
+        if (!v || v === s.targetLang)
+          return;
+        s.targetLang = v;
+        targetLangComp == null ? void 0 : targetLangComp.setValue(v);
+        await this.plugin.saveSettings();
+        new import_obsidian6.Notice(t("notice.lang.switched"));
+      });
+    });
+    const targetLangSetting = new import_obsidian6.Setting(el).setName(t("settings.general.target-lang")).setDesc(t("settings.general.target-lang.desc"));
+    targetLangSetting.addText((text) => {
+      targetLangComp = text;
+      text.setValue(s.targetLang).setPlaceholder("zh-CN").onChange(async (v) => {
         s.targetLang = v.trim() || "zh-CN";
+        quickLangComp == null ? void 0 : quickLangComp.setValue(
+          QUICK_LANGS.includes(s.targetLang) ? s.targetLang : ""
+        );
+        await this.plugin.saveSettings();
+      });
+    });
+    new import_obsidian6.Setting(el).setName(t("settings.general.ui-lang")).setDesc(t("settings.general.ui-lang.desc")).addDropdown(
+      (d) => d.addOption("auto", t("settings.general.ui-lang.auto")).addOption("zh-CN", t("settings.general.ui-lang.zh")).addOption("en", t("settings.general.ui-lang.en")).setValue(s.uiLanguage).onChange(async (v) => {
+        s.uiLanguage = v;
         await this.plugin.saveSettings();
       })
     );
@@ -2554,9 +3201,9 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
   async renderApi(el) {
     var _a, _b, _c, _d, _e, _f, _g;
     const s = this.plugin.settings;
-    new import_obsidian6.Setting(el).setName("\u7FFB\u8BD1\u5F15\u64CE").addDropdown((d) => {
+    new import_obsidian6.Setting(el).setName(t("settings.api.engine")).addDropdown((d) => {
       for (const p of PROVIDERS)
-        d.addOption(p.id, p.label);
+        d.addOption(p.id, t(p.key));
       d.setValue(s.activeProvider).onChange(async (v) => {
         s.activeProvider = v;
         await this.plugin.saveSettings();
@@ -2567,10 +3214,14 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
     s.providers[s.activeProvider] = cfg;
     const keySaved = await this.plugin.hasApiKey(s.activeProvider);
     new import_obsidian6.Setting(el).setName("API Key").setDesc(
-      (this.plugin.isKeyEncryptionAvailable() ? "safeStorage \u52A0\u5BC6\u5B58\u50A8\u4E8E secrets.bin\uFF0C\u4E0D\u5199\u5165 data.json\uFF084.4.1\uFF09" : "\u5F53\u524D\u7CFB\u7EDF\u4E0D\u652F\u6301\u7CFB\u7EDF\u7EA7\u52A0\u5BC6\uFF0CKey \u4EC5\u4EE5\u6DF7\u6DC6\u65B9\u5F0F\u5B58\u50A8\u4E8E secrets.bin\uFF0C\u8BF7\u52FF\u540C\u6B65\u8BE5\u6587\u4EF6\uFF084.4.1 \u964D\u7EA7\u5206\u652F\uFF09") + `\uFF5CKey \u72B6\u6001\uFF1A${keySaved ? "\u5DF2\u4FDD\u5B58" : "\u672A\u4FDD\u5B58"}`
+      (this.plugin.isKeyEncryptionAvailable() ? t("settings.api.key.desc.encrypted") : t("settings.api.key.desc.plain")) + t("settings.api.key.status", {
+        s: keySaved ? t("settings.api.key.status.saved") : t("settings.api.key.status.unsaved")
+      })
     ).addText((text) => {
       text.inputEl.type = "password";
-      text.setPlaceholder(keySaved ? "\u5DF2\u4FDD\u5B58\uFF0C\u8F93\u5165\u65B0 Key \u53EF\u8986\u76D6" : "\u8F93\u5165\u540E\u81EA\u52A8\u52A0\u5BC6\u4FDD\u5B58").onChange(async (v) => {
+      text.setPlaceholder(
+        keySaved ? t("settings.api.key.placeholder.saved") : t("settings.api.key.placeholder.empty")
+      ).onChange(async (v) => {
         await this.plugin.saveApiKey(s.activeProvider, v.trim());
         await this.renderTabs();
       });
@@ -2579,7 +3230,7 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
       this.addTextSetting(
         el,
         "Base URL",
-        "\u53EF\u6307\u5411\u672C\u5730\u6A21\u578B\uFF0C\u5982 http://localhost:11434/v1",
+        t("settings.api.base-url.desc"),
         (_b = cfg.apiBaseUrl) != null ? _b : "",
         "https://api.openai.com/v1",
         async (v) => {
@@ -2588,18 +3239,18 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
       );
       this.addTextSetting(
         el,
-        "\u6A21\u578B",
-        "\u9ED8\u8BA4 gpt-4o-mini\uFF08\u4F4E\u6210\u672C\u6863\uFF09",
+        t("settings.api.model"),
+        t("settings.api.model.desc"),
         (_c = cfg.model) != null ? _c : "",
         "gpt-4o-mini",
         async (v) => {
           cfg.model = v;
         }
       );
-      new import_obsidian6.Setting(el).setName("\u5173\u95ED\u601D\u8003\u6A21\u5F0F").setDesc("DeepSeek V4 \u7B49\u9ED8\u8BA4\u5F00\u542F\u201C\u601D\u8003\u201D\u7684\u6A21\u578B\u5EFA\u8BAE\u6253\u5F00\uFF1AUI \u77ED\u6587\u672C\u65E0\u9700\u63A8\u7406\uFF0C\u5173\u6389\u540E\u66F4\u5FEB\u3001\u66F4\u7701 tokens").addToggle(
-        (t) => {
+      new import_obsidian6.Setting(el).setName(t("settings.api.disable-thinking")).setDesc(t("settings.api.disable-thinking.desc")).addToggle(
+        (toggle) => {
           var _a2;
-          return t.setValue((_a2 = cfg.disableThinking) != null ? _a2 : false).onChange(async (v) => {
+          return toggle.setValue((_a2 = cfg.disableThinking) != null ? _a2 : false).onChange(async (v) => {
             cfg.disableThinking = v;
             await this.plugin.saveSettings();
           });
@@ -2608,9 +3259,7 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
       const priceCfg = cfg.pricePerMillion;
       const priceText = priceCfg && priceCfg.input > 0 && priceCfg.output > 0 ? `${priceCfg.input}/${priceCfg.output}` : "";
       let priceEnabled = priceText !== "";
-      new import_obsidian6.Setting(el).setName("token \u5355\u4EF7\uFF08\u6BCF\u767E\u4E07\uFF09").setDesc(
-        "\u683C\u5F0F \u8F93\u5165\u4EF7/\u8F93\u51FA\u4EF7\uFF0C\u5982 2/8\uFF08\u6309\u4F60\u6240\u7528\u6A21\u578B\u540E\u53F0\u6807\u4EF7\u586B\uFF09\u3002\u586B\u597D\u540E\u72B6\u6001\u680F\u4E0E\u7528\u91CF\u9875\u6309 \u5B9E\u6D4B token \xD7 \u5355\u4EF7 \u5C55\u793A\u8D39\u7528\u4F30\u7B97\uFF1B\u7559\u7A7A\u5173\u95ED\u3002\u4EC5\u5F71\u54CD\u5C55\u793A\uFF0C\u4E0D\u5F71\u54CD\u9884\u7B97\u7194\u65AD"
-      ).addText((text) => {
+      new import_obsidian6.Setting(el).setName(t("settings.api.price")).setDesc(t("settings.api.price.desc")).addText((text) => {
         text.setPlaceholder("2/8").setValue(priceText).onChange(async (v) => {
           var _a2;
           const s2 = this.plugin.settings;
@@ -2624,7 +3273,7 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
             await this.plugin.saveSettings();
             if (!priceEnabled) {
               priceEnabled = true;
-              new import_obsidian6.Notice("UUT\uFF1A\u8D39\u7528\u4F30\u7B97\u5DF2\u542F\u7528\uFF08\u72B6\u6001\u680F\u4E0E\u7528\u91CF\u9875\u53EF\u89C1\uFF09");
+              new import_obsidian6.Notice(t("settings.api.price.notice-enabled"));
             }
           } else if (v.trim() === "") {
             delete c.pricePerMillion;
@@ -2648,7 +3297,7 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
       this.addTextSetting(
         el,
         "Region",
-        "\u5982 eastasia",
+        t("settings.api.region.desc"),
         (_d = cfg.region) != null ? _d : "",
         "eastasia",
         async (v) => {
@@ -2658,8 +3307,8 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
     } else if (s.activeProvider === "custom") {
       this.addTextSetting(
         el,
-        "\u7AEF\u70B9 URL",
-        "\u5982 http://localhost:11434/v1/chat/completions",
+        t("settings.api.custom.endpoint"),
+        t("settings.api.custom.endpoint.desc"),
         (_e = cfg.apiBaseUrl) != null ? _e : "",
         "http://localhost:11434/v1/chat/completions",
         async (v) => {
@@ -2668,7 +3317,7 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
       );
       this.addTextSetting(
         el,
-        "\u6A21\u578B\u540D",
+        t("settings.api.custom.model"),
         "",
         (_f = cfg.model) != null ? _f : "",
         "",
@@ -2676,7 +3325,7 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
           cfg.model = v;
         }
       );
-      new import_obsidian6.Setting(el).setName("\u8BF7\u6C42\u4F53\u6A21\u677F").setDesc("\u5360\u4F4D\u7B26 {{text}} {{targetLang}} {{model}}\uFF1B\u7559\u7A7A\u4F7F\u7528 OpenAI \u517C\u5BB9\u6A21\u677F").addTextArea(
+      new import_obsidian6.Setting(el).setName(t("settings.api.custom.request-template")).setDesc(t("settings.api.custom.request-template.desc")).addTextArea(
         (text) => {
           var _a2;
           return text.setValue((_a2 = cfg.requestTemplate) != null ? _a2 : "").onChange(async (v) => {
@@ -2687,8 +3336,8 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
       );
       this.addTextSetting(
         el,
-        "\u54CD\u5E94\u8DEF\u5F84",
-        "\u70B9\u5206\u9694\u8DEF\u5F84\uFF0C\u5982 choices.0.message.content\uFF1B\u7559\u7A7A\u4E3A\u9ED8\u8BA4\u503C",
+        t("settings.api.custom.response-path"),
+        t("settings.api.custom.response-path.desc"),
         (_g = cfg.responsePath) != null ? _g : "",
         "",
         async (v) => {
@@ -2696,8 +3345,8 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
         }
       );
     }
-    new import_obsidian6.Setting(el).setName("\u8FDE\u901A\u6027\u6D4B\u8BD5").setDesc("\u5411\u5F53\u524D\u5F15\u64CE\u53D1\u9001\u4E00\u6B21\u6D4B\u8BD5\u8BF7\u6C42\uFF08\u6D88\u8017\u6781\u5C11\u989D\u5EA6\uFF1A\u4E00\u6761\u77ED\u6587\u672C\u7EA6\u51E0\u5341 tokens\uFF0C\u6309\u57FA\u51C6\u4EF7 < \xA50.001\uFF09").addButton(
-      (b) => b.setButtonText("\u6D4B\u8BD5\u8FDE\u63A5").onClick(async () => {
+    new import_obsidian6.Setting(el).setName(t("settings.api.connectivity")).setDesc(t("settings.api.connectivity.desc")).addButton(
+      (b) => b.setButtonText(t("settings.api.connectivity.button")).onClick(async () => {
         b.setDisabled(true);
         try {
           const res = await this.plugin.testActiveProvider();
@@ -2708,14 +3357,16 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
       })
     );
     const usage = await this.plugin.monthlyUsage();
-    new import_obsidian6.Setting(el).setName("\u7528\u91CF\u7EDF\u8BA1").setDesc(
-      `\u672C\u6708\u5DF2\u53D1\u9001 ${usage} \u5B57\u7B26\uFF08usage.json \u6301\u4E45\u5316\uFF09\u3002${COST_BASIS}\uFF1B\u6309\u6B64\u6298\u7B97\u672C\u6708\u5DF2\u6D88\u8017 ${estimateCost(usage)}\uFF08\u4EC5\u91CF\u7EA7\u53C2\u8003\uFF09`
+    new import_obsidian6.Setting(el).setName(t("settings.api.usage")).setDesc(
+      t("settings.api.monthly-usage.desc", {
+        usage,
+        basis: costBasis(),
+        cost: estimateCost(usage)
+      })
     );
-    new import_obsidian6.Setting(el).setName("\u6708\u5EA6\u5B57\u7B26\u9884\u7B97").setDesc(
-      "\u9632\u610F\u5916\u70E7\u989D\u5EA6\u7684\u786C\u95F8\u95E8\uFF1A\u8D85\u9650\u81EA\u52A8\u6682\u505C\u9001\u8BD1\u3001\u754C\u9762\u56DE\u9000\u539F\u6587\uFF084.5 \u7194\u65AD\uFF09\u3002\u4ED8\u8D39\u5F15\u64CE\u5F3A\u70C8\u5EFA\u8BAE\u8BBE\u7F6E\uFF1B\u7559\u7A7A\u4E3A\u4E0D\u9650\u3002\u53C2\u8003\u91CF\u7EA7\uFF1A\u6838\u5FC3\u754C\u9762\u4E00\u6B21\u6027\u7EA6 5\u201310 \u4E07\u5B57\u7B26\uFF1B\u793E\u533A\u5E02\u573A\u5168\u91CF\u7EA6 30 \u4E07\u5B57\u7B26/\u8F6E"
-    ).addText((text) => {
+    new import_obsidian6.Setting(el).setName(t("settings.api.budget")).setDesc(t("settings.api.budget.desc")).addText((text) => {
       text.inputEl.type = "number";
-      text.setValue(s.monthlyCharBudget === null ? "" : String(s.monthlyCharBudget)).setPlaceholder("\u4E0D\u9650").onChange(async (v) => {
+      text.setValue(s.monthlyCharBudget === null ? "" : String(s.monthlyCharBudget)).setPlaceholder(t("settings.api.budget.placeholder")).onChange(async (v) => {
         const n = Number(v);
         s.monthlyCharBudget = v.trim() === "" || !Number.isFinite(n) ? null : Math.max(0, Math.floor(n));
         await this.plugin.saveSettings();
@@ -2726,48 +3377,42 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
   renderScope(el) {
     var _a;
     const s = this.plugin.settings;
-    el.createDiv({ cls: "uut-scope-note" }).setText(
-      "\u63A8\u8350\u7528\u6CD5\u2014\u2014\u793E\u533A\u63D2\u4EF6\u5E02\u573A\u7684\u300C\u8BD1\u300D\u6309\u94AE\u6709\u4E24\u4E2A\uFF1A\u2460 \u5DE6\u4FA7\u5217\u8868\uFF1A\u6BCF\u4E2A\u63D2\u4EF6\u6761\u76EE\u7684\u3010\u53F3\u4E0A\u89D2\u3011\uFF0C\u7FFB\u8BD1\u8BE5\u6761\u76EE\u7684\u540D\u79F0+\u7B80\u4ECB\uFF08\u7EA6 150 \u5B57\u7B26\uFF0C\u8D39\u7528\u4E0D\u8DB3 0.1 \u5206\u94B1\uFF09\uFF1B\u2461 \u53F3\u4FA7\u8BE6\u60C5\uFF1A\u70B9\u5F00\u4EFB\u610F\u63D2\u4EF6\u540E\uFF0C\u8BE6\u60C5\u533A\u3010\u6700\u9876\u7AEF\u3011\u7684\u300C\u8BD1\u300D\u6309\u94AE\uFF0C\u7FFB\u8BD1\u8BE5\u63D2\u4EF6\u7684 README \u5168\u6587\uFF08\u6570\u5343\u5B57\u7B26 \u2248 2,600 tokens\uFF0C\u9AD8\u5CF0\u4EF7\u7EA6 1.5 \u5206\u94B1\uFF0C\u7A7A\u95F2\u65F6\u6BB5\u534A\u4EF7\uFF09\u3002\u4E24\u8005\u8BD1\u8FC7\u5373\u7F13\u5B58\u3001\u91CD\u590D\u70B9\u51FB\u96F6\u6210\u672C\u3002\u7EDD\u5927\u591A\u6570\u8981\u8BFB\u7684\u82F1\u6587\u5185\u5BB9\u662F\u63D2\u4EF6\u8BF4\u660E\u4E0E\u4ECB\u7ECD\uFF0C\u7528\u300C\u8BD1\u300D\u6309\u94AE\u5373\u53EF\u8986\u76D6\uFF0C\u65E0\u9700\u6253\u5F00\u4E0B\u9762\u7684\u81EA\u52A8\u7FFB\u8BD1\u5F00\u5173\u3002"
-    );
-    new import_obsidian6.Setting(el).setName("\u7FFB\u8BD1 Obsidian \u6838\u5FC3\u754C\u9762").setDesc(
-      "\u4F4E\u98CE\u9669\uFF1A\u6838\u5FC3\u754C\u9762\u6587\u672C\u91CF\u56FA\u5B9A\uFF08\u7EA6 5\u201310 \u4E07\u5B57\u7B26\uFF09\uFF0C\u4E00\u6B21\u6027\u6210\u672C\u6309\u57FA\u51C6\u4EF7 \u2248 \xA50.30 \u4EE5\u5185\uFF08\u7A7A\u95F2\u65F6\u6BB5\u534A\u4EF7\uFF09\uFF0C\u7F13\u5B58\u540E\u96F6\u6210\u672C\u3002\u751F\u6548\u901A\u9053\uFF1A\u6838\u5FC3\u547D\u4EE4\uFF08\u8BBE\u7F6E\u9762\u677F / DOM \u515C\u5E95\u901A\u9053\u6280\u672F\u4E0A\u65E0\u6CD5\u533A\u5206\u754C\u9762\u5F52\u5C5E\u6838\u5FC3\u8FD8\u662F\u793E\u533A\u63D2\u4EF6\uFF0C\u4E0D\u53D7\u6B64\u5F00\u5173\u63A7\u5236\uFF09"
-    ).addToggle(
-      (t) => t.setValue(s.scope.core).onChange(async (v) => {
+    el.createDiv({ cls: "uut-scope-note" }).setText(t("settings.scope.note"));
+    new import_obsidian6.Setting(el).setName(t("settings.scope.core")).setDesc(t("settings.scope.core.desc")).addToggle(
+      (toggle) => toggle.setValue(s.scope.core).onChange(async (v) => {
         s.scope.core = v;
         await this.plugin.saveSettings();
       })
     );
-    new import_obsidian6.Setting(el).setName("\u7FFB\u8BD1\u793E\u533A\u63D2\u4EF6\u754C\u9762").setDesc(
-      "\u26A0\uFE0F \u9AD8\u98CE\u9669\uFF08API \u6D88\u8017\uFF09\uFF1A\u5F00\u542F\u540E\u793E\u533A\u5E02\u573A\u6D4F\u89C8\u5668\u7684\u53EF\u89C1\u6761\u76EE\u4F1A\u88AB\u81EA\u52A8\u7FFB\u8BD1\uFF0C\u6EDA\u52A8\u5217\u8868\u5373\u6301\u7EED\u9001\u8BD1\uFF1B\u5E02\u573A\u6570\u5343\u6761\u76EE\u5168\u91CF\u7EA6 30 \u4E07\u5B57\u7B26/\u8F6E\uFF08\u6309\u57FA\u51C6\u4EF7\u9AD8\u5CF0 \u2248 \xA51.1\u3001\u7A7A\u95F2 \u2248 \xA50.55\uFF09\uFF0C\u9875\u9762\u5E38\u9A7B\u671F\u95F4\u53CD\u590D\u89E6\u53D1\u2014\u2014v1.1.5 \u8D77\u9ED8\u8BA4\u5173\u95ED\uFF0C\u5EFA\u8BAE\u6539\u7528\u6761\u76EE\u300C\u8BD1\u300D\u6309\u94AE\u3002\u751F\u6548\u901A\u9053\uFF1A\u793E\u533A\u63D2\u4EF6\u547D\u4EE4\u3001\u5E02\u573A\u6D4F\u89C8\u5668\u81EA\u52A8\u7FFB\u8BD1\uFF08\u8BBE\u7F6E\u9762\u677F / DOM \u515C\u5E95\u65E0\u6CD5\u5F52\u56E0\u63D2\u4EF6\uFF0C\u4E0D\u53D7\u6B64\u5F00\u5173\u63A7\u5236\uFF09"
-    ).addToggle(
-      (t) => t.setValue(s.scope.communityPlugins).onChange(async (v) => {
+    new import_obsidian6.Setting(el).setName(t("settings.scope.community")).setDesc(t("settings.scope.community.desc")).addToggle(
+      (toggle) => toggle.setValue(s.scope.communityPlugins).onChange(async (v) => {
         s.scope.communityPlugins = v;
         await this.plugin.saveSettings();
       })
     );
-    new import_obsidian6.Setting(el).setName("\u62E6\u622A\u5668\u72EC\u7ACB\u5F00\u5173").setDesc("\u5355\u901A\u9053\u5F02\u5E38\u65F6\u5173\u95ED\u5BF9\u5E94\u901A\u9053\uFF08D1 \u7194\u65AD\u624B\u52A8\u5165\u53E3\uFF09\u3002\u5404\u901A\u9053\u7684 API \u6D88\u8017\u91CF\u7EA7\u89C1\u9010\u9879\u6807\u6CE8");
+    new import_obsidian6.Setting(el).setName(t("settings.scope.interceptors")).setDesc(t("settings.scope.interceptors.desc"));
     const interceptors = [
-      { key: "command", label: "\u547D\u4EE4\u9762\u677F", risk: "\u4F4E\u98CE\u9669\uFF1A\u547D\u4EE4\u6E05\u5355\u56FA\u5B9A\uFF0C\u542F\u52A8\u65F6\u9884\u70ED\u4E00\u6B21\uFF0C\u7F13\u5B58\u540E\u96F6\u6210\u672C" },
-      { key: "menu", label: "\u83DC\u5355", risk: "\u4F4E\u98CE\u9669\uFF1A\u83DC\u5355\u9879\u77ED\u4E14\u91CD\u590D\u7387\u9AD8\uFF0C\u7F13\u5B58\u547D\u4E2D\u7387\u901A\u5E38 >90%" },
-      { key: "setting", label: "\u8BBE\u7F6E\u9762\u677F", risk: "\u4F4E\u98CE\u9669\uFF1A\u5404\u63D2\u4EF6\u8BBE\u7F6E\u9879\u6587\u672C\u91CF\u56FA\u5B9A\uFF0C\u7FFB\u8FC7\u4E00\u6B21\u5373\u7F13\u5B58" },
+      { key: "command", labelKey: "settings.scope.ic.command", riskKey: "settings.scope.ic.command.risk" },
+      { key: "menu", labelKey: "settings.scope.ic.menu", riskKey: "settings.scope.ic.menu.risk" },
+      { key: "setting", labelKey: "settings.scope.ic.setting", riskKey: "settings.scope.ic.setting.risk" },
       {
         key: "dom",
-        label: "DOM \u515C\u5E95",
-        risk: "\u26A0\uFE0F \u4E2D\u98CE\u9669\uFF1A\u5168\u5C40 MutationObserver \u89C2\u5BDF\uFF0C\u52A8\u6001\u754C\u9762\uFF08\u72B6\u6001\u680F\u3001\u5F39\u7A97\u3001\u81EA\u5B9A\u4E49\u89C6\u56FE\uFF09\u4F1A\u6301\u7EED\u9001\u8BD1\uFF1B\u5173\u95ED\u540E Notice/\u5F39\u7A97\u7B49\u4E0D\u518D\u7FFB\u8BD1"
+        labelKey: "settings.scope.ic.dom",
+        riskKey: "settings.scope.ic.dom.risk"
       },
       {
         key: "marketplace",
-        label: "\u793E\u533A\u5E02\u573A\u300C\u8BD1\u300D\u6309\u94AE",
-        risk: "\u2705 \u63A8\u8350\uFF1A\u96F6\u81EA\u52A8\u6D88\u8017\u2014\u2014\u6309\u94AE\u4F4D\u7F6E\uFF1A\u5217\u8868\u6761\u76EE\u3010\u53F3\u4E0A\u89D2\u3011+ \u70B9\u5F00\u63D2\u4EF6\u540E\u8BE6\u60C5\u533A\u3010\u6700\u9876\u7AEF\u3011\uFF1B\u70B9\u51FB\u624D\u7FFB\u8BD1\uFF0C\u7F13\u5B58\u547D\u4E2D\u540E\u91CD\u590D\u70B9\u51FB\u96F6\u6210\u672C\uFF1B\u5931\u8D25\u65F6\u6309\u94AE\u53D8\u7EA2 \xD7 \u5E76\u5F39\u51FA\u5177\u4F53\u539F\u56E0\uFF08\u9884\u7B97\u8D85\u9650 / \u7194\u65AD\u4E2D / \u7F51\u7EDC\u9519\u8BEF\uFF09\uFF0Cv1.1.8 \u8D77\u4E0D\u518D\u9759\u9ED8"
+        labelKey: "settings.scope.ic.market",
+        riskKey: "settings.scope.ic.market.risk"
       }
     ];
     for (const item of interceptors) {
-      new import_obsidian6.Setting(el).setName(item.label).setDesc(item.risk).addToggle(
-        (t) => {
+      new import_obsidian6.Setting(el).setName(t(item.labelKey)).setDesc(t(item.riskKey)).addToggle(
+        (toggle) => {
           var _a2;
           return (
             // marketplace 为 v1.1.0 新增键：旧 data.json 无此字段，?? true 兜底默认开
-            t.setValue((_a2 = s.interceptors[item.key]) != null ? _a2 : true).onChange(async (v) => {
+            toggle.setValue((_a2 = s.interceptors[item.key]) != null ? _a2 : true).onChange(async (v) => {
               s.interceptors[item.key] = v;
               await this.plugin.saveSettings();
             })
@@ -2777,36 +3422,32 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
     }
     this.addIdListSetting(
       el,
-      "\u63D2\u4EF6\u767D\u540D\u5355",
-      "\u975E\u7A7A\u65F6\u4EC5\u7FFB\u8BD1\u8FD9\u4E9B\u63D2\u4EF6\uFF08\u6BCF\u884C\u4E00\u4E2A\u63D2\u4EF6 id\uFF09\u3002\u26A0\uFE0F \u5F53\u524D\u7248\u672C\u4E3A\u9884\u7559\u914D\u7F6E\uFF0C\u8FD0\u884C\u65F6\u5C1A\u672A\u751F\u6548",
+      t("settings.scope.whitelist"),
+      t("settings.scope.whitelist.desc"),
       s.scope.pluginWhitelist
     );
     this.addIdListSetting(
       el,
-      "\u63D2\u4EF6\u9ED1\u540D\u5355",
-      "\u8FD9\u4E9B\u63D2\u4EF6\u7684\u547D\u4EE4\u4E0D\u7FFB\u8BD1\uFF08\u9ED8\u8BA4\u542B\u672C\u63D2\u4EF6\u81EA\u8EAB\uFF09\u3002\u26A0\uFE0F \u5F53\u524D\u7248\u672C\u4EC5\u547D\u4EE4\u901A\u9053\u751F\u6548\uFF1B\u8BBE\u7F6E\u9762\u677F / DOM \u515C\u5E95\u65E0\u6CD5\u5F52\u56E0\u63D2\u4EF6\u5F52\u5C5E",
+      t("settings.scope.blacklist"),
+      t("settings.scope.blacklist.desc"),
       s.scope.pluginBlacklist
     );
     const manifests = (_a = this.app.plugins) == null ? void 0 : _a.manifests;
     if (manifests) {
       const ids = Object.keys(manifests).sort().join("\u3001");
-      new import_obsidian6.Setting(el).setName("\u5DF2\u5B89\u88C5\u63D2\u4EF6 id \u53C2\u8003").setDesc(ids);
+      new import_obsidian6.Setting(el).setName(t("settings.scope.installed-ids")).setDesc(ids);
     }
   }
   /** 缓存：开关、上限、统计、落盘、清理、清空、导出/导入（4.5 / FR-12；v1.1.9 说明三段式重写 + 失效条目清理 + 磁盘文件实况） */
   async renderCache(el) {
     const s = this.plugin.settings;
-    new import_obsidian6.Setting(el).setName("\u542F\u7528\u672C\u5730\u7F13\u5B58").setDesc(
-      "\u662F\u4EC0\u4E48\uFF1A\u8BD1\u6587\u6301\u4E45\u5316\u5230\u63D2\u4EF6\u76EE\u5F55 translation-cache.json\u2014\u2014\u540C\u4E00\u6587\u672C\u53EA\u4ED8\u4E00\u6B21 API \u8D39\u7528\uFF0C\u91CD\u542F Obsidian \u540E\u4ECD\u7136\u6709\u6548\u3002\u4EC0\u4E48\u65F6\u5019\u5173\uFF1A\u53EA\u6709\u6392\u67E5\u7FFB\u8BD1\u5F02\u5E38\u65F6\u624D\u9700\u8981\u5173\u3002\u26A0\uFE0F \u5173\u95ED\u540E\u6BCF\u6B21\u6E32\u67D3\u754C\u9762\u90FD\u91CD\u65B0\u8C03 API\uFF0C\u540C\u4E00\u754C\u9762\u4F1A\u53CD\u590D\u6D88\u8017\u989D\u5EA6"
-    ).addToggle(
-      (t) => t.setValue(s.cacheEnabled).onChange(async (v) => {
+    new import_obsidian6.Setting(el).setName(t("settings.cache.enable")).setDesc(t("settings.cache.enable.desc")).addToggle(
+      (toggle) => toggle.setValue(s.cacheEnabled).onChange(async (v) => {
         s.cacheEnabled = v;
         await this.plugin.saveSettings();
       })
     );
-    new import_obsidian6.Setting(el).setName("\u7F13\u5B58\u6761\u76EE\u4E0A\u9650").setDesc(
-      "\u662F\u4EC0\u4E48\uFF1A\u5185\u5B58\u4E0E\u78C1\u76D8\u5171\u7528\u6B64\u4E0A\u9650\uFF08\u9ED8\u8BA4 50000\uFF0C\u8303\u56F4 1000\u2013200000\uFF1B\u78C1\u76D8\u53E6\u6709 64MB \u5B57\u8282\u786C\u9876\uFF0C\u5148\u5230\u5148\u622A\uFF09\uFF0C\u8D85\u51FA\u540E\u6DD8\u6C70\u6700\u4E45\u672A\u7528\u7684\u6761\u76EE\u3002\u4EC0\u4E48\u65F6\u5019\u8C03\uFF1A\u793E\u533A\u5E02\u573A README \u5168\u6587\u7FFB\u8BD1\u6761\u76EE\u91CF\u5927\uFF0C\u4E0A\u9650\u592A\u4F4E\u4F1A\u63D0\u524D\u6DD8\u6C70\u8BD1\u6587\u3001\u4E0B\u6B21\u6253\u5F00\u91CD\u590D\u6D88\u8017 API\u2014\u2014\u8BD1\u6587\u662F\u7EAF\u6587\u672C\u4E0D\u5360\u7A7A\u95F4\uFF0C\u5EFA\u8BAE\u5F80\u5BBD\u4E86\u8BBE\u3002\u4EE3\u4EF7\uFF1A\u5BB9\u91CF\u8D8A\u5927\uFF0C\u542F\u52A8\u65F6\u52A0\u8F7D\u7F13\u5B58\u8D8A\u4E45\uFF08\u6BEB\u79D2\u7EA7\uFF09\u3001\u5360\u5185\u5B58\u8D8A\u591A\u3002\u4FEE\u6539\u5373\u65F6\u751F\u6548\uFF1B\u8C03\u5C0F\u4F1A\u7ACB\u5373\u6DD8\u6C70\u6700\u65E7\u6761\u76EE"
-    ).addText((text) => {
+    new import_obsidian6.Setting(el).setName(t("settings.cache.max-entries")).setDesc(t("settings.cache.max-entries.desc")).addText((text) => {
       text.inputEl.type = "number";
       text.setValue(String(s.cacheMaxEntries)).onChange(async (v) => {
         const n = Number(v);
@@ -2818,34 +3459,33 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
     });
     const stats = this.plugin.cache.stats();
     const bytes = await this.plugin.cacheFileBytes();
-    const sizeInfo = bytes === null ? "\u78C1\u76D8\u6587\u4EF6\u5C1A\u672A\u521B\u5EFA" : `\u78C1\u76D8\u6587\u4EF6\u7EA6 ${(bytes / 1024 / 1024).toFixed(2)} MB`;
-    const flushInfo = stats.lastFlushAt ? `\u6700\u540E\u843D\u76D8 ${new Date(stats.lastFlushAt).toLocaleTimeString()}` : "\u672C\u4F1A\u8BDD\u5C1A\u672A\u843D\u76D8\uFF08\u6BCF 30s \u68C0\u67E5\uFF0C\u7D2F\u8BA1 100 \u6761\u6216 5 \u5206\u949F\u81EA\u52A8\u843D\u76D8\uFF1B\u4E5F\u53EF\u70B9\u4E0B\u65B9\u300C\u7ACB\u5373\u843D\u76D8\u300D\uFF09";
-    new import_obsidian6.Setting(el).setName("\u7F13\u5B58\u7EDF\u8BA1").setDesc(
-      `\u6761\u76EE ${stats.size}\uFF08\u5185\u5B58=\u78C1\u76D8\u540C\u4E0A\u9650\uFF09\uFF5C\u547D\u4E2D\u7387 ${(stats.hitRate * 100).toFixed(1)}%\uFF08\u672C\u4F1A\u8BDD\u7EDF\u8BA1\u2014\u2014\u547D\u4E2D\u7387\u8D8A\u9AD8\uFF0C\u8D8A\u591A\u5185\u5BB9\u8D70\u4E86\u672C\u5730\u7F13\u5B58\u3001\u8D8A\u7701\u94B1\uFF09\uFF5C${sizeInfo}\uFF5C${flushInfo}`
+    const sizeInfo = bytes === null ? t("settings.cache.disk-absent") : t("settings.cache.disk-size", { mb: (bytes / 1024 / 1024).toFixed(2) });
+    const flushInfo = stats.lastFlushAt ? t("settings.cache.last-flush", { time: new Date(stats.lastFlushAt).toLocaleTimeString() }) : t("settings.cache.flush-pending");
+    new import_obsidian6.Setting(el).setName(t("settings.cache.stats")).setDesc(
+      t("settings.cache.stats.desc", {
+        n: stats.size,
+        rate: (stats.hitRate * 100).toFixed(1),
+        size: sizeInfo,
+        flush: flushInfo
+      })
     );
-    new import_obsidian6.Setting(el).setName("\u7ACB\u5373\u843D\u76D8").setDesc(
-      "\u662F\u4EC0\u4E48\uFF1A\u65B0\u8BD1\u7684\u8BD1\u6587\u5148\u5B58\u5728\u5185\u5B58\u91CC\uFF0C\u63D2\u4EF6\u6BCF 30 \u79D2\u68C0\u67E5\u4E00\u6B21\u2014\u2014\u7D2F\u8BA1\u6EE1 100 \u6761\u65B0\u8BD1\u6587\u3001\u6216\u8DDD\u4E0A\u6B21\u843D\u76D8\u6EE1 5 \u5206\u949F\uFF0C\u624D\u5199\u5165\u78C1\u76D8\u6587\u4EF6\uFF1B\u63D2\u4EF6\u6B63\u5E38\u5378\u8F7D/\u5173\u5E93\u65F6\u4E5F\u4F1A\u5F3A\u5236\u5199\u5165\u3002\u4EC0\u4E48\u65F6\u5019\u70B9\uFF1A\u521A\u7FFB\u5B8C\u4E00\u5927\u6279\u5E02\u573A README\u3001\u6216\u51C6\u5907\u5173\u673A/\u91CD\u542F Obsidian \u524D\u70B9\u4E00\u4E0B\uFF0C\u7ACB\u523B\u628A\u5185\u5B58\u91CC\u7684\u65B0\u8BD1\u6587\u5199\u5165\u78C1\u76D8\u3002\u4E0D\u70B9\u4F1A\u600E\u6837\uFF1A\u5D29\u6E83/\u5F3A\u6740\u4F1A\u4E22\u6389\u300C\u4E0A\u6B21\u843D\u76D8\u4EE5\u6765\u300D\u7684\u65B0\u8BD1\u6587\uFF08\u6700\u591A 5 \u5206\u949F\u7684\u91CF\uFF09\uFF0C\u6B63\u5E38\u9000\u51FA\u4E0D\u53D7\u5F71\u54CD\u3002\u96F6 API \u6D88\u8017"
-    ).addButton(
-      (b) => b.setButtonText("\u7ACB\u5373\u843D\u76D8").onClick(async () => {
+    new import_obsidian6.Setting(el).setName(t("settings.cache.flush-now")).setDesc(t("settings.cache.flush-now.desc")).addButton(
+      (b) => b.setButtonText(t("settings.cache.flush-now")).onClick(async () => {
         const res = await this.plugin.flushCacheNow();
         new import_obsidian6.Notice(`UUT\uFF1A${res.message}`);
         await this.renderTabs();
       })
     );
-    new import_obsidian6.Setting(el).setName("\u6E05\u7406\u5931\u6548\u6761\u76EE").setDesc(
-      "\u662F\u4EC0\u4E48\uFF1A\u5220\u9664\u4E0E\u5F53\u524D\u300C\u5F15\u64CE + \u76EE\u6807\u8BED\u8A00 + \u6A21\u578B\u300D\u4E0D\u5339\u914D\u7684\u7F13\u5B58\u6761\u76EE\u2014\u2014\u7F13\u5B58\u952E\u5305\u542B\u8FD9\u4E09\u4E2A\u7EF4\u5EA6\uFF0C\u6362\u8FC7\u6A21\u578B\u6216\u5F15\u64CE\u540E\uFF0C\u65E7\u6761\u76EE\u6C38\u8FDC\u4E0D\u4F1A\u518D\u547D\u4E2D\uFF0C\u7EAF\u5360\u7A7A\u95F4\u3002\u4EC0\u4E48\u65F6\u5019\u70B9\uFF1A\u6362\u8FC7\u6A21\u578B/\u5F15\u64CE/\u76EE\u6807\u8BED\u8A00\u4E4B\u540E\u70B9\u4E00\u6B21\u3002\u6CE8\u610F\uFF1Av1.1.9 \u4E4B\u524D\u5199\u5165\u7684\u65E7\u6761\u76EE\u6CA1\u6709\u6A21\u578B\u6807\u8BB0\uFF0C\u53EA\u80FD\u6309\u5F15\u64CE+\u8BED\u8A00\u5224\u5B9A\u3002\u96F6 API \u6D88\u8017"
-    ).addButton(
-      (b) => b.setButtonText("\u6E05\u7406\u5931\u6548\u6761\u76EE").onClick(async () => {
+    new import_obsidian6.Setting(el).setName(t("settings.cache.purge-stale")).setDesc(t("settings.cache.purge-stale.desc")).addButton(
+      (b) => b.setButtonText(t("settings.cache.purge-stale")).onClick(async () => {
         const res = await this.plugin.purgeStaleCacheEntries();
         new import_obsidian6.Notice(`UUT\uFF1A${res.message}`);
         await this.renderTabs();
       })
     );
-    new import_obsidian6.Setting(el).setName("\u6E05\u7A7A\u7F13\u5B58").setDesc(
-      "\u662F\u4EC0\u4E48\uFF1A\u5220\u9664\u5168\u90E8\u7F13\u5B58\u8BD1\u6587\uFF08\u5185\u5B58+\u78C1\u76D8\uFF09\uFF0C\u540C\u65F6\u91CD\u7F6E\u754C\u9762\u5DF2\u663E\u793A\u7684\u8BD1\u6587\uFF08R-07 \u8054\u52A8\uFF09\u3002\u4EC0\u4E48\u65F6\u5019\u7528\uFF1A\u8BD1\u6587\u51FA\u73B0\u5F02\u5E38\uFF08\u5982\u5D4C\u5957\u4E71\u7801\uFF09\u3001\u6216\u6362\u4E86\u672F\u8BED\u8868\u60F3\u5168\u90E8\u91CD\u8BD1\u65F6\u3002\u26A0\uFE0F \u4EE3\u4EF7\uFF1A\u6E05\u7A7A\u540E\u6240\u6709\u754C\u9762\u5C06\u5728\u4E0B\u6B21\u6253\u5F00\u65F6\u91CD\u65B0\u6D88\u8017 API \u7FFB\u8BD1\u4E00\u904D\uFF08\u6309\u57FA\u51C6\u4EF7\uFF1A\u6838\u5FC3\u754C\u9762 \u2248 \xA50.30 \u4EE5\u5185\uFF0C\u7A7A\u95F2\u65F6\u6BB5\u534A\u4EF7\uFF09"
-    ).addButton((b) => {
+    new import_obsidian6.Setting(el).setName(t("settings.cache.clear")).setDesc(t("settings.cache.clear.desc")).addButton((b) => {
       var _a;
-      b.setButtonText("\u6E05\u7A7A\u7F13\u5B58");
+      b.setButtonText(t("settings.cache.clear"));
       const btn = b;
       if (typeof btn.setDestructive === "function")
         btn.setDestructive();
@@ -2855,14 +3495,12 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
         this.plugin.cache.clear();
         this.plugin.resetCommandTranslations();
         await this.plugin.cache.flush();
-        new import_obsidian6.Notice("UUT\uFF1A\u7F13\u5B58\u5DF2\u6E05\u7A7A\uFF0C\u754C\u9762\u8BD1\u6587\u5C06\u5728\u4E0B\u6B21\u8BBF\u95EE\u65F6\u91CD\u65B0\u7FFB\u8BD1");
+        new import_obsidian6.Notice(t("settings.cache.clear.notice"));
         await this.renderTabs();
       });
     });
-    new import_obsidian6.Setting(el).setName("\u5BFC\u51FA\u7F13\u5B58").setDesc(
-      "\u662F\u4EC0\u4E48\uFF1A\u628A\u7F13\u5B58\u5B8C\u6574\u5BFC\u51FA\u5230\u5E93\u6839\u76EE\u5F55 universal-ui-translator-cache-export.json\u3002\u4EC0\u4E48\u65F6\u5019\u7528\uFF1A\u6362\u7535\u8111\u8FC1\u79FB\uFF0C\u6216\u628A\u81EA\u5DF1\u79EF\u7D2F\u7684\u8BD1\u6587\u5206\u4EAB\u7ED9\u4ED6\u4EBA\u2014\u2014\u5BF9\u65B9\u5BFC\u5165\u540E\u96F6 API \u6D88\u8017\u76F4\u63A5\u590D\u7528\uFF08FR-12\uFF09\u3002\u96F6 API \u6D88\u8017"
-    ).addButton(
-      (b) => b.setButtonText("\u5BFC\u51FA").onClick(async () => {
+    new import_obsidian6.Setting(el).setName(t("settings.cache.export")).setDesc(t("settings.cache.export.desc")).addButton(
+      (b) => b.setButtonText(t("settings.cache.export.button")).onClick(async () => {
         const res = await this.plugin.exportCache();
         new import_obsidian6.Notice(`UUT\uFF1A${res.message}`);
       })
@@ -2870,14 +3508,12 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
     const fileInput = el.createEl("input", {
       attr: { type: "file", accept: ".json,application/json" }
     });
-    new import_obsidian6.Setting(el).setName("\u5BFC\u5165\u7F13\u5B58").setDesc(
-      "\u662F\u4EC0\u4E48\uFF1A\u4ECE\u7F13\u5B58 JSON \u6587\u4EF6\u5408\u5E76\u6761\u76EE\u8FDB\u672C\u5730\u7F13\u5B58\uFF08\u6821\u9A8C schemaVersion \u4E0E\u6761\u76EE\u7ED3\u6784\uFF0C\u975E\u6CD5\u6587\u4EF6\u62D2\u7EDD\uFF09\u3002\u4EC0\u4E48\u65F6\u5019\u7528\uFF1A\u6362\u673A\u8FC1\u79FB\u56DE\u6765\uFF0C\u6216\u63A5\u6536\u4ED6\u4EBA\u5206\u4EAB\u7684\u8BD1\u6587\u8BCD\u8868\u3002\u96F6 API \u6D88\u8017"
-    ).addButton(
-      (b) => b.setButtonText("\u5BFC\u5165").onClick(async () => {
+    new import_obsidian6.Setting(el).setName(t("settings.cache.import")).setDesc(t("settings.cache.import.desc")).addButton(
+      (b) => b.setButtonText(t("settings.cache.import.button")).onClick(async () => {
         var _a;
         const file = (_a = fileInput.files) == null ? void 0 : _a[0];
         if (!file) {
-          new import_obsidian6.Notice("UUT\uFF1A\u8BF7\u5148\u9009\u62E9\u7F13\u5B58 JSON \u6587\u4EF6");
+          new import_obsidian6.Notice(t("settings.cache.import.no-file"));
           return;
         }
         const res = await this.plugin.importCache(await file.text());
@@ -2907,11 +3543,19 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
     const inTok = Math.ceil(month.inChars / 4);
     const outTok = Math.ceil(month.outChars / 2.5);
     const cost = this.estimateCostSplit(month.inChars, month.outChars);
-    new import_obsidian6.Setting(el).setName("\u8BA1\u8D39\u53E3\u5F84").setDesc(
-      isTokenBasis ? "\u5F53\u524D\u5F15\u64CE\uFF08OpenAI \u517C\u5BB9\u63A5\u53E3\uFF09\u6309 token \u8BA1\u8D39\uFF1Av1.3 \u8D77\u76F4\u63A5\u91C7\u96C6 API \u8FD4\u56DE\u7684 usage \u5B57\u6BB5\uFF08\u8D26\u5355\u53E3\u5F84\uFF0C\u542B\u6BCF\u8BF7\u6C42 system prompt \u5F00\u9500\uFF09\uFF1B\u72B6\u6001\u680F\u5E38\u9A7B\u300C\u901F\u7387 \xB7 \u4ECA\u65E5 \xB7 \u8D39\u7528\u300D\u6BB5\uFF08\u9AD8\u7EA7\u9875\u53EF\u5173\uFF09\u3002\u5207\u6362\u5176\u4ED6\u5F15\u64CE\u540E\u672C\u9875\u56DE\u843D\u5B57\u7B26\u53E3\u5F84" : "\u5F53\u524D\u5F15\u64CE\u6309\u5B57\u7B26\u8BA1\u8D39\uFF08DeepL/Google/Azure\uFF09\uFF1Atokens \u9879\u4E3A\u5B57\u7B26\u6298\u7B97\u4F30\u7B97\uFF08\u8F93\u5165 \u2248 \u5B57\u7B26/4\u3001\u8F93\u51FA \u2248 \u5B57\u7B26/2.5\uFF09\uFF0C\u4EC5\u91CF\u7EA7\u53C2\u8003"
+    new import_obsidian6.Setting(el).setName(t("settings.usage.basis")).setDesc(
+      isTokenBasis ? t("settings.usage.basis.token.desc") : t("settings.usage.basis.chars.desc")
     );
-    new import_obsidian6.Setting(el).setName("\u672C\u6708\u7528\u91CF").setDesc(
-      `\u9001\u8BD1 ${month.calls.toLocaleString()} \u6761\uFF5C\u8F93\u5165 ${month.inChars.toLocaleString()} \u5B57\u7B26 \u2248 ${inTok.toLocaleString()} tokens\uFF5C\u8F93\u51FA ${month.outChars.toLocaleString()} \u5B57\u7B26 \u2248 ${outTok.toLocaleString()} tokens\uFF5C\u4F30\u7B97\u8D39\u7528 ${cost}\u3002\u672C\u6708\u7D2F\u8BA1\u53D1\u9001 ${monthChars.toLocaleString()} \u5B57\u7B26\uFF08\u4E0E\u6708\u5EA6\u9884\u7B97\u540C\u53E3\u5F84\uFF0Cusage.json \u6301\u4E45\u5316\uFF09\u3002\u9010\u65E5\u660E\u7EC6\u81EA v1.1.9 \u8D77\u8BB0\u5F55\uFF0C\u6B64\u524D\u5386\u53F2\u53EA\u6709\u6708\u7D2F\u8BA1`
+    new import_obsidian6.Setting(el).setName(t("settings.usage.month")).setDesc(
+      t("settings.usage.month.desc", {
+        calls: month.calls.toLocaleString(),
+        inChars: month.inChars.toLocaleString(),
+        inTok: inTok.toLocaleString(),
+        outChars: month.outChars.toLocaleString(),
+        outTok: outTok.toLocaleString(),
+        cost,
+        total: monthChars.toLocaleString()
+      })
     );
     const cards = el.createDiv("uut-usage-cards");
     const addCard = (label, value) => {
@@ -2919,13 +3563,25 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
       c.createDiv("uut-usage-card-label").setText(label);
       c.createDiv("uut-usage-card-value").setText(value);
     };
-    addCard("\u672C\u4F1A\u8BDD tokens\uFF08\u5B9E\u6D4B\uFF09", session.tokens.toLocaleString());
-    addCard("\u672C\u4F1A\u8BDD\u9001\u8BD1", `${session.calls.toLocaleString()} \u6761 / ${fmtCompact(session.chars)} \u5B57`);
-    addCard("\u8FD1 1 \u5206\u949F", isTokenBasis ? `${fmtCompact(rate1.tokensPerMin)} tok/min` : `${fmtCompact(rate1.charsPerMin)} \u5B57/min`);
-    addCard("\u8FD1 5 \u5206\u949F", isTokenBasis ? `${fmtCompact(rate5.tokensPerMin)} tok/min` : `${fmtCompact(rate5.charsPerMin)} \u5B57/min`);
-    addCard("\u4F1A\u8BDD\u5CF0\u503C", `${fmtCompact(session.peakTokensPerMin)} tok/min`);
+    addCard(t("settings.usage.card.session-tokens"), session.tokens.toLocaleString());
+    addCard(
+      t("settings.usage.card.session-calls"),
+      t("settings.usage.card.session-calls.value", {
+        n: session.calls.toLocaleString(),
+        chars: fmtCompact(session.chars)
+      })
+    );
+    addCard(
+      t("settings.usage.card.rate1"),
+      isTokenBasis ? `${fmtCompact(rate1.tokensPerMin)} tok/min` : t("settings.usage.card.rate-chars.value", { n: fmtCompact(rate1.charsPerMin) })
+    );
+    addCard(
+      t("settings.usage.card.rate5"),
+      isTokenBasis ? `${fmtCompact(rate5.tokensPerMin)} tok/min` : t("settings.usage.card.rate-chars.value", { n: fmtCompact(rate5.charsPerMin) })
+    );
+    addCard(t("settings.usage.card.peak"), `${fmtCompact(session.peakTokensPerMin)} tok/min`);
     if (isTokenBasis) {
-      addCard("\u4ECA\u65E5 tokens\uFF08\u5B9E\u6D4B\uFF09", (today.inTokens + today.outTokens).toLocaleString());
+      addCard(t("settings.usage.card.today-tokens"), (today.inTokens + today.outTokens).toLocaleString());
       if (priceOn && price) {
         const todayCost = estimateTokenCost(today.inTokens, today.outTokens, {
           inputPerMillion: price.input,
@@ -2935,14 +3591,14 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
           inputPerMillion: price.input,
           outputPerMillion: price.output
         });
-        addCard(`\u4ECA\u65E5\u8D39\u7528\uFF08\u2248${currency}\uFF09`, fmtCost(todayCost, currency));
-        addCard(`\u672C\u6708\u8D39\u7528\uFF08\u2248${currency}\uFF09`, fmtCost(monthCost, currency));
+        addCard(t("settings.usage.card.today-cost", { currency }), fmtCost(todayCost, currency));
+        addCard(t("settings.usage.card.month-cost", { currency }), fmtCost(monthCost, currency));
       }
     }
-    addCard("\u672C\u6708\u9001\u8BD1\u6761\u6570", month.calls.toLocaleString());
-    addCard("\u8F93\u5165 tokens\uFF08\u4F30\u7B97\uFF09", inTok.toLocaleString());
-    addCard("\u8F93\u51FA tokens\uFF08\u4F30\u7B97\uFF09", outTok.toLocaleString());
-    addCard("\u4F30\u7B97\u8D39\u7528", cost);
+    addCard(t("settings.usage.card.month-calls"), month.calls.toLocaleString());
+    addCard(t("settings.usage.card.in-tokens"), inTok.toLocaleString());
+    addCard(t("settings.usage.card.out-tokens"), outTok.toLocaleString());
+    addCard(t("settings.usage.card.cost"), cost);
     const tokenBasis = this.usageChartBasis === "token";
     const barIn = (d) => {
       var _a2;
@@ -2953,14 +3609,18 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
       return tokenBasis ? (_a2 = d.outTokens) != null ? _a2 : 0 : Math.ceil(d.outChars / 2.5);
     };
     const maxTok = Math.max(1, ...daily.map((d) => barIn(d) + barOut(d)));
-    new import_obsidian6.Setting(el).setName(`\u8FD1 30 \u5929\u9010\u65E5\u7528\u91CF\uFF08${tokenBasis ? "tokens \u5B9E\u6D4B" : "tokens \u6298\u7B97\u4F30\u7B97"}\uFF09`).setHeading();
+    new import_obsidian6.Setting(el).setName(
+      t("settings.usage.chart.title", {
+        basis: tokenBasis ? t("settings.usage.chart.basis-token") : t("settings.usage.chart.basis-est")
+      })
+    ).setHeading();
     const toggle = el.createDiv("uut-tabbar");
-    for (const [id, label] of [
-      ["token", "tokens \u5B9E\u6D4B"],
-      ["chars", "\u5B57\u7B26\u6298\u7B97"]
+    for (const [id, key] of [
+      ["token", "settings.usage.chart.basis-token"],
+      ["chars", "settings.usage.chart.toggle-chars"]
     ]) {
       const btn = toggle.createDiv(`uut-tab${this.usageChartBasis === id ? " uut-tab-active" : ""}`);
-      btn.textContent = label;
+      btn.textContent = t(key);
       btn.addEventListener("click", () => {
         this.usageChartBasis = id;
         void this.renderTabs();
@@ -2971,9 +3631,14 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
       const iV = barIn(d);
       const oV = barOut(d);
       const bar = chart.createDiv("uut-chart-bar");
-      bar.title = `${d.date}\uFF1A\u8C03\u7528 ${d.calls} \u6761
-\u8F93\u5165 ${d.inChars.toLocaleString()} \u5B57\u7B26 / \u5B9E\u6D4B ${((_f = d.inTokens) != null ? _f : 0).toLocaleString()} tokens
-\u8F93\u51FA ${d.outChars.toLocaleString()} \u5B57\u7B26 / \u5B9E\u6D4B ${((_g = d.outTokens) != null ? _g : 0).toLocaleString()} tokens`;
+      bar.title = t("settings.usage.chart.bar-title", {
+        date: d.date,
+        calls: d.calls,
+        inChars: d.inChars.toLocaleString(),
+        inTok: ((_f = d.inTokens) != null ? _f : 0).toLocaleString(),
+        outChars: d.outChars.toLocaleString(),
+        outTok: ((_g = d.outTokens) != null ? _g : 0).toLocaleString()
+      });
       if (oV > 0)
         bar.createDiv("uut-chart-out").style.height = `${oV / maxTok * 100}%`;
       if (iV > 0)
@@ -2983,13 +3648,14 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
     axis.createSpan().setText((_i = (_h = daily[0]) == null ? void 0 : _h.date) != null ? _i : "");
     axis.createSpan().setText((_k = (_j = daily[Math.floor(daily.length / 2)]) == null ? void 0 : _j.date) != null ? _k : "");
     axis.createSpan().setText((_m = (_l = daily[daily.length - 1]) == null ? void 0 : _l.date) != null ? _m : "");
+    const legendBasis = tokenBasis ? t("settings.usage.legend.actual") : t("settings.usage.legend.est");
     const legend = el.createDiv("uut-chart-legend");
     const lg1 = legend.createSpan();
     lg1.createSpan({ cls: "uut-chart-swatch uut-swatch-in" });
-    lg1.appendText(`\u8F93\u5165 tokens\uFF08${tokenBasis ? "\u5B9E\u6D4B" : "\u4F30\u7B97"}\uFF09`);
+    lg1.appendText(t("settings.usage.legend.in", { basis: legendBasis }));
     const lg2 = legend.createSpan();
     lg2.createSpan({ cls: "uut-chart-swatch uut-swatch-out" });
-    lg2.appendText(`\u8F93\u51FA tokens\uFF08${tokenBasis ? "\u5B9E\u6D4B" : "\u4F30\u7B97"}\uFF09`);
+    lg2.appendText(t("settings.usage.legend.out", { basis: legendBasis }));
     const week = daily.slice(-7).reduce(
       (acc, d) => {
         var _a2, _b2, _c2, _d2;
@@ -3003,12 +3669,16 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
       },
       { calls: 0, inChars: 0, outChars: 0, inTokens: 0, outTokens: 0 }
     );
-    new import_obsidian6.Setting(el).setName("\u4ECA\u65E5 / \u8FD1 7 \u65E5").setDesc(
-      `\u4ECA\u65E5\uFF1A${(_o = (_n = daily[daily.length - 1]) == null ? void 0 : _n.calls) != null ? _o : 0} \u6761\uFF0C\u5B9E\u6D4B ${(today.inTokens + today.outTokens).toLocaleString()} tokens\uFF5C\u8FD1 7 \u65E5\uFF1A${week.calls.toLocaleString()} \u6761\uFF0C\u5B9E\u6D4B ${(((_p = week.inTokens) != null ? _p : 0) + ((_q = week.outTokens) != null ? _q : 0)).toLocaleString()} tokens\uFF08\u6298\u7B97\u4F30\u7B97 ${(Math.ceil(week.inChars / 4) + Math.ceil(week.outChars / 2.5)).toLocaleString()}\uFF09`
+    new import_obsidian6.Setting(el).setName(t("settings.usage.today-week")).setDesc(
+      t("settings.usage.today-week.desc", {
+        todayCalls: (_o = (_n = daily[daily.length - 1]) == null ? void 0 : _n.calls) != null ? _o : 0,
+        todayTok: (today.inTokens + today.outTokens).toLocaleString(),
+        weekCalls: week.calls.toLocaleString(),
+        weekTok: (((_p = week.inTokens) != null ? _p : 0) + ((_q = week.outTokens) != null ? _q : 0)).toLocaleString(),
+        weekEst: (Math.ceil(week.inChars / 4) + Math.ceil(week.outChars / 2.5)).toLocaleString()
+      })
     );
-    new import_obsidian6.Setting(el).setName("\u53E3\u5F84\u8BF4\u660E").setDesc(
-      "v1.3 \u8D77 OpenAI \u517C\u5BB9\u901A\u9053\u8BB0\u5F55 API \u8FD4\u56DE\u7684\u771F\u5B9E usage\uFF08\u8D26\u5355\u53E3\u5F84\uFF0C\u542B\u6BCF\u8BF7\u6C42 system prompt \u5F00\u9500\uFF09\uFF1B\u300C\u6298\u7B97\u4F30\u7B97\u300D\u7531\u5B57\u7B26\u6570\u4F30\u7B97\uFF08\u8F93\u5165 \u2248 \u5B57\u7B26/4\u3001\u8F93\u51FA \u2248 \u5B57\u7B26/2.5\uFF09\uFF0C\u670D\u52A1\u4E8E\u5386\u53F2\u6570\u636E\u4E0E\u975E token \u8BA1\u8D39\u5F15\u64CE\u3002" + COST_BASIS + "\u3002\u7F13\u5B58\u547D\u4E2D\u4E0E\u672F\u8BED\u8868\u547D\u4E2D\u4E0D\u6D88\u8017 API\u3001\u4E0D\u8BA1\u5165\u6B64\u7EDF\u8BA1\uFF1B\u6708\u5EA6\u9884\u7B97\u53E3\u5F84\u4ECD\u4E3A\u5B57\u7B26"
-    );
+    new import_obsidian6.Setting(el).setName(t("settings.usage.basis-note")).setDesc(t("settings.usage.basis-note.desc", { basis: costBasis() }));
   }
   /** 按基准价把输入/输出字符拆分折算为费用（比单字符口径更准；高峰价，空闲减半） */
   estimateCostSplit(inChars, outChars) {
@@ -3018,19 +3688,19 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
     const outTok = Math.ceil(outChars / 2.5);
     const yuan = inTok * 2e-6 + outTok * 8e-6;
     if (yuan < 0.01)
-      return "< \xA50.01\uFF08\u7A7A\u95F2\u534A\u4EF7\uFF09";
-    return `\u9AD8\u5CF0 \u2248 \xA5${yuan.toFixed(2)}\uFF08\u7A7A\u95F2 \u2248 \xA5${(yuan / 2).toFixed(2)}\uFF09`;
+      return t("settings.usage.split-low");
+    return t("settings.usage.split-high", { peak: yuan.toFixed(2), off: (yuan / 2).toFixed(2) });
   }
   /** 高级：过滤正则、术语表、批量参数、调试模式（4.5） */
   renderAdvanced(el) {
     const s = this.plugin.settings;
-    new import_obsidian6.Setting(el).setName("\u8DF3\u8FC7\u89C4\u5219\uFF08\u6B63\u5219\uFF09").setDesc("\u6BCF\u884C\u4E00\u6761\u6B63\u5219\uFF1B\u547D\u4E2D\u6587\u672C\u4E0D\u9001\u8BD1\uFF084.2.1 \u89C4\u5219 1\uFF09\u3002\u51CF\u5C11\u4E0D\u5FC5\u8981\u7684 API \u6D88\u8017\uFF1B\u96F6\u81EA\u8EAB\u6210\u672C").addTextArea(
+    new import_obsidian6.Setting(el).setName(t("settings.advanced.skip-patterns")).setDesc(t("settings.advanced.skip-patterns.desc")).addTextArea(
       (text) => text.setValue(s.skipPatterns.join("\n")).onChange(async (v) => {
         s.skipPatterns = v.split("\n").map((x) => x.trim()).filter((x) => x.length > 0);
         await this.plugin.saveSettings();
       })
     );
-    new import_obsidian6.Setting(el).setName("\u672F\u8BED\u8868\uFF08\u56FA\u5B9A\u8BD1\u6CD5\uFF09").setDesc("\u6BCF\u884C\u4E00\u6761\uFF1A\u539F\u6587=\u8BD1\u6587\uFF1B\u547D\u4E2D\u76F4\u63A5\u8FD4\u56DE\uFF0C\u4E0D\u8FDB\u7F13\u5B58\u4E0E API\uFF08FR-15\uFF09\u2014\u2014\u7701\u989D\u5EA6\uFF1A\u547D\u4E2D\u8BCD\u6761\u96F6\u6D88\u8017").addTextArea(
+    new import_obsidian6.Setting(el).setName(t("settings.advanced.glossary")).setDesc(t("settings.advanced.glossary.desc")).addTextArea(
       (text) => text.setValue(
         Object.entries(s.glossary).map(([k, v]) => `${k}=${v}`).join("\n")
       ).onChange(async (v) => {
@@ -3045,7 +3715,7 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
         await this.plugin.saveSettings();
       })
     );
-    new import_obsidian6.Setting(el).setName("\u6279\u91CF\u805A\u5408\u7A97\u53E3\uFF08\u6BEB\u79D2\uFF09").setDesc("\u9ED8\u8BA4 100\uFF0C\u53EF\u914D\u7F6E 50\u2013500\uFF084.2.2\uFF09\u3002\u7A97\u53E3\u5185\u76F8\u540C\u6587\u672C\u53BB\u91CD\u5171\u4EAB\u4E00\u6B21\u8BF7\u6C42\u2014\u2014\u8C03\u5927\u53EF\u7565\u5FAE\u51CF\u5C11\u91CD\u590D\u8BF7\u6C42\uFF1B\u5BF9\u603B\u5B57\u7B26\u6D88\u8017\u65E0\u5F71\u54CD").addText((text) => {
+    new import_obsidian6.Setting(el).setName(t("settings.advanced.batch-window")).setDesc(t("settings.advanced.batch-window.desc")).addText((text) => {
       text.inputEl.type = "number";
       text.setValue(String(s.batchWindowMs)).onChange(async (v) => {
         const n = Number(v);
@@ -3055,7 +3725,7 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
         }
       });
     });
-    new import_obsidian6.Setting(el).setName("\u6700\u5927\u5E76\u53D1\u8BF7\u6C42\u6570").setDesc("\u9ED8\u8BA4 3\uFF0C\u907F\u514D\u89E6\u53D1 API \u9650\u6D41\uFF084.2.2\uFF09\u3002\u26A0\uFE0F \u8C03\u5927\u4E0D\u7701\u94B1\uFF08\u603B\u5B57\u7B26\u91CF\u4E0D\u53D8\uFF09\uFF0C\u53EA\u5F71\u54CD\u901F\u5EA6\uFF1B\u89E6\u53D1\u9650\u6D41\u53CD\u800C\u53EF\u80FD\u56E0\u91CD\u8BD5\u591A\u8017\u989D\u5EA6").addText((text) => {
+    new import_obsidian6.Setting(el).setName(t("settings.advanced.max-concurrent")).setDesc(t("settings.advanced.max-concurrent.desc")).addText((text) => {
       text.inputEl.type = "number";
       text.setValue(String(s.maxConcurrentRequests)).onChange(async (v) => {
         const n = Number(v);
@@ -3065,7 +3735,7 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
         }
       });
     });
-    new import_obsidian6.Setting(el).setName("\u5355\u8BF7\u6C42\u8D85\u65F6\uFF08\u6BEB\u79D2\uFF09").setDesc("\u9ED8\u8BA4 30000\uFF08R-23\uFF1A\u6162\u5F15\u64CE\u4E0A\u8C03\uFF09\uFF1B\u53EF\u914D\u7F6E 5000\u2013120000\uFF084.2.2\uFF09\u3002\u8D85\u65F6\u7684\u8BF7\u6C42\u6309\u5931\u8D25\u5904\u7406\uFF1A\u5DF2\u53D1\u9001\u7684\u5B57\u7B26\u901A\u5E38\u4ECD\u4F1A\u8BA1\u8D39").addText((text) => {
+    new import_obsidian6.Setting(el).setName(t("settings.advanced.timeout")).setDesc(t("settings.advanced.timeout.desc")).addText((text) => {
       text.inputEl.type = "number";
       text.setValue(String(s.requestTimeoutMs)).onChange(async (v) => {
         const n = Number(v);
@@ -3075,8 +3745,8 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
         }
       });
     });
-    new import_obsidian6.Setting(el).setName("\u8C03\u8BD5\u6A21\u5F0F").setDesc("Console \u8F93\u51FA\u62E6\u622A\u65E5\u5FD7\u3002\u7EAF\u672C\u5730\u884C\u4E3A\uFF0C\u96F6 API \u6D88\u8017").addToggle(
-      (t) => t.setValue(s.debugMode).onChange(async (v) => {
+    new import_obsidian6.Setting(el).setName(t("settings.advanced.debug")).setDesc(t("settings.advanced.debug.desc")).addToggle(
+      (toggle) => toggle.setValue(s.debugMode).onChange(async (v) => {
         s.debugMode = v;
         await this.plugin.saveSettings();
       })
@@ -3373,16 +4043,14 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
       DEFAULT_SETTINGS,
       await this.loadData()
     );
+    setUiLocale(resolveUiLocale(this.settings.uiLanguage, import_obsidian7.moment.locale()));
     if (!this.settings.communityScopeMigratedV115) {
       const wasOn = this.settings.scope.communityPlugins;
       this.settings.scope.communityPlugins = false;
       this.settings.communityScopeMigratedV115 = true;
       await this.saveData(this.settings);
       if (wasOn) {
-        new import_obsidian7.Notice(
-          "UUT v1.1.5\uFF1A\u793E\u533A\u5E02\u573A\u9ED8\u8BA4\u4E0D\u518D\u81EA\u52A8\u7FFB\u8BD1\uFF08\u6B64\u524D\u8BE5\u5F00\u5173\u5B9E\u9645\u672A\u751F\u6548\uFF0C\u6EDA\u52A8\u5E02\u573A\u5217\u8868\u4F1A\u6301\u7EED\u6D88\u8017 API \u989D\u5EA6\uFF09\u3002\u9010\u6761\u7FFB\u8BD1\u8BF7\u7528\u5E02\u573A\u6761\u76EE\u4E0A\u7684\u300C\u8BD1\u300D\u6309\u94AE\uFF08\u7F13\u5B58\u547D\u4E2D\u96F6\u6210\u672C\uFF09\uFF1B\u786E\u9700\u81EA\u52A8\u7FFB\u8BD1\u8BF7\u5230 \u8BBE\u7F6E \u2192 \u4F5C\u7528\u57DF \u624B\u52A8\u6253\u5F00",
-          12e3
-        );
+        new import_obsidian7.Notice(t("notice.migrate-v115") + t("notice.migrate-v115-hint"), 12e3);
       }
     }
     this.io = {
@@ -3403,7 +4071,7 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
             throw: false
           }),
           this.settings.requestTimeoutMs,
-          "\u7FFB\u8BD1\u8BF7\u6C42"
+          t("common.timeout-request")
         );
         return { status: res.status, text: res.text };
       } finally {
@@ -3446,7 +4114,7 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
       (u) => void this.usageTracker.recordTokens(u.promptTokens, u.completionTokens)
     );
     if (this.keyStorage.hasDecryptFailures()) {
-      new import_obsidian7.Notice("UUT\uFF1A\u5DF2\u4FDD\u5B58\u7684 API Key \u5728\u672C\u673A\u89E3\u5BC6\u5931\u8D25\uFF0C\u8BF7\u5728\u8BBE\u7F6E\u9875\u91CD\u65B0\u8F93\u5165");
+      new import_obsidian7.Notice(t("notice.key-decrypt-failed"));
     }
     this.statusBarItem = this.addStatusBarItem();
     this.statusBarItem.setAttr("data-uut", "status");
@@ -3476,11 +4144,9 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
       // v1.1.5：cacheEnabled 接线（此前为死配置，缓存读写始终生效）
       isCacheEnabled: () => this.settings.cacheEnabled,
       // 4.2.2 错误分类：Key 失效（401/403）立即引导，不等熔断
-      onAuthFailure: () => new import_obsidian7.Notice("UUT\uFF1AAPI Key \u53EF\u80FD\u5931\u6548\uFF08401/403\uFF09\uFF0C\u8BF7\u68C0\u67E5\u8BBE\u7F6E\u9875 API \u914D\u7F6E"),
+      onAuthFailure: () => new import_obsidian7.Notice(t("notice.auth-failed")),
       // v1.1.8：预算超限提示（types.ts 承诺的"超限提示"此前未实现，纯静默 = 用户实测"按钮失效"头号嫌疑）
-      onBudgetExceeded: () => new import_obsidian7.Notice(
-        "UUT\uFF1A\u672C\u6708\u5B57\u7B26\u9884\u7B97\u5DF2\u7528\u5B8C\uFF0C\u7FFB\u8BD1\u5DF2\u6682\u505C\u5E76\u56DE\u9000\u539F\u6587\uFF1B\u5982\u9700\u7EE7\u7EED\u8BF7\u5230 \u8BBE\u7F6E\u9875 \u2192 API \u914D\u7F6E \u8C03\u6574\u6708\u5EA6\u9884\u7B97"
-      )
+      onBudgetExceeded: () => new import_obsidian7.Notice(t("notice.budget-exceeded"))
     };
     this.coordinator = new TranslationCoordinator(
       this.filter,
@@ -3491,7 +4157,7 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
       // Provider 熔断提示（4.2.2：一次熔断只 Notice 一次）；
       // v1.2 A3：同时启动状态栏倒计时（此前只有一次性 Notice，用户不知道熔断还要多久）
       () => {
-        new import_obsidian7.Notice("UUT\uFF1A\u7FFB\u8BD1\u670D\u52A1\u8FDE\u7EED\u5931\u8D25\uFF0C\u5DF2\u81EA\u52A8\u6682\u505C 10 \u5206\u949F\uFF08\u8BE6\u89C1\u8BBE\u7F6E\u9875\uFF09");
+        new import_obsidian7.Notice(t("notice.circuit-open"));
         this.startCircuitCountdown();
       }
     );
@@ -3501,17 +4167,17 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
         () => window.setTimeout(() => this.prewarmCommands(), 2e3)
       );
     } else if (this.settings.enabled && !this.provider) {
-      new import_obsidian7.Notice("UUT\uFF1A\u8BF7\u5148\u5728\u8BBE\u7F6E\u9875\u914D\u7F6E\u7FFB\u8BD1\u5F15\u64CE\u4E0E API Key");
+      new import_obsidian7.Notice(t("notice.setup-required"));
     }
     this.addSettingTab(new UutSettingTab(this.app, this));
     this.addCommand({
       id: "toggle-original",
-      name: "\u4E34\u65F6\u663E\u793A\u539F\u6587/\u6062\u590D\u8BD1\u6587",
+      name: t("command.toggle-original"),
       callback: () => {
         this.settings.displayMode = this.settings.displayMode === "original" ? "replace" : "original";
         void this.saveSettings();
         new import_obsidian7.Notice(
-          this.settings.displayMode === "original" ? "UUT\uFF1A\u5DF2\u5207\u6362\u4E3A\u539F\u6587\u663E\u793A\uFF08\u65B0\u6E32\u67D3\u5185\u5BB9\u4E0D\u518D\u56DE\u5199\uFF1B\u7F13\u5B58\u7EE7\u7EED\u9884\u70ED\uFF09" : "UUT\uFF1A\u5DF2\u6062\u590D\u8BD1\u6587\u663E\u793A"
+          this.settings.displayMode === "original" ? t("notice.original-on") : t("notice.original-off")
         );
       }
     });
@@ -3541,8 +4207,8 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
         await this.keyStorage.delete(providerId);
       }
     } catch (e) {
-      console.error("[uut] Key \u4FDD\u5B58\u5931\u8D25\uFF1A", e);
-      new import_obsidian7.Notice(`UUT\uFF1AKey \u4FDD\u5B58\u5931\u8D25\uFF1A${String(e)}`);
+      console.error(t("common.log-key-save-failed"), e);
+      new import_obsidian7.Notice(t("notice.key-save-failed", { n: String(e) }));
     }
     await this.refreshRuntime();
   }
@@ -3599,7 +4265,7 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
       const todayTokens = today.inTokens + today.outTokens;
       if (rate.tokensPerMin >= 1)
         ratePart = `\u25B2 ${fmtCompact(rate.tokensPerMin)} tok/min \xB7 `;
-      badge = `UUT \u4ECA\u65E5 ${fmtCompact(todayTokens)} tok`;
+      badge = t("status.today-tokens", { n: fmtCompact(todayTokens) });
       if (price && price.input > 0 && price.output > 0) {
         const cost = estimateTokenCost(today.inTokens, today.outTokens, {
           inputPerMillion: price.input,
@@ -3610,8 +4276,8 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
       }
     } else {
       if (rate.charsPerMin >= 1)
-        ratePart = `\u25B2 ${fmtCompact(rate.charsPerMin)} \u5B57/min \xB7 `;
-      badge = `UUT \u4ECA\u65E5 ${fmtCompact(today.chars)} \u5B57`;
+        ratePart = t("status.rate-chars", { n: fmtCompact(rate.charsPerMin) });
+      badge = t("status.today-chars", { n: fmtCompact(today.chars) });
     }
     return { bar: idle ? null : `${ratePart}${badge}`, badge };
   }
@@ -3654,7 +4320,7 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
   async purgeStaleCacheEntries() {
     var _a;
     if (!this.provider) {
-      return { ok: false, message: "\u672A\u914D\u7F6E\u7FFB\u8BD1\u5F15\u64CE\uFF0C\u65E0\u6CD5\u5224\u5B9A\u5F53\u524D\u914D\u7F6E\uFF0C\u672A\u505A\u4EFB\u4F55\u6E05\u7406" };
+      return { ok: false, message: t("common.purge-no-engine") };
     }
     const model = (_a = this.provider.modelId) != null ? _a : "";
     const removed = this.cache.purgeMismatched(
@@ -3665,7 +4331,7 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
     await this.cache.flush();
     return {
       ok: true,
-      message: `\u5DF2\u6E05\u7406 ${removed} \u6761\u4E0E\u5F53\u524D\u5F15\u64CE/\u8BED\u8A00/\u6A21\u578B\u4E0D\u5339\u914D\u7684\u7F13\u5B58\u6761\u76EE`
+      message: t("status.cache-purged", { n: removed })
     };
   }
   /** 缓存 Tab「立即落盘」（v1.1.5）：不等 30s/100 条/5 分钟保底策略，立即把内存缓存写入磁盘 */
@@ -3675,10 +4341,13 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
       const at = this.cache.stats().lastFlushAt;
       return {
         ok: true,
-        message: `\u7F13\u5B58\u5DF2\u843D\u76D8\uFF08${at ? new Date(at).toLocaleTimeString() : "\u521A\u521A"}\uFF09\uFF0C\u5171 ${this.cache.stats().size} \u6761`
+        message: t("status.cache-flushed", {
+          time: at ? new Date(at).toLocaleTimeString() : t("status.just-now"),
+          n: this.cache.stats().size
+        })
       };
     } catch (e) {
-      return { ok: false, message: `\u843D\u76D8\u5931\u8D25\uFF1A${String(e)}` };
+      return { ok: false, message: t("status.flush-failed", { n: String(e) }) };
     }
   }
   /** 导出缓存到库根目录（4.5 缓存 Tab；FR-12） */
@@ -3690,9 +4359,9 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
         path,
         await this.io.read(`${this.manifest.dir}/translation-cache.json`)
       );
-      return { ok: true, message: `\u7F13\u5B58\u5DF2\u5BFC\u51FA\u5230\u5E93\u6839\u76EE\u5F55\uFF1A${path}` };
+      return { ok: true, message: t("status.cache-exported", { n: path }) };
     } catch (e) {
-      return { ok: false, message: `\u5BFC\u51FA\u5931\u8D25\uFF1A${String(e)}` };
+      return { ok: false, message: t("status.export-failed", { n: String(e) }) };
     }
   }
   /** 导入缓存 JSON（4.5 校验：schemaVersion 与条目结构，非法文件拒绝） */
@@ -3701,27 +4370,28 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
     try {
       raw = JSON.parse(text);
     } catch (e) {
-      return { ok: false, message: "\u5BFC\u5165\u5931\u8D25\uFF1A\u4E0D\u662F\u5408\u6CD5 JSON \u6587\u4EF6" };
+      return { ok: false, message: t("status.import-bad-json") };
     }
     const file = raw;
     if (typeof file.schemaVersion !== "number" || file.schemaVersion > CACHE_SCHEMA_VERSION || typeof file.entries !== "object" || file.entries === null) {
       return {
         ok: false,
-        message: `\u5BFC\u5165\u5931\u8D25\uFF1AschemaVersion \u4E0D\u53D7\u652F\u6301\uFF08\u5F53\u524D\u652F\u6301 \u2264 ${CACHE_SCHEMA_VERSION}\uFF09\u6216\u7F3A\u5C11 entries`
+        message: t("status.import-schema-unsupported", { n: CACHE_SCHEMA_VERSION })
       };
     }
     const count = this.cache.importEntries(file.entries);
     await this.cache.flush();
-    return { ok: true, message: `\u5BFC\u5165\u5B8C\u6210\uFF1A${count} \u6761\u7F13\u5B58\u6761\u76EE\u5DF2\u5408\u5E76` };
+    return { ok: true, message: t("status.import-done", { n: count }) };
   }
   async testActiveProvider() {
     if (!this.provider)
-      return { ok: false, message: "\u672A\u914D\u7F6E\u7FFB\u8BD1\u5F15\u64CE\u6216 API Key" };
+      return { ok: false, message: t("common.no-engine-or-key") };
     return this.provider.validateConfig();
   }
   /** 配置变更热生效：重建 Provider 与批量通道、同步 coordinator 参数、按需启停拦截器 */
   async refreshRuntime() {
     var _a, _b;
+    setUiLocale(resolveUiLocale(this.settings.uiLanguage, import_obsidian7.moment.locale()));
     this.provider = await createActiveProvider(
       this.settings,
       this.keyStorage,
@@ -3756,7 +4426,7 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
       if (this.settings.debugMode)
         console.log("[uut]", msg);
     };
-    const format = (t, o) => formatWriteBack(t, o, this.settings.displayMode, this.settings.bilingualFormat);
+    const format = (t2, o) => formatWriteBack(t2, o, this.settings.displayMode, this.settings.bilingualFormat);
     const isBilingual = () => this.settings.displayMode === "bilingual";
     const on = this.settings.interceptors;
     if (on.command && !this.commandPatcher) {
@@ -3871,7 +4541,7 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
       }
       const mm = String(Math.floor(remain / 6e4)).padStart(2, "0");
       const ss = String(Math.floor(remain % 6e4 / 1e3)).padStart(2, "0");
-      this.statusBarItem.setText(`UUT \u7194\u65AD\u4E2D ${mm}:${ss}`);
+      this.statusBarItem.setText(t("status.circuit-countdown", { n: mm, m: ss }));
       this.setStatusVisible(true);
     };
     tick();
@@ -3897,12 +4567,12 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
     }
     if (pending > 0) {
       const done = this.batcher.stats().completed;
-      this.statusBarItem.setText(`UUT \u7FFB\u8BD1\u4E2D\u2026 \u5269 ${pending}\uFF08\u5DF2\u8BD1 ${done}\uFF09`);
+      this.statusBarItem.setText(t("status.translating", { n: pending, m: done }));
       this.setStatusVisible(true);
     } else {
       const done = this.batcher.stats().completed;
       if (done > 0) {
-        this.statusBarItem.setText(`UUT \u2713 \u672C\u4F1A\u8BDD\u5DF2\u8BD1 ${done} \u6761`);
+        this.statusBarItem.setText(t("status.session-done", { n: done }));
         this.setStatusVisible(true);
         this.statusHideTimer = window.setTimeout(() => {
           this.setStatusVisible(false);

@@ -48,15 +48,15 @@
       "visibleModels": [
         "haiku",
         "sonnet",
-        "opus",
+        "opus[1m]",
         "fable"
       ],
       "selectedModels": [
         {
-          "value": "sonnet",
-          "label": "Sonnet",
-          "description": "Sonnet 5 · Efficient for routine tasks",
-          "resolvedModel": "claude-sonnet-5",
+          "value": "opus[1m]",
+          "label": "Opus",
+          "description": "Opus 4.8 with 1M context · Best for everyday, complex tasks · $5/$25 per Mtok",
+          "resolvedModel": "claude-opus-4-8[1m]",
           "reasoningMetadataResolved": true,
           "supportedEffortLevels": [
             "low",
@@ -67,10 +67,10 @@
           ]
         },
         {
-          "value": "opus",
-          "label": "Opus",
-          "description": "Opus 4.8 · Best for everyday, complex tasks",
-          "resolvedModel": "claude-opus-4-8",
+          "value": "sonnet",
+          "label": "Sonnet",
+          "description": "Sonnet 5 · Efficient for routine tasks · $3/$15 per Mtok",
+          "resolvedModel": "claude-sonnet-5",
           "reasoningMetadataResolved": true,
           "supportedEffortLevels": [
             "low",
@@ -83,7 +83,7 @@
         {
           "value": "haiku",
           "label": "Haiku",
-          "description": "Haiku 4.5 · Fastest for quick answers",
+          "description": "Haiku 4.5 · Fastest for quick answers · $1/$5 per Mtok",
           "resolvedModel": "claude-haiku-4-5-20251001",
           "reasoningMetadataResolved": true,
           "supportedEffortLevels": []
