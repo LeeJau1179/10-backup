@@ -522,6 +522,18 @@ body.sl-hide-toolbar-title .workspace-leaf-content[data-type^="story-line-"] > .
 .story-line-icon-group .clickable-icon {
     padding: 4px;
 }
+.story-line-corkboard-zoom-value {
+    min-width: 42px;
+    color: var(--text-muted);
+    font-size: 0.85em;
+    text-align: center;
+    user-select: none;
+}
+.story-line-corkboard-reset-zoom {
+    min-width: 36px;
+    font-size: 0.85em;
+    font-weight: 600;
+}
 
 /* --- View Switcher Tabs --- */
 .story-line-view-switcher {
@@ -704,6 +716,10 @@ body.sl-auto-hide-tab-labels .story-line-view-switcher.sl-collapsed .story-line-
 .story-line-filter-toggle {
     font-size: 0.85em;
     padding: 4px 8px;
+}
+
+.story-line-filter-toggle.has-filter {
+    color: var(--interactive-accent);
 }
 
 .story-line-filter-panel {
@@ -3770,6 +3786,21 @@ body.sl-auto-hide-tab-labels .story-line-view-switcher.sl-collapsed .story-line-
     font-style: italic;
 }
 
+.storyline-entity-select[multiple] {
+    min-height: 76px;
+}
+.storyline-entity-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 10px;
+    margin-top: 4px;
+    font-size: 0.82em;
+}
+.storyline-entity-link {
+    color: var(--text-accent);
+    cursor: pointer;
+}
+
 .character-field-textarea {
     width: 100%;
     padding: 6px 10px;
@@ -5387,7 +5418,6 @@ body.sl-auto-hide-tab-labels .story-line-view-switcher.sl-collapsed .story-line-
     padding: 16px;
     overflow-y: auto;
     flex: 1;
-    max-width: 700px;
 }
 
 .stats-section {
@@ -5677,6 +5707,7 @@ body.sl-auto-hide-tab-labels .story-line-view-switcher.sl-collapsed .story-line-
     flex-wrap: wrap;
     gap: 16px;
     margin: 12px 0 4px;
+    justify-content: center;
 }
 
 .stats-ring {
@@ -5722,8 +5753,8 @@ body.sl-auto-hide-tab-labels .story-line-view-switcher.sl-collapsed .story-line-
 .stats-sprint-spark-row {
     display: flex;
     align-items: flex-end;
-    gap: 4px;
-    height: 60px;
+    gap: 16px;
+    height: 130px;
 }
 
 .stats-sprint-spark-col {
@@ -5737,7 +5768,6 @@ body.sl-auto-hide-tab-labels .story-line-view-switcher.sl-collapsed .story-line-
 
 .stats-sprint-spark-bar {
     width: 100%;
-    max-width: 20px;
     background: var(--sc-accent);
     border-radius: 2px 2px 0 0;
     min-height: 2px;
@@ -5790,7 +5820,7 @@ body.sl-auto-hide-tab-labels .story-line-view-switcher.sl-collapsed .story-line-
 .pacing-dist-chart {
     display: flex;
     align-items: flex-end;
-    gap: 4px;
+    gap: 16px;
     height: 130px;
     padding: 8px 0;
     border-bottom: 2px solid var(--background-modifier-border);
@@ -5807,7 +5837,6 @@ body.sl-auto-hide-tab-labels .story-line-view-switcher.sl-collapsed .story-line-
 
 .pacing-dist-bar {
     width: 100%;
-    max-width: 40px;
     background: var(--sl-info, #2196F3);
     border-radius: 3px 3px 0 0;
     min-height: 2px;
@@ -5996,7 +6025,6 @@ body.sl-auto-hide-tab-labels .story-line-view-switcher.sl-collapsed .story-line-
 
 .stats-history-bar {
     width: 100%;
-    max-width: 18px;
     border-radius: 2px 2px 0 0;
     min-height: 2px;
     transition: height 0.3s;
@@ -7103,6 +7131,10 @@ body.sl-auto-hide-tab-labels .story-line-view-switcher.sl-collapsed .story-line-
     position:absolute; right:0; top:0; bottom:0; width:6px; cursor:col-resize; z-index:20; background:transparent;
 }
 
+.plot-label-col-resize-handle {
+    position:absolute; right:0; top:0; bottom:0; width:6px; cursor:col-resize; z-index:20; background:transparent;
+}
+
 /* Row headers */
 .plot-grid-row-header {
     display:flex;
@@ -7315,7 +7347,9 @@ body.sl-auto-hide-tab-labels .story-line-view-switcher.sl-collapsed .story-line-
     user-select: none;
     overflow: hidden;
     white-space: nowrap;
+    cursor: pointer;
 }
+.plot-grid-divider:focus-visible { outline: 2px solid var(--interactive-accent); outline-offset: -2px; }
 .plot-grid-divider-act {
     background: var(--background-modifier-border);
     font-size: 13px;
@@ -7842,6 +7876,12 @@ body.sl-auto-hide-tab-labels .story-line-view-switcher.sl-collapsed .story-line-
 /* ============================================
    Settings — Collapsible Color Section
    ============================================ */
+.story-line-declarative-settings-host {
+    display: block;
+    flex: 0 0 100%;
+    width: 100%;
+}
+
 .story-line-settings-section {
     margin: 12px 0;
     border: 1px solid var(--background-modifier-border);
@@ -10836,12 +10876,10 @@ body.theme-dark .location-field-input.dropdown {
     display: none;
 }
 
-/* Hide frontmatter / properties — gated on the Hide-Frontmatter setting via
-   the body-level class so toggling the setting OFF restores frontmatter
-   inside Manuscript-embedded scenes too. */
-body.sl-hide-frontmatter-global .sl-manuscript-embedded-split.sl-manuscript-embedded-split .metadata-container,
-body.sl-hide-frontmatter-global .sl-manuscript-embedded-split.sl-manuscript-embedded-split .metadata-properties-container,
-body.sl-hide-frontmatter-global .sl-manuscript-embedded-split.sl-manuscript-embedded-split .metadata-properties-heading {
+/* Hide frontmatter / properties in Manuscript view only. */
+body.sl-hide-manuscript-frontmatter .sl-manuscript-embedded-split.sl-manuscript-embedded-split .metadata-container,
+body.sl-hide-manuscript-frontmatter .sl-manuscript-embedded-split.sl-manuscript-embedded-split .metadata-properties-container,
+body.sl-hide-manuscript-frontmatter .sl-manuscript-embedded-split.sl-manuscript-embedded-split .metadata-properties-heading {
     display: none !important;
 }
 
@@ -10860,22 +10898,19 @@ body.sl-hide-frontmatter-global .view-content.sl-hide-frontmatter.sl-hide-frontm
     display: none;
 }
 
-/* Frontmatter inside any StoryLine custom view (Board, Manuscript, Scene
-   Inspector sidebar, Research, etc.) — those views have no `view.file`, so
-   we can't tag them per-leaf. Use the body-class + view data-type instead. */
-body.sl-hide-frontmatter-global .workspace-leaf-content.workspace-leaf-content[data-type^="story-line-"] .metadata-container.metadata-container,
-body.sl-hide-frontmatter-global .workspace-leaf-content.workspace-leaf-content[data-type^="story-line-"] .metadata-properties-container.metadata-properties-container,
-body.sl-hide-frontmatter-global .workspace-leaf-content.workspace-leaf-content[data-type^="story-line-"] .metadata-properties-heading.metadata-properties-heading,
-body.sl-hide-frontmatter-global .workspace-leaf-content.workspace-leaf-content[data-type^="story-line-"] .cm-line.HyperMD-frontmatter.HyperMD-frontmatter {
+/* Frontmatter inside StoryLine custom views (Board, Scene Inspector sidebar,
+    Research, etc.) — exclude Manuscript's embedded editors because they have
+    their own setting above. */
+body.sl-hide-frontmatter-global .workspace-leaf-content.workspace-leaf-content[data-type^="story-line-"] .metadata-container.metadata-container:not(.sl-manuscript-embedded-split .metadata-container),
+body.sl-hide-frontmatter-global .workspace-leaf-content.workspace-leaf-content[data-type^="story-line-"] .metadata-properties-container.metadata-properties-container:not(.sl-manuscript-embedded-split .metadata-properties-container),
+body.sl-hide-frontmatter-global .workspace-leaf-content.workspace-leaf-content[data-type^="story-line-"] .metadata-properties-heading.metadata-properties-heading:not(.sl-manuscript-embedded-split .metadata-properties-heading),
+body.sl-hide-frontmatter-global .workspace-leaf-content.workspace-leaf-content[data-type^="story-line-"] .cm-line.HyperMD-frontmatter.HyperMD-frontmatter:not(.sl-manuscript-embedded-split .cm-line.HyperMD-frontmatter) {
     display: none;
 }
 
-/* Issue #110 — Manuscript view embeds scene editors via detached splits, so
-   the JS toggle in updateFrontmatterVisibility() can't reach them. Gate on the
-   body-level `sl-hide-frontmatter-global` class so the setting still
-   round-trips: turning Hide Frontmatter OFF removes the class and restores
-   frontmatter inside Manuscript-embedded scenes too. */
-body.sl-hide-frontmatter-global .sl-manuscript-embedded-split .cm-line.HyperMD-frontmatter {
+/* Manuscript view embeds scene editors via detached splits, so the JS toggle
+    in updateFrontmatterVisibility() can't reach their raw YAML lines. */
+body.sl-hide-manuscript-frontmatter .sl-manuscript-embedded-split .cm-line.HyperMD-frontmatter {
     display: none !important;
 }
 
@@ -12112,13 +12147,19 @@ body /* ── Plain-text mode: hide link/tag decorations ───────�
 .character-role-history-title { font-weight: 600; font-size: 0.9em; }
 .character-role-history-hint { font-size: 0.8em; color: var(--text-muted); }
 .character-role-history-list { display: flex; flex-direction: column; gap: 4px; }
-.character-role-history-row { display: grid; grid-template-columns: 1.2fr 1.5fr 1fr 1fr auto; gap: 4px; align-items: center; }
+.character-role-history-row { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.5fr) minmax(0, 1fr) minmax(0, 1fr) auto; gap: 4px; align-items: center; }
 .character-role-history-input { font-size: 0.85em; padding: 3px 6px; }
 .character-role-history-remove { background: transparent; border: 1px solid var(--background-modifier-border); border-radius: 4px; color: var(--text-muted); cursor: pointer; padding: 2px 8px; }
 .character-role-history-remove:hover { color: var(--text-error); border-color: var(--text-error); }
 .character-role-history-empty { font-size: 0.8em; color: var(--text-muted); font-style: italic; padding: 4px; }
 .character-role-history-add { margin-top: 6px; font-size: 0.85em; padding: 4px 10px; background: var(--interactive-normal); border: 1px solid var(--background-modifier-border); border-radius: 4px; cursor: pointer; }
 .character-role-history-add:hover { background: var(--interactive-hover); }
+
+@media (max-width: 700px) {
+    .character-role-history-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; }
+    .character-role-history-plotline,
+    .character-role-history-book { grid-column: span 1; }
+}
 
 
 
