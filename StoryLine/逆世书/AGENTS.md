@@ -12,6 +12,10 @@
 
 **单一事实源总原则**：同一个事实，全库只允许在一个主场文件里写全；其余位置一律用 wikilink 指过去，不得复述。执行细节见 `[[Codex/AGENTS]]`。
 
+## Notes 修订来源
+
+`今生/Notes/` 中新增或实质性修改的条目，必须按条目标注来源（作者修订 / GPT / DeepSeek / OpenCode 等）；具体格式、来源判定与历史保留规则见 `今生/Notes/AGENTS.md`。此规则不替代 SceneNotes 已有的「灵感 / 作者对话」来源标注。
+
 ## 场景卡（Scene）三件套
 
 每张场景卡 frontmatter 必含以下三字段，其中 `title` 与 `aliases` **创建后永远不变**：
