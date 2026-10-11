@@ -50,12 +50,11 @@ sequence: 48                           # 数字，仅用于排序
 1. 写完整 frontmatter：三件套 `title`（无号、唯一）/ `aliases`（= title）/ `sequence`，加 `act`、`storyDate`、`chapter`、`pov`、`characters`、`location`、`status`、`subthread` 等。
    - 所属故事线 **必填**：使用 `subthread` 列表填写该 Scene 实际归属的一条或多条故事线，不得缺省或留空。
 2. `conflict` **必写** = 这场戏的冲突（戏剧张力/矛盾是什么，一句话）。
-3. `synopsis` 留空串：`synopsis: ""`（不写内容）。
-4. SceneNotes **必写**，来源标注「灵感」或「作者对话」。
-5. `sequence` 用 **`+0.5` 占位**：要插在 `seq N` 与 `seq N+1` 之间，填 `N.5`，文件名 `NN-N.5 标题.md`。
+3. SceneNotes **必写**，来源标注「灵感」或「作者对话」。
+4. `sequence` 用 **`+0.5` 占位**：要插在 `seq N` 与 `seq N+1` 之间，填 `N.5`，文件名 `NN-N.5 标题.md`。
    - 例：插在 `02-85` 与 `02-86` 之间 → `sequence: 85.5`，文件名 `02-85.5 标题.md`
-6. 建完**提醒用户去 UI 拖一下**：插件 `globalResequence` 会把小数归整成连续整数、后续序号自动顺延（只动数字，不动 title/aliases/链接）。
-7. 归整只发生在「手动拖动/重排」时；UI 自动扫描不会归整，所以建完必须提醒。
+5. 建完**提醒用户去 UI 拖一下**：插件 `globalResequence` 会把小数归整成连续整数、后续序号自动顺延（只动数字，不动 title/aliases/链接）。
+6. 归整只发生在「手动拖动/重排」时；UI 自动扫描不会归整，所以建完必须提醒。
 
 ## 写作注意事项
 
