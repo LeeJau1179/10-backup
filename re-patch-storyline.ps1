@@ -1,4 +1,4 @@
-# re-patch-storyline.ps1
+﻿# re-patch-storyline.ps1
 # 用途：StoryLine 插件每次被 Obsidian 更新后，会回滚看板虚拟滚动补丁（threshold:40 → threshold:1e9），
 #       导致 board 里超过 40 张卡片的 Act 列拖拽时跳到底部。跑本脚本可一键重新打补丁。
 #
