@@ -68,7 +68,7 @@
           ]
         },
         {
-          "value": "claude-fable-5-1",
+          "value": "claude-fable-5-1[1m]",
           "label": "Fable",
           "description": "Fable 5.1 · Most capable for your hardest and longest-running tasks · Requires usage credits",
           "resolvedModel": "claude-fable-5-1",
