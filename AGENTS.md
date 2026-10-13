@@ -36,3 +36,4 @@
 | `StoryLine/逆世书/AGENTS.md` | 创作分层（Codex / Scene / 正文）、场景卡三件套、链接铁律、新建 Scene SOP |
 | `StoryLine/逆世书/Codex/AGENTS.md` | Codex 命名／目录归位／单一事实源 |
 | `StoryLine/逆世书/今生/Notes/AGENTS.md` | Notes 定位与铁律 |
+| `.claude/skills/aiout/`（`.agents/skills/aiout/` 为同内容副本） | 正文检测、清理、重写、新写流程；改正文前先读 |
