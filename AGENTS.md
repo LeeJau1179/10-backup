@@ -6,7 +6,7 @@
 
 - **讨论不等于设定，解释不等于约束，否定旧方案不等于新增永久禁令。**
 - 改任何文件都直接改成最新内容，不留痕迹：不写来源、修订记录、日期标注、「作者定／作者对话」、「改为／删除／原来」之类的改动说明。改动历史由 git 记录。
-- 场景卡 `synopsis` 记事件及核心变化，`conflict` 记矛盾；SceneNotes 只记节拍和边界。写法见 `StoryLine/逆世书/AGENTS.md`「场景卡与 SceneNotes」。
+- 场景卡 `synopsis` 记事件及核心变化，`conflict` 记矛盾；SceneNotes 记节拍、边界和正文待改。写法见 `StoryLine/逆世书/AGENTS.md`「场景卡与 SceneNotes」。
 
 ## 顶层目录
 
@@ -27,7 +27,7 @@
 | `今生/`                       | 本一（正文主体）                                                                          |
 | `今生/Codex/`                 | 本一层设定：Characters / Locations / Items / Culture / Lore / Organizations；Systems 空置  |
 | `今生/Scenes/Act 0–5、Act 99/` | 场景卡（成果驱动）                                                                         |
-| `今生/SceneNotes/`            | 场景笔记：节拍与边界                                                                        |
+| `今生/SceneNotes/`            | 场景笔记：节拍、边界、正文待改                                                                   |
 | `今生/Notes/`                 | 作者私人参考工作区                                                                         |
 | `今生/Research/`              | 研究资料                                                                              |
 | `今生/Archive/`               | 归档场景卡                                                                             |
@@ -42,4 +42,3 @@
 | `StoryLine/逆世书/AGENTS.md` | 创作分层（Codex / Scene / 正文）、场景卡三件套、链接铁律、新建 Scene SOP |
 | `StoryLine/逆世书/Codex/AGENTS.md` | Codex 命名／目录归位／单一事实源 |
 | `StoryLine/逆世书/今生/Notes/AGENTS.md` | Notes 定位与铁律 |
-| `.claude/skills/aiout/`（`.agents/skills/aiout/` 为同内容副本） | 正文检测、清理、重写、新写流程；改正文前先读 |
