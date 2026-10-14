@@ -49,8 +49,9 @@ sequence: 48                           # 数字，仅用于排序
 3. SceneNotes **必写**，来源标注「灵感」或「作者对话」。
 4. `sequence` 用 **`+0.5` 占位**：要插在 `seq N` 与 `seq N+1` 之间，填 `N.5`，文件名 `NN-N.5 标题.md`。
    - 例：插在 `02-85` 与 `02-86` 之间 → `sequence: 85.5`，文件名 `02-85.5 标题.md`
-5. 建完**提醒用户去 UI 拖一下**：插件 `globalResequence` 会把小数归整成连续整数、后续序号自动顺延（只动数字，不动 title/aliases/链接）。
+5. 建完**提醒用户去 UI 拖一下**：插件 `globalResequence` 会把全书 `sequence` 归整成连续整数、后续序号自动顺延（只动 frontmatter，不动 title/aliases/链接）。
 6. 归整只发生在「手动拖动/重排」时；UI 自动扫描不会归整，所以建完必须提醒。
+7. **插件不改文件名**（StoryLine 1.10.82 实测：重排只写 `sequence`，只有改 title 时才重命名文件）。用户拖完并同步后，agent 须按各卡 `sequence` 把文件名前缀改成 `<幕两位>-<sequence两位起> 标题.md`，并同步更新 `今生/System/plotgrid.json` 等 JSON 里的场景路径。
 
 ## 写作注意事项
 
