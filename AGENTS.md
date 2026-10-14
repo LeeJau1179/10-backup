@@ -6,7 +6,7 @@
 
 - **讨论不等于设定，解释不等于约束，否定旧方案不等于新增永久禁令。**
 - 改任何文件都直接改成最新内容，不留痕迹：不写来源、修订记录、日期标注、「作者定／作者对话」、「改为／删除／原来」之类的改动说明。改动历史由 git 记录。
-- SceneNotes 只有四节：核心变化／节拍／约束／衔接，格式见 `StoryLine/逆世书/AGENTS.md`「SceneNotes 格式」。
+- 场景信息只写在场景卡的 `synopsis`／`conflict`，写法见 `StoryLine/逆世书/AGENTS.md`「场景卡 Synopsis／Conflict」；SceneNotes 停用。
 
 ## 顶层目录
 
@@ -27,7 +27,7 @@
 | `今生/` | 本一（正文主体） |
 | `今生/Codex/` | 本一层设定：Characters / Locations / Items / Culture / Lore / Organizations；Systems 空置 |
 | `今生/Scenes/Act 0–5、Act 99/` | 场景卡（成果驱动） |
-| `今生/SceneNotes/` | 场景笔记（必写） |
+| `今生/SceneNotes/` | 场景笔记（停用，内容迁入场景卡属性） |
 | `今生/Notes/` | 作者私人参考工作区 |
 | `今生/Research/` | 研究资料 |
 | `今生/Archive/` | 归档场景卡 |
