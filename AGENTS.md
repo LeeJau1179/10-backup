@@ -37,8 +37,6 @@
 
 ## 规范入口索引
 
-| 文件 | 装什么 |
-| --- | --- |
-| `StoryLine/逆世书/AGENTS.md` | 创作分层（Codex / Scene / 正文）、场景卡三件套、链接铁律、新建 Scene SOP |
-| `StoryLine/逆世书/Codex/AGENTS.md` | Codex 命名／目录归位／单一事实源 |
-| `StoryLine/逆世书/今生/Notes/AGENTS.md` | Notes 定位与铁律 |
+- [[StoryLine/逆世书/AGENTS]]
+- [[StoryLine/逆世书/Codex/AGENTS]]
+- [[StoryLine/逆世书/今生/Notes/AGENTS]]
