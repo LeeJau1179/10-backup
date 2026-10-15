@@ -6,6 +6,7 @@
 
 - **讨论不等于设定，解释不等于约束，否定旧方案不等于新增永久禁令。**
 - 改任何文件都直接改成最新内容，不留痕迹：不写来源、修订记录、日期标注、「作者定／作者对话」、「改为／删除／原来」之类的改动说明。改动历史由 git 记录。
+- 文件的新建、改名、移动、删除一律走 Obsidian CLI（`obsidian vault="Obsidian-S" create／move／rename／delete …`，语法查 `obsidian help <命令>`），由 Obsidian 自动更新全库链接。禁止用 shell `mv`／`cp`／`rm`、脚本或手改 frontmatter `title` 来增删改名；场景改标题在 StoryLine 插件里改。Obsidian 未运行或 CLI 不可用时停下报告，不得退回文件系统操作。
 - 场景卡 `synopsis` 记事件及核心变化，`conflict` 记矛盾；SceneNotes 记节拍、边界和正文待改。写法见 `StoryLine/逆世书/AGENTS.md`「场景卡与 SceneNotes」。
 
 ## 顶层目录

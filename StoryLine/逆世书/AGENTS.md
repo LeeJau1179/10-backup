@@ -30,21 +30,22 @@ sequence: 48                           # 数字，仅用于排序
 - 文件名 = `NN-NN 无号标题.md`，如 `01-48 陪读方案·苏晚身份材料齐备.md`
 - 文件名的数字前缀**只用于文件树排序**，可随时改；`title` / `aliases` 不随数字变。
 
-## 链接铁律：场景不加链接
+## 链接铁律：场景链接指向带序号的文件名
 
-- 提到场景一律写纯文字标题，用「」括起，如「陪读方案·苏晚身份材料齐备」，不加 `[[ ]]`。Obsidian 只按文件名解析链接，场景文件名带序号，StoryLine 改标题时也会重新加序号，场景链接指不到文件。
+- 提到场景用 wikilink 指向场景文件的**当前文件名（含序号）**，显示名写无号标题：`[[01-48 陪读方案·苏晚身份材料齐备|陪读方案·苏晚身份材料齐备]]`（表格内写 `\|`）。
+- 写链接前先按 `title` 查到当前文件名。只写 `[[无号标题]]` 是断链：Obsidian 只按文件名解析，不认 `aliases`。
+- 序号变化后由 Obsidian 自动更新链接，前提是改名走 CLI（见根目录 `AGENTS.md`「全库铁律」）。
 - 例外：frontmatter 的 `setup_scenes`／`payoff_scenes` 是 StoryLine 插件字段，照旧写 `"[[无号标题]]"`。
-- wikilink 只用于 Codex 词条（地点、物品、组织、设定）。人名不加链接，直接写名字。
 
 ## 增删 / 改序
 
-- 只改两处：**文件名数字** + `sequence` 字段
+- 只改两处：**文件名数字**（用 CLI `move` 改）+ `sequence` 字段
 - `title`、`aliases` **一律不动**
 - 拖拽重排由 StoryLine 插件自动完成（触发全局重排 + 顺延序号）；手动改序同样只动数字 + `sequence`
 
 ## 新建场景 SOP（agent 执行）
 
-1. 写完整 frontmatter：三件套 `title`（无号、唯一）/ `aliases`（= title）/ `sequence`，加 `act`、`storyDate`、`chapter`、`pov`、`characters`、`location`、`status`、`subthread` 等。
+1. 用 CLI 新建场景文件，写完整 frontmatter：三件套 `title`（无号、唯一）/ `aliases`（= title）/ `sequence`，加 `act`、`storyDate`、`chapter`、`pov`、`characters`、`location`、`status`、`subthread` 等。
    - 所属故事线 **必填**：使用 `subthread` 列表填写该 Scene 实际归属的一条或多条故事线，不得缺省或留空。
 2. `synopsis`、`conflict` **必写**，写法见下方「场景卡与 SceneNotes」。
 3. SceneNotes **必写**，只含 `## 节拍`、`## 边界`、`## 正文待改` 三节，内容可留空。
@@ -52,7 +53,7 @@ sequence: 48                           # 数字，仅用于排序
    - 例：插在 `02-85` 与 `02-86` 之间 → `sequence: 85.5`，文件名 `02-85.5 标题.md`
 5. 建完**提醒用户去 UI 拖一下**：插件 `globalResequence` 会把全书 `sequence` 归整成连续整数、后续序号自动顺延（只动 frontmatter，不动 title/aliases/链接）。
 6. 归整只发生在「手动拖动/重排」时；UI 自动扫描不会归整，所以建完必须提醒。
-7. **插件不改文件名**（StoryLine 1.10.82 实测：重排只写 `sequence`，只有改 title 时才重命名文件）。用户拖完并同步后，agent 须按各卡 `sequence` 把文件名前缀改成 `<幕两位>-<sequence两位起> 标题.md`，并同步更新 `今生/System/plotgrid.json` 等 JSON 里的场景路径。
+7. **插件不改文件名**（StoryLine 1.10.82 实测：重排只写 `sequence`，只有改 title 时才重命名文件）。用户拖完并同步后，agent 须按各卡 `sequence` 用 CLI `move` 逐个把文件名前缀改成 `<幕两位>-<sequence两位起> 标题.md`（链接随之自动更新），并同步更新 `今生/System/plotgrid.json` 等 JSON 里的场景路径。
 
 ## 场景卡与 SceneNotes（铁律）
 
@@ -98,6 +99,7 @@ sequence: 48                           # 数字，仅用于排序
 ## 通用 Obsidian 铁律
 
 - 表格内 wikilink 的 `|` 显示名分隔符必须转义为 `\|`（避免被解析成列分隔符）
+- 人物名必须用 wikilink，禁止裸写（如 `裴衍` 应写 `[[裴衍]]`），全库适用
 
 ## AI 沟通标准
 
