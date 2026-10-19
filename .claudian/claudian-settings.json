@@ -104,7 +104,8 @@
           "reasoningMetadataResolved": true,
           "supportedEffortLevels": []
         }
-      ]
+      ],
+      "sessionEnvironmentHash": "runtime-input:v1:ebc4ebc6ad9f613efdcf6ec714d83795d5000ef0a5a8d9955baf5dbec8f4fa98"
     },
     "codex": {
       "enabled": false,
@@ -121,7 +122,8 @@
       "installationMethodsByHost": {},
       "wslDistroOverridesByHost": {},
       "responseVerbosity": "default",
-      "selectedModels": []
+      "selectedModels": [],
+      "sessionEnvironmentHash": ""
     },
     "grok": {
       "cliPath": "",
@@ -154,6 +156,7 @@
       "environmentVariables": "",
       "modelAliases": {},
       "preferredThinkingByModel": {},
+      "sessionEnvironmentHash": "",
       "visibleModels": [],
       "selectedModels": []
     },
@@ -176,6 +179,7 @@
     "providerId": "claude",
     "model": "opus"
   },
+  "inlineEditModel": null,
   "savedProviderModel": {
     "claude": "haiku"
   },
@@ -190,6 +194,7 @@
   "enableAutoScroll": true,
   "showMessageTimestamps": true,
   "deferMathRenderingDuringStreaming": true,
+  "pluginRenderedFenceLanguages": [],
   "expandFileEditsByDefault": false,
   "chatViewPlacement": "right-sidebar",
   "enableZenMode": true,
