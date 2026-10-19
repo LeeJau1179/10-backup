@@ -56,4 +56,5 @@
 - StoryLine 人物字段装得下的内容只写字段，正文不再复述：称呼（nickname）、年龄（age）、定位（role）、职业（occupation）、住处（residency）、外貌（appearance）、特征（distinguishingFeatures）、穿着（style）、小动作（quirks）、性格（personality）、内外动机、长处、缺点、恐惧、信念、误信（misbelief）、成长经历（formativeMemories）、成就与失败、秘密、起点、目标、预期变化、习惯（habits）、随身物（props）。
 - 人物关系的类型只登记在 `relations`；正文只写关系怎么发展、分时接触。
 - 正文只写字段装不下的：关系进程、出场时序、剧情作用、结局、台账、写法约束。
+- 人物内核：核心逻辑写 `belief`，反差写 `flaws`，盲区写 `misbelief`；衍射写正文「行为方式」。
 - 字段写纯文本，不写 wikilink。
