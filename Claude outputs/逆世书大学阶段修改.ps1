@@ -2,7 +2,7 @@
 # 用法：Obsidian 保持打开，在 PowerShell 里运行：
 #   powershell -ExecutionPolicy Bypass -File "D:\Obsidian-S\Claude outputs\逆世书大学阶段修改.ps1"
 $ErrorActionPreference = "Stop"
-$ob = if ($env:COPILOT_OBSIDIAN_CLI) { $env:COPILOT_OBSIDIAN_CLI } else { "obsidian" }
+$ob = if ($env:COPILOT_OBSIDIAN_CLI) { $env:COPILOT_OBSIDIAN_CLI } elseif (Test-Path 'D:\Program Files\Obsidian\Obsidian.com') { 'D:\Program Files\Obsidian\Obsidian.com' } else { "obsidian" }
 $vaultDir = Split-Path $PSScriptRoot -Parent
 $scenes = "StoryLine/逆世书/今生/Scenes"
 $utf8 = New-Object System.Text.UTF8Encoding($false)
