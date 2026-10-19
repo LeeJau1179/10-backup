@@ -60,7 +60,11 @@ sequence: 48                           # 数字，仅用于排序
    - 例：插在 `02-85` 与 `02-86` 之间 → `sequence: 85.5`，文件名 `02-85.5 标题.md`
 5. 建完**提醒用户去 UI 拖一下**：插件 `globalResequence` 会把全书 `sequence` 归整成连续整数、后续序号自动顺延（只动 frontmatter，不动 title/aliases/链接）。
 6. 归整只发生在「手动拖动/重排」时；UI 自动扫描不会归整，所以建完必须提醒。
-7. **插件不改文件名**（StoryLine 1.10.82 实测：重排只写 `sequence`，只有改 title 时才重命名文件）。用户拖完并同步后，agent 须按各卡 `sequence` 用 CLI `move` 逐个把文件名前缀改成 `<幕两位>-<sequence两位起> 标题.md`（链接随之自动更新），并同步更新 `今生/System/plotgrid.json` 等 JSON 里的场景路径。
+7. **文件名前缀由本地插件 `storyline-prefix-sync` 自动同步**（`.obsidian/plugins/storyline-prefix-sync/`）。StoryLine 1.10.81 起重排只写 `sequence`、不改文件名；本插件在 `act`／`sequence` 变化约 2 秒后，用 Obsidian 改名接口把前缀改成 `<幕两位>-<sequence两位起> 标题.md`，全库链接随之自动更新。
+   - agent **不再手动改前缀**，改序只改 `sequence`。Obsidian 必须开着，插件才会触发；没开就停下报告，不得退回 shell 改名。
+   - 一次改名超过 20 个时插件会弹窗列清单，需用户在 Obsidian 里点确认；agent 提醒用户确认，不得绕过。
+   - 插件跳过：没有序号前缀的文件、文件名标题 ≠ `title` 的文件（如带 ` (1)`）、Archive。拖完后用命令「检查场景文件名前缀（只看不改）」核对，被跳过的报告给用户，不要自行改名绕过。
+   - `plotgrid.json` 的 `linkedSceneId` 与 corkboard 位置由 StoryLine 随改名自动更新，但**只限当前打开的项目**。改了非当前项目（如在今生打开时改初世）的 `sequence` 后，须核查该项目 `System/*.json` 里的场景路径是否都存在，有失效的报告给用户。
 
 ## 场景卡与 SceneNotes（铁律）
 
