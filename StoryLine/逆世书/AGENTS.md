@@ -14,38 +14,37 @@
 
 **单一事实源总原则**：同一个事实，全库只允许在一个主场文件里写全；其余位置一律用 wikilink 指过去，不得复述。执行细节见 `[[Codex/AGENTS]]`。
 
-## 场景卡（Scene）三件套
+## 场景卡（Scene）必填字段
 
-每张场景卡 frontmatter 必含以下三字段：
+每张场景卡 frontmatter 必含以下两字段：
 
 ```yaml
 ---
 type: scene
 title: 陪读方案·苏晚身份材料齐备        # 无号标题（唯一，链接用它）
-aliases: ["陪读方案·苏晚身份材料齐备"]  # 与 title 完全相同
 sequence: 48                           # 数字，仅用于排序
 ---
 ```
 
 - 文件名 = `NN-NN 无号标题.md`，如 `01-48 陪读方案·苏晚身份材料齐备.md`
-- 文件名的数字前缀**只用于文件树排序**，可随时改；`title` / `aliases` 不随数字变。
+- 文件名的数字前缀**只用于文件树排序**，可随时改；`title` 不随数字变。
 
 ## 链接铁律：场景链接指向带序号的文件名
 
 - 提到场景用 wikilink 指向场景文件的**当前文件名（含序号）**，显示名写无号标题：`[[01-48 陪读方案·苏晚身份材料齐备|陪读方案·苏晚身份材料齐备]]`（表格内写 `\|`）。
-- 写链接前先按 `title` 查到当前文件名。只写 `[[无号标题]]` 是断链：Obsidian 只按文件名解析，不认 `aliases`。
+- 写链接前先按 `title` 查到当前文件名。只写 `[[无号标题]]` 是断链：Obsidian 只按文件名解析。
 - 序号变化后由 Obsidian 自动更新链接，前提是改名走 CLI（见根目录 `AGENTS.md`「全库铁律」）。
 - 例外：frontmatter 的 `setup_scenes`／`payoff_scenes` 是 StoryLine 插件字段，照旧写 `"[[无号标题]]"`。
 
 ## 增删 / 改序
 
 - 只改两处：**文件名数字**（用 CLI `move` 改）+ `sequence` 字段
-- `title`、`aliases` **一律不动**
+- `title` **不动**
 - 拖拽重排由 StoryLine 插件自动完成（触发全局重排 + 顺延序号）；手动改序同样只动数字 + `sequence`
 
 ## 新建场景 SOP（agent 执行）
 
-1. 用 CLI 新建场景文件，写完整 frontmatter：三件套 `title`（无号、唯一）/ `aliases`（= title）/ `sequence`，加 `act`、`storyDate`、`chapter`、`pov`、`characters`、`location`、`status`、`tags` 等。
+1. 用 CLI 新建场景文件，写完整 frontmatter：`title`（无号、唯一）、`sequence`，加 `act`、`storyDate`、`chapter`、`pov`、`characters`、`location`、`status`、`tags` 等。
    - `tags` 记故事线（StoryLine 故事线视图读这个字段），分两种：
      - `主-…` 大线，**必填**，一到两条，这场最主要的排第一：
        - `主-身份`：[[苏晚]]这个身份——变身、女身适应、双身份维持与掉马、被看见、她是谁（来历、前世）
@@ -58,7 +57,7 @@ sequence: 48                           # 数字，仅用于排序
 3. SceneNotes **必写**，只含 `## 节拍`、`## 边界`、`## 正文待改` 三节，内容可留空。
 4. `sequence` 用 **`+0.5` 占位**：要插在 `seq N` 与 `seq N+1` 之间，填 `N.5`，文件名 `NN-N.5 标题.md`。
    - 例：插在 `02-85` 与 `02-86` 之间 → `sequence: 85.5`，文件名 `02-85.5 标题.md`
-5. 建完**提醒用户去 UI 拖一下**：插件 `globalResequence` 会把全书 `sequence` 归整成连续整数、后续序号自动顺延（只动 frontmatter，不动 title/aliases/链接）。
+5. 建完**提醒用户去 UI 拖一下**：插件 `globalResequence` 会把全书 `sequence` 归整成连续整数、后续序号自动顺延（只动 frontmatter，不动 title 和链接）。
 6. 归整只发生在「手动拖动/重排」时；UI 自动扫描不会归整，所以建完必须提醒。
 7. **文件名前缀由本地插件 `storyline-prefix-sync` 自动同步**（`.obsidian/plugins/storyline-prefix-sync/`）。StoryLine 1.10.81 起重排只写 `sequence`、不改文件名；本插件在 `act`／`sequence` 变化约 2 秒后，用 Obsidian 改名接口把前缀改成 `<幕两位>-<sequence两位起> 标题.md`，全库链接随之自动更新。
    - agent **不再手动改前缀**，改序只改 `sequence`。Obsidian 必须开着，插件才会触发；没开就停下报告，不得退回 shell 改名。
