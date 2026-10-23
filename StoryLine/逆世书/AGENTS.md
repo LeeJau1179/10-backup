@@ -33,18 +33,18 @@ sequence: 48                           # 数字，仅用于排序
 
 - 提到场景用 wikilink 指向场景文件的**当前文件名（含序号）**，显示名写无号标题：`[[01-48 陪读方案·苏晚身份材料齐备|陪读方案·苏晚身份材料齐备]]`（表格内写 `\|`）。
 - 写链接前先按 `title` 查到当前文件名。只写 `[[无号标题]]` 是断链：Obsidian 只按文件名解析。
-- 序号变化后由 Obsidian 自动更新链接，前提是改名走 CLI（见根目录 `AGENTS.md`「全库铁律」）。
+- 序号变化后由前缀同步插件调用 Obsidian 改名接口更新文件名及链接，须开启自动更新内部链接（见下方「新建场景 SOP」）。
 - 例外：frontmatter 的 `setup_scenes`／`payoff_scenes` 是 StoryLine 插件字段，照旧写 `"[[无号标题]]"`。
 
 ## 增删 / 改序
 
-- 只改两处：**文件名数字**（用 CLI `move` 改）+ `sequence` 字段
+- 手动改序只改 `sequence` 字段，文件名数字由 `storyline-prefix-sync` 插件同步。
 - `title` **不动**
-- 拖拽重排由 StoryLine 插件自动完成（触发全局重排 + 顺延序号）；手动改序同样只动数字 + `sequence`
+- 拖拽重排由 StoryLine 插件自动完成（触发全局重排 + 顺延序号），文件名前缀由同步插件处理。
 
 ## 新建场景 SOP（agent 执行）
 
-1. 用 CLI 新建场景文件，写完整 frontmatter：`title`（无号、唯一）、`sequence`，加 `act`、`storyDate`、`chapter`、`pov`、`characters`、`location`、`status`、`tags` 等。
+1. 可直接新建场景文件，按下列要求写完整 frontmatter 并核查插件识别结果：`title`（无号、唯一）、`sequence`，加 `act`、`storyDate`、`chapter`、`pov`、`characters`、`location`、`status`、`tags` 等。
    - `tags` 记故事线（StoryLine 故事线视图读这个字段），分两种：
      - `主-…` 大线，**必填**，一到两条，这场最主要的排第一：
        - `主-身份`：[[苏晚]]这个身份——变身、女身适应、双身份维持与掉马、被看见、她是谁（来历、前世）
