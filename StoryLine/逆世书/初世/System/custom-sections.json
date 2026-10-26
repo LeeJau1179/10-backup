@@ -5,5 +5,11 @@
   "codexVisualGroups": {},
   "customLocationTypes": [],
   "codexCustomCategories": [],
-  "codexEnabledCategories": []
+  "codexEnabledCategories": [
+    "items",
+    "lore",
+    "organizations",
+    "culture",
+    "systems"
+  ]
 }

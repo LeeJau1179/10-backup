@@ -1,0 +1,9 @@
+{
+  "id": "storyline-prefix-sync",
+  "name": "StoryLine Prefix Sync",
+  "version": "0.1.0",
+  "minAppVersion": "1.5.0",
+  "description": "StoryLine 拖动重排后，按 frontmatter 的 act/sequence 自动把场景文件名前缀改成当前顺序（走 Obsidian 改名接口，链接自动更新）。",
+  "author": "local",
+  "isDesktopOnly": false
+}

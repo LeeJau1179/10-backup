@@ -34,6 +34,8 @@
     "dom": true,
     "marketplace": true
   },
+  "usageInStatusBar": true,
+  "uiLanguage": "auto",
   "debugMode": false,
   "communityScopeMigratedV115": true
 }
