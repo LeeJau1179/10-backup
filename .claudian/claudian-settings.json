@@ -35,13 +35,12 @@
       "modelEnvironmentType": "haiku",
       "titleModelEnvironmentType": "",
       "environmentVariables": "",
-      "environmentHash": "runtime-input:v1:2a2df9a7f2a74babe6fa614d61d01d3967e0db7f7da9d9e41678a20e08464bad",
+      "environmentHash": "runtime-input:v1:e3a3492dd19704352b6e2501d1a2b99adce7d5f569db6949d679b1043fb89aa1",
       "outputStyle": null,
       "promptSuggestions": false,
       "discoveredOutputStyles": [
         "default",
         "Proactive",
-        "Concise",
         "Explanatory",
         "Learning"
       ],
@@ -50,43 +49,28 @@
         "opus[1m]",
         "haiku",
         "sonnet",
-        "claude-fable-5-1[1m]",
-        "opus"
+        "claude-fable-5-1[1m]"
       ],
       "selectedModels": [
         {
+          "value": "opus[1m]",
+          "label": "Opus",
+          "description": "Opus 4.8 with 1M context · Best for everyday, complex tasks · $5/$25 per Mtok",
+          "resolvedModel": "claude-opus-4-8[1m]",
+          "reasoningMetadataResolved": true,
+          "supportedEffortLevels": [
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ]
+        },
+        {
           "value": "sonnet",
           "label": "Sonnet",
-          "description": "Sonnet 5 · Efficient for routine tasks",
+          "description": "Sonnet 5 · Efficient for routine tasks · $3/$15 per Mtok",
           "resolvedModel": "claude-sonnet-5",
-          "reasoningMetadataResolved": true,
-          "supportedEffortLevels": [
-            "low",
-            "medium",
-            "high",
-            "xhigh",
-            "max"
-          ]
-        },
-        {
-          "value": "claude-fable-5-1[1m]",
-          "label": "Fable",
-          "description": "Fable 5.1 · Most capable for your hardest and longest-running tasks · Requires usage credits",
-          "resolvedModel": "claude-fable-5-1",
-          "reasoningMetadataResolved": true,
-          "supportedEffortLevels": [
-            "low",
-            "medium",
-            "high",
-            "xhigh",
-            "max"
-          ]
-        },
-        {
-          "value": "opus",
-          "label": "Opus",
-          "description": "Opus 5 · Best for everyday, complex tasks · ~2× usage vs Sonnet",
-          "resolvedModel": "claude-opus-5",
           "reasoningMetadataResolved": true,
           "supportedEffortLevels": [
             "low",
@@ -99,7 +83,7 @@
         {
           "value": "haiku",
           "label": "Haiku",
-          "description": "Haiku 4.5 · Fastest for quick answers",
+          "description": "Haiku 4.5 · Fastest for quick answers · $1/$5 per Mtok",
           "resolvedModel": "claude-haiku-4-5-20251001",
           "reasoningMetadataResolved": true,
           "supportedEffortLevels": []
