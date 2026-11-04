@@ -12,7 +12,7 @@
   "lastStorylineViewMode": "subway",
   "lastStorylineSortMode": "alpha",
   "lastStorylineArcFilter": "all",
-  "lastStorylineShowTagPills": false,
+  "lastStorylineShowTagPills": true,
   "timelineOrder": "reading",
   "timelineSwimlaneMode": false,
   "timelineSwimlaneGroupBy": "pov",
