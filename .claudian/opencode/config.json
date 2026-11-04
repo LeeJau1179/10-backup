@@ -2,26 +2,7 @@
   "$schema": "https://opencode.ai/config.json",
   "agent": {
     "build": {
-      "prompt": "{file:/Users/lijia/Documents/Obsidian-S/.claudian/opencode/prompts/main.md}"
-    },
-    "claudian-yolo": {
-      "mode": "primary",
-      "permission": {
-        "*": "allow",
-        "plan_enter": "deny",
-        "question": "allow"
-      },
-      "prompt": "{file:/Users/lijia/Documents/Obsidian-S/.claudian/opencode/prompts/main.md}"
-    },
-    "claudian-safe": {
-      "mode": "primary",
-      "permission": {
-        "plan_enter": "deny",
-        "question": "allow",
-        "bash": "ask",
-        "edit": "ask"
-      },
-      "prompt": "{file:/Users/lijia/Documents/Obsidian-S/.claudian/opencode/prompts/main.md}"
+      "prompt": "{file:D:\\Obsidian-S\\.claudian\\opencode\\prompts\\main.md}"
     },
     "claudian-inline-edit": {
       "description": "Claudian read-only execution agent.",
@@ -42,7 +23,7 @@
         "webfetch": "allow",
         "websearch": "allow"
       },
-      "prompt": "{file:/Users/lijia/Documents/Obsidian-S/.claudian/opencode/prompts/inline-edit.md}"
+      "prompt": "{file:D:\\Obsidian-S\\.claudian\\opencode\\prompts\\inline-edit.md}"
     },
     "claudian-title": {
       "description": "Claudian passive execution agent.",
@@ -51,11 +32,11 @@
         "*": "deny",
         "external_directory": "deny"
       },
-      "prompt": "{file:/Users/lijia/Documents/Obsidian-S/.claudian/opencode/prompts/title.md}"
+      "prompt": "{file:D:\\Obsidian-S\\.claudian\\opencode\\prompts\\title.md}"
     },
     "plan": {
       "disable": true
     }
   },
-  "default_agent": "claudian-safe"
+  "default_agent": "build"
 }

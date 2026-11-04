@@ -1,7 +1,7 @@
 {
   "userName": "",
   "permissionMode": "yolo",
-  "model": "haiku",
+  "model": "opencode:volcengine-coding-plan/deepseek-v4-pro",
   "effortLevel": "high",
   "serviceTier": "default",
   "enableAutoTitleGeneration": true,
@@ -22,7 +22,7 @@
   "locale": "zh-CN",
   "providerConfigs": {
     "claude": {
-      "enabled": true,
+      "enabled": false,
       "safeMode": "acceptEdits",
       "cliPath": "",
       "cliPathsByHost": {
@@ -35,12 +35,13 @@
       "modelEnvironmentType": "haiku",
       "titleModelEnvironmentType": "",
       "environmentVariables": "",
-      "environmentHash": "runtime-input:v1:e3a3492dd19704352b6e2501d1a2b99adce7d5f569db6949d679b1043fb89aa1",
+      "environmentHash": "runtime-input:v1:2a2df9a7f2a74babe6fa614d61d01d3967e0db7f7da9d9e41678a20e08464bad",
       "outputStyle": null,
       "promptSuggestions": false,
       "discoveredOutputStyles": [
         "default",
         "Proactive",
+        "Concise",
         "Explanatory",
         "Learning"
       ],
@@ -53,10 +54,10 @@
       ],
       "selectedModels": [
         {
-          "value": "opus[1m]",
-          "label": "Opus",
-          "description": "Opus 4.8 with 1M context · Best for everyday, complex tasks · $5/$25 per Mtok",
-          "resolvedModel": "claude-opus-4-8[1m]",
+          "value": "sonnet",
+          "label": "Sonnet",
+          "description": "Sonnet 5 · Efficient for routine tasks",
+          "resolvedModel": "claude-sonnet-5",
           "reasoningMetadataResolved": true,
           "supportedEffortLevels": [
             "low",
@@ -67,10 +68,10 @@
           ]
         },
         {
-          "value": "sonnet",
-          "label": "Sonnet",
-          "description": "Sonnet 5 · Efficient for routine tasks · $3/$15 per Mtok",
-          "resolvedModel": "claude-sonnet-5",
+          "value": "claude-fable-5-1[1m]",
+          "label": "Fable",
+          "description": "Fable 5.1 · Most capable for your hardest and longest-running tasks · Requires usage credits",
+          "resolvedModel": "claude-fable-5-1",
           "reasoningMetadataResolved": true,
           "supportedEffortLevels": [
             "low",
@@ -83,7 +84,7 @@
         {
           "value": "haiku",
           "label": "Haiku",
-          "description": "Haiku 4.5 · Fastest for quick answers · $1/$5 per Mtok",
+          "description": "Haiku 4.5 · Fastest for quick answers",
           "resolvedModel": "claude-haiku-4-5-20251001",
           "reasoningMetadataResolved": true,
           "supportedEffortLevels": []
@@ -123,14 +124,140 @@
     "opencode": {
       "cliPath": "",
       "cliPathsByHost": {},
-      "enabled": false,
+      "enabled": true,
       "environmentHash": "",
       "environmentVariables": "OPENCODE_ENABLE_EXA=1",
       "modelAliases": {},
       "preferredThinkingByModel": {},
-      "thinkingOptionsByModel": {},
-      "visibleModels": [],
-      "selectedModels": []
+      "thinkingOptionsByModel": {
+        "volcengine-coding-plan/deepseek-v4-pro": [
+          {
+            "label": "Low",
+            "value": "low"
+          },
+          {
+            "label": "Medium",
+            "value": "medium"
+          },
+          {
+            "label": "High",
+            "value": "high"
+          },
+          {
+            "label": "Max",
+            "value": "max"
+          },
+          {
+            "label": "Default",
+            "value": "default"
+          }
+        ],
+        "volcengine-coding-plan/deepseek-v4-flash": [
+          {
+            "label": "Low",
+            "value": "low"
+          },
+          {
+            "label": "Medium",
+            "value": "medium"
+          },
+          {
+            "label": "High",
+            "value": "high"
+          },
+          {
+            "label": "Max",
+            "value": "max"
+          },
+          {
+            "label": "Default",
+            "value": "default"
+          }
+        ],
+        "volcengine-coding-plan/glm-5.3-flash": [
+          {
+            "label": "Low",
+            "value": "low"
+          },
+          {
+            "label": "High",
+            "value": "high"
+          },
+          {
+            "label": "Max",
+            "value": "max"
+          },
+          {
+            "label": "Default",
+            "value": "default"
+          }
+        ],
+        "volcengine-coding-plan/glm-5.3": [
+          {
+            "label": "Low",
+            "value": "low"
+          },
+          {
+            "label": "High",
+            "value": "high"
+          },
+          {
+            "label": "Max",
+            "value": "max"
+          },
+          {
+            "label": "Default",
+            "value": "default"
+          }
+        ],
+        "kimi-code-plan-cn/k3.1-pro": [
+          {
+            "label": "Low",
+            "value": "low"
+          },
+          {
+            "label": "High",
+            "value": "high"
+          },
+          {
+            "label": "Max",
+            "value": "max"
+          },
+          {
+            "label": "Default",
+            "value": "default"
+          }
+        ]
+      },
+      "visibleModels": [
+        "volcengine-coding-plan/deepseek-v4-pro",
+        "volcengine-coding-plan/deepseek-v4-flash",
+        "volcengine-coding-plan/glm-5.3-flash",
+        "volcengine-coding-plan/glm-5.3",
+        "kimi-code-plan-cn/k3.1-pro"
+      ],
+      "selectedModels": [
+        {
+          "label": "Kimi For Coding (kimi.com)/Kimi K3.1 Pro",
+          "rawId": "kimi-code-plan-cn/k3.1-pro"
+        },
+        {
+          "label": "Volcengine Ark Coding Plan/DeepSeek V4 Flash",
+          "rawId": "volcengine-coding-plan/deepseek-v4-flash"
+        },
+        {
+          "label": "Volcengine Ark Coding Plan/DeepSeek V4 Pro",
+          "rawId": "volcengine-coding-plan/deepseek-v4-pro"
+        },
+        {
+          "label": "Volcengine Ark Coding Plan/GLM-5.3",
+          "rawId": "volcengine-coding-plan/glm-5.3"
+        },
+        {
+          "label": "Volcengine Ark Coding Plan/GLM-5.3-Flash",
+          "rawId": "volcengine-coding-plan/glm-5.3-flash"
+        }
+      ]
     },
     "pi": {
       "cliPath": "",
@@ -158,21 +285,24 @@
       "selectedModels": []
     }
   },
-  "settingsProvider": "claude",
+  "settingsProvider": "opencode",
   "lastSelectedChatModel": {
-    "providerId": "claude",
-    "model": "opus"
+    "providerId": "opencode",
+    "model": "opencode:kimi-code-plan-cn/k3.1-pro"
   },
   "inlineEditModel": null,
   "savedProviderModel": {
-    "claude": "haiku"
+    "claude": "haiku",
+    "opencode": "opencode:volcengine-coding-plan/deepseek-v4-pro"
   },
   "savedProviderEffort": {
-    "claude": "high"
+    "claude": "high",
+    "opencode": "high"
   },
   "savedProviderServiceTier": {},
   "savedProviderPermissionMode": {
-    "claude": "yolo"
+    "claude": "yolo",
+    "opencode": "yolo"
   },
   "pendingProviderSessionInvalidations": {},
   "enableAutoScroll": true,
@@ -181,7 +311,7 @@
   "pluginRenderedFenceLanguages": [],
   "expandFileEditsByDefault": false,
   "chatViewPlacement": "right-sidebar",
-  "enableZenMode": true,
+  "enableZenMode": false,
   "zenModePosition": null,
   "enableDualPane": true,
   "dualPaneSide": "right",
