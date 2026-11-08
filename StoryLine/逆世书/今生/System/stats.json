@@ -82,12 +82,12 @@
       "2026-11-05": 10134,
       "2026-11-06": 6719,
       "2026-11-07": 7756,
-      "2026-11-08": 1055
+      "2026-11-08": 1058
     },
     "changeHistory": {
       "2026-11-08": {
         "added": 41,
-        "deleted": 28
+        "deleted": 31
       }
     },
     "projectDeadlineIncludeWeekends": false,
