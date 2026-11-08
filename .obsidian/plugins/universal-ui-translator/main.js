@@ -198,6 +198,9 @@ var zhCN = {
   "settings.cache.enable.desc": "\u662F\u4EC0\u4E48\uFF1A\u8BD1\u6587\u6301\u4E45\u5316\u5230\u63D2\u4EF6\u76EE\u5F55 translation-cache.json\u2014\u2014\u540C\u4E00\u6587\u672C\u53EA\u4ED8\u4E00\u6B21 API \u8D39\u7528\uFF0C\u91CD\u542F Obsidian \u540E\u4ECD\u7136\u6709\u6548\u3002\u4EC0\u4E48\u65F6\u5019\u5173\uFF1A\u53EA\u6709\u6392\u67E5\u7FFB\u8BD1\u5F02\u5E38\u65F6\u624D\u9700\u8981\u5173\u3002\u26A0\uFE0F \u5173\u95ED\u540E\u6BCF\u6B21\u6E32\u67D3\u754C\u9762\u90FD\u91CD\u65B0\u8C03 API\uFF0C\u540C\u4E00\u754C\u9762\u4F1A\u53CD\u590D\u6D88\u8017\u989D\u5EA6",
   "settings.cache.max-entries": "\u7F13\u5B58\u6761\u76EE\u4E0A\u9650",
   "settings.cache.max-entries.desc": "\u662F\u4EC0\u4E48\uFF1A\u5185\u5B58\u4E0E\u78C1\u76D8\u5171\u7528\u6B64\u4E0A\u9650\uFF08\u9ED8\u8BA4 50000\uFF0C\u8303\u56F4 1000\u2013200000\uFF1B\u78C1\u76D8\u53E6\u6709 64MB \u5B57\u8282\u786C\u9876\uFF0C\u5148\u5230\u5148\u622A\uFF09\uFF0C\u8D85\u51FA\u540E\u6DD8\u6C70\u6700\u4E45\u672A\u7528\u7684\u6761\u76EE\u3002\u4EC0\u4E48\u65F6\u5019\u8C03\uFF1A\u793E\u533A\u5E02\u573A README \u5168\u6587\u7FFB\u8BD1\u6761\u76EE\u91CF\u5927\uFF0C\u4E0A\u9650\u592A\u4F4E\u4F1A\u63D0\u524D\u6DD8\u6C70\u8BD1\u6587\u3001\u4E0B\u6B21\u6253\u5F00\u91CD\u590D\u6D88\u8017 API\u2014\u2014\u8BD1\u6587\u662F\u7EAF\u6587\u672C\u4E0D\u5360\u7A7A\u95F4\uFF0C\u5EFA\u8BAE\u5F80\u5BBD\u4E86\u8BBE\u3002\u4EE3\u4EF7\uFF1A\u5BB9\u91CF\u8D8A\u5927\uFF0C\u542F\u52A8\u65F6\u52A0\u8F7D\u7F13\u5B58\u8D8A\u4E45\uFF08\u6BEB\u79D2\u7EA7\uFF09\u3001\u5360\u5185\u5B58\u8D8A\u591A\u3002\u4FEE\u6539\u5373\u65F6\u751F\u6548\uFF1B\u8C03\u5C0F\u4F1A\u7ACB\u5373\u6DD8\u6C70\u6700\u65E7\u6761\u76EE",
+  "settings.cache.loose-key": "\u8DE8\u6A21\u578B/\u5F15\u64CE\u590D\u7528\u7F13\u5B58\uFF08\u5BBD\u677E\u7F13\u5B58\u952E\uFF09",
+  "settings.cache.loose-key.desc": "\u662F\u4EC0\u4E48\uFF1A\u5F00\u542F\u540E\u7F13\u5B58\u952E\u9000\u5316\u4E3A\u300C\u539F\u6587+\u76EE\u6807\u8BED\u8A00\u300D\uFF0C\u6362\u6A21\u578B\u6216\u6362\u5F15\u64CE\u540E\u65E7\u8BD1\u6587\u76F4\u63A5\u590D\u7528\uFF0C\u4E0D\u518D\u5168\u91CF\u91CD\u8BD1\u3002\u4EC0\u4E48\u65F6\u5019\u5F00\uFF1A\u7ECF\u5E38\u6362\u6A21\u578B\u8BD5\u63A2\uFF08\u540C\u4E00\u754C\u9762\u6BCF\u6362\u4E00\u6B21\u6A21\u578B\u5C31\u91CD\u8BD1\u4E00\u904D\uFF0C\u662F\u6700\u8D39\u7684\u7528\u91CF\u653E\u5927\u5668\uFF09\u3002\u4EE3\u4EF7\uFF1A\u4E0D\u540C\u6A21\u578B\u7684\u8BD1\u6587\u98CE\u683C\u4F1A\u6DF7\u6742\u5728\u540C\u4E00\u7F13\u5B58\u91CC\uFF1B\u5F00\u542F\u671F\u95F4\u300C\u6E05\u7406\u5931\u6548\u6761\u76EE\u300D\u4E0D\u53EF\u7528\u3002\u5173\u95ED\u540E\u6062\u590D\u6309 \u5F15\u64CE+\u8BED\u8A00+\u6A21\u578B \u9694\u79BB",
+  "status.cache-purge-loose": "\u5BBD\u677E\u7F13\u5B58\u952E\uFF08\u8DE8\u6A21\u578B/\u5F15\u64CE\u590D\u7528\uFF09\u5DF2\u5F00\u542F\uFF1A\u6761\u76EE\u65E0\u5F15\u64CE/\u6A21\u578B\u7EF4\u5EA6\u53EF\u5224\u5B9A\uFF0C\u6E05\u7406\u4F1A\u8BEF\u5220\u5171\u4EAB\u8BD1\u6587\u2014\u2014\u5DF2\u7981\u7528\u3002\u5982\u9700\u6E05\u7406\u8BF7\u5148\u5173\u95ED\u8BE5\u5F00\u5173",
   "settings.cache.disk-absent": "\u78C1\u76D8\u6587\u4EF6\u5C1A\u672A\u521B\u5EFA",
   "settings.cache.disk-size": "\u78C1\u76D8\u6587\u4EF6\u7EA6 {mb} MB",
   "settings.cache.last-flush": "\u6700\u540E\u843D\u76D8 {time}",
@@ -464,6 +467,9 @@ var en = {
   "settings.cache.enable.desc": "What: translations persist to translation-cache.json in the plugin folder \u2014 each text costs API once and survives Obsidian restarts. When to turn off: only while troubleshooting translation issues. \u26A0\uFE0F While off, every render re-calls the API and the same UI repeatedly spends quota",
   "settings.cache.max-entries": "Cache entry limit",
   "settings.cache.max-entries.desc": "What: shared by memory and disk (default 50000, range 1000\u2013200000; disk also has a 64MB byte cap, first-come first-trimmed); oldest entries evicted beyond it. When to adjust: market README translations add many entries; a low limit evicts early and re-spends API next time \u2014 translations are plain text and small, set generously. Trade-off: a bigger cache loads longer at startup (milliseconds) and uses more memory. Changes apply immediately; lowering evicts the oldest entries right away",
+  "settings.cache.loose-key": "Reuse cache across models/engines (loose cache key)",
+  "settings.cache.loose-key.desc": "What: the cache key degrades to text+target language, so old translations are reused after switching models or engines \u2014 no full re-translation. When to enable: if you often try different models (each switch otherwise re-translates the whole UI \u2014 the biggest usage amplifier). Trade-off: translations from different models get mixed in one cache; \u201CPurge stale entries\u201D is disabled while this is on. Turning it off restores engine+language+model isolation",
+  "status.cache-purge-loose": "Loose cache key (cross-model/engine reuse) is on: entries carry no engine/model dimension to match, purging would delete shared translations \u2014 disabled. Turn the toggle off first if you need to purge",
   "settings.cache.disk-absent": "Disk file not created yet",
   "settings.cache.disk-size": "Disk file \u2248 {mb} MB",
   "settings.cache.last-flush": "Last flush {time}",
@@ -766,6 +772,7 @@ var DEFAULT_SETTINGS = {
   providers: {},
   cacheEnabled: true,
   cacheMaxEntries: 5e4,
+  looseCacheKey: false,
   batchWindowMs: 100,
   maxConcurrentRequests: 3,
   requestTimeoutMs: 3e4,
@@ -811,6 +818,11 @@ var CacheManager = class {
   }
   static makeKey(src, providerId, targetLang, model) {
     return (0, import_crypto.createHash)("sha256").update(src + providerId + targetLang + model).digest("hex").slice(0, 16);
+  }
+  /** 1.5（B3）：宽松键——仅原文+目标语言维度，跨引擎/模型复用译文（设置 looseCacheKey 开启时使用）。
+   *  "loose:" 前缀与严格键空间隔离（严格键 = 原文+引擎+语言+模型 直连哈希，无前缀） */
+  static makeLooseKey(src, targetLang) {
+    return (0, import_crypto.createHash)("sha256").update("loose:" + src + targetLang).digest("hex").slice(0, 16);
   }
   /** 待落盘新条目数（配合「累计 100 条批量写入」策略） */
   get pendingWrites() {
@@ -911,7 +923,6 @@ var CacheManager = class {
   }
   /** 批量落盘：内存视图（含 load 读入的磁盘条目）按条数与字节双上限截断后写 JSON */
   async flush() {
-    var _a, _b;
     await this.load();
     if (this.now() - this.lastBakAt >= BAK_REFRESH_MS) {
       const stamp = this.now();
@@ -923,6 +934,35 @@ var CacheManager = class {
       } catch (e) {
       }
     }
+    await this.io.write(this.filePath, JSON.stringify(this.serialize()));
+    this.dirtyCount = 0;
+    this.accessDirty = false;
+    this.lastFlushAt = this.now();
+  }
+  /**
+   * 1.5（F1）：卸载同步落盘——writeSync(tmp) + renameSync 原子替换。
+   * 真机实证（文档/1022-1427 E4/E5）：onunload 的 void flush() 在强杀与优雅关闭下都来不及完成，
+   * 翻译成功但未落盘的译文即丢失；同步路径是唯一可靠兜底。rename 原子性同时根治
+   * 覆盖写一半崩溃的文件损坏窗口（写坏的只是 tmp，主文件始终是上一完整版本）。
+   * 不做 .bak 复制（耗时；rename 已保证主文件不损坏）。
+   * @returns true=同步落盘成功；false=失败（调用方回落异步 flush）
+   */
+  flushSync(sync) {
+    try {
+      const tmp = `${this.filePath}.tmp`;
+      sync.writeSync(tmp, JSON.stringify(this.serialize()));
+      sync.renameSync(tmp, this.filePath);
+      this.dirtyCount = 0;
+      this.accessDirty = false;
+      this.lastFlushAt = this.now();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+  /** flush/flushSync 共享的序列化视图：排序（最近访问优先）→ 条数上限 → 字节硬顶 */
+  serialize() {
+    var _a, _b;
     const sorted = [...this.mem.entries()].sort(([, a], [, b]) => {
       var _a2, _b2;
       return ((_a2 = b.lastAccessAt) != null ? _a2 : b.updatedAt) - ((_b2 = a.lastAccessAt) != null ? _b2 : a.updatedAt);
@@ -935,14 +975,7 @@ var CacheManager = class {
         break;
       kept[key] = e;
     }
-    const file = {
-      schemaVersion: CACHE_SCHEMA_VERSION,
-      entries: kept
-    };
-    await this.io.write(this.filePath, JSON.stringify(file));
-    this.dirtyCount = 0;
-    this.accessDirty = false;
-    this.lastFlushAt = this.now();
+    return { schemaVersion: CACHE_SCHEMA_VERSION, entries: kept };
   }
   stats() {
     const total = this.hits + this.misses;
@@ -1061,11 +1094,15 @@ var _FilterEngine = class _FilterEngine {
       return false;
     if (t2.length > _FilterEngine.MAX_TRANSLATABLE_CHARS)
       return false;
-    if (/^([a-zA-Z]:[\\/]|[\\/]|~[\\/]|\.{1,2}[\\/])/.test(t2))
+    if (/^([a-zA-Z]:[\\/]|[\\/]|~[\\/]|\\.{1,2}[\\/])/.test(t2))
       return false;
     if (/^[\w.-]+([\\/][\w .-]+)+$/.test(t2))
       return false;
     if (/^[\w-]+\.[a-zA-Z0-9]{1,5}$/.test(t2))
+      return false;
+    if (/^[a-z][a-z0-9]*(-[a-z0-9]+)+$/.test(t2))
+      return false;
+    if (/^[a-z][a-z0-9]*(_[a-z0-9]+)+$/.test(t2))
       return false;
     if (/^(https?|ftp|obsidian|mailto|tel):/i.test(t2))
       return false;
@@ -1089,6 +1126,15 @@ var _FilterEngine = class _FilterEngine {
   static extractPlaceholders(text) {
     const matches = text.match(/\{\d+\}|%[sd]|\{\{[^}]+\}\}/g);
     return matches != null ? matches : [];
+  }
+  /**
+   * 1.5（G2）：专名形态判定——1~4 个首字母大写词（如 "Dataview"、"Obsidian Git"、
+   * "Michael Brenan"）。仅市场条目卡片的收集阶段使用（卡片内容 = 插件显示名+作者名+
+   * 下载量+简介，前三者按此形态跳过送译保留原文；详情 README 的章节标题同形态但
+   * 那里不启用——避免漏译 "Installation" 等标题）。
+   */
+  static isProperNounLike(text) {
+    return /^[A-Z][\w&'.-]*(\s+[A-Z][\w&'.-]*){0,3}$/.test(text.trim());
   }
   /** 规则 6：占位符 token 化保护，送译 masked 而非原文 */
   static protectPlaceholders(text) {
@@ -1148,9 +1194,11 @@ var TranslationCoordinator = class {
    * 不再把失败静默显示成成功（用户实测"点击无反应"的根因）
    * @param opts.bypassNegativeCache 手动点击 = 显式重试意图，跳过 5 分钟负缓存；
    *   熔断与预算不受影响（钱包保护不动）
+   * @param opts.cacheOnly 1.5（F3）：只查 过滤→术语表→缓存，未命中直接原文返回（outcome
+   *   "cache-miss"），不发任何 API——弹窗重开时自动回写已译内容用，零 token 成本
    */
   async translateWithOutcome(text, ctx, opts) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n;
     if (!this.filter.shouldTranslate(text))
       return { text, outcome: "filtered" };
     const fixed = this.options.glossary[text];
@@ -1161,14 +1209,16 @@ var TranslationCoordinator = class {
       return { text, outcome: "no-provider" };
     const cacheOn = (_c = (_b = (_a = this.options).isCacheEnabled) == null ? void 0 : _b.call(_a)) != null ? _c : true;
     const model = (_f = (_e = (_d = this.options).getModelId) == null ? void 0 : _e.call(_d)) != null ? _f : "";
-    const key = CacheManager.makeKey(text, provider.id, this.options.targetLang, model);
+    const key = ((_h = (_g = this.options).isLooseCacheKey) == null ? void 0 : _h.call(_g)) ? CacheManager.makeLooseKey(text, this.options.targetLang) : CacheManager.makeKey(text, provider.id, this.options.targetLang, model);
     const hit = cacheOn ? this.cache.get(key) : null;
     if (hit)
       return { text: hit.tgt, outcome: "cache" };
-    if (this.options.usageTracker && await this.options.usageTracker.isOverBudget((_g = this.options.monthlyCharBudget) != null ? _g : null)) {
+    if (opts == null ? void 0 : opts.cacheOnly)
+      return { text, outcome: "cache-miss" };
+    if (this.options.usageTracker && await this.options.usageTracker.isOverBudget((_i = this.options.monthlyCharBudget) != null ? _i : null)) {
       if (!this.budgetNotified) {
         this.budgetNotified = true;
-        (_i = (_h = this.options).onBudgetExceeded) == null ? void 0 : _i.call(_h);
+        (_k = (_j = this.options).onBudgetExceeded) == null ? void 0 : _k.call(_j);
       }
       return { text, outcome: "budget" };
     }
@@ -1185,7 +1235,7 @@ var TranslationCoordinator = class {
       const context = `${ctx.source}:${ctx.pluginId}`;
       const raw = this.options.translateVia ? await this.options.translateVia(masked, context) : await provider.translate(masked, { context });
       const restored = FilterEngine.restorePlaceholders(raw.trim(), tokens);
-      void ((_j = this.options.usageTracker) == null ? void 0 : _j.record(masked.length, restored.length));
+      void ((_l = this.options.usageTracker) == null ? void 0 : _l.record(masked.length, restored.length));
       if (!FilterEngine.placeholdersIntact(text, restored)) {
         return { text, outcome: "failed", error: t("common.placeholder-rewritten") };
       }
@@ -1206,7 +1256,7 @@ var TranslationCoordinator = class {
     } catch (e) {
       if (/HTTP 40[13]/.test(String(e)) && !this.authNotified) {
         this.authNotified = true;
-        (_l = (_k = this.options).onAuthFailure) == null ? void 0 : _l.call(_k);
+        (_n = (_m = this.options).onAuthFailure) == null ? void 0 : _n.call(_m);
       }
       if (this.consecutiveFailures < 3) {
         console.warn(t("common.log-translate-failed", { n: String(e).slice(0, 160) }));
@@ -1896,7 +1946,7 @@ var MarketplacePatcher = class {
       btn.addEventListener("click", (e) => {
         e.preventDefault();
         e.stopPropagation();
-        void this.translateItem(item, btn);
+        void this.translateItem(item, btn, void 0, { protectProperNouns: true });
       });
       item.appendChild(btn);
       added++;
@@ -1939,10 +1989,13 @@ var MarketplacePatcher = class {
     btn.addEventListener("click", (e) => {
       e.preventDefault();
       e.stopPropagation();
-      const modal = detail.closest(".mod-community-plugin");
-      void this.translateItem(modal != null ? modal : detail, btn, ".modal-sidebar");
+      const modal2 = detail.closest(".mod-community-plugin");
+      void this.translateItem(modal2 != null ? modal2 : detail, btn, ".modal-sidebar");
     });
     detail.insertBefore(btn, detail.firstChild);
+    const modal = detail.closest(".mod-community-plugin");
+    if (modal)
+      void this.cacheOnlyPass(modal, ".modal-sidebar");
     return true;
   }
   /**
@@ -1952,7 +2005,7 @@ var MarketplacePatcher = class {
    * v1.1.8：done===0 且本轮有节点因重渲染游离 → 自动重试一次（译文已缓存，零成本秒出）
    * @param skipClosest v1.1.6：额外排除的子树选择器（详情弹窗传 ".modal-sidebar" 跳过左侧列表）
    */
-  async translateItem(item, btn, skipClosest) {
+  async translateItem(item, btn, skipClosest, opts) {
     var _a;
     btn.textContent = "\u2026";
     btn.setAttribute("disabled", "true");
@@ -1961,9 +2014,9 @@ var MarketplacePatcher = class {
       const stats = await this.translatePass(item, skipClosest, (settled, total) => {
         if (btn.isConnected && total > 0)
           btn.textContent = `${settled}/${total}`;
-      });
+      }, opts);
       if (stats.detached > 0 && item.isConnected) {
-        const retry = await this.translatePass(item, skipClosest);
+        const retry = await this.translatePass(item, skipClosest, void 0, opts);
         stats.done += retry.done;
         stats.modeSuppressed += retry.modeSuppressed;
         stats.outcomes.push(...retry.outcomes);
@@ -2004,7 +2057,7 @@ var MarketplacePatcher = class {
    * v1.2 P1：可选 onSettle 进度回调——分母为送译节点总数（先收集后送译，开译即知），
    * 分子在每个节点任意结局（成功/失败/游离/模式抑制）结算时递增，确定型不回退
    */
-  async translatePass(item, skipClosest, onSettle) {
+  async translatePass(item, skipClosest, onSettle, opts) {
     const doc = item.ownerDocument;
     const skipSelector = "[data-no-translate], [data-uut], code, pre" + (skipClosest ? `, ${skipClosest}` : "");
     const walker = doc.createTreeWalker(item, NodeFilter.SHOW_TEXT, {
@@ -2022,10 +2075,12 @@ var MarketplacePatcher = class {
       nodes.push(cur);
       cur = walker.nextNode();
     }
-    const targets = nodes.filter((n) => {
-      var _a;
-      return ((_a = n.nodeValue) != null ? _a : "").trim().length >= 2;
-    });
+    const targets = nodes.filter(
+      (n) => {
+        var _a, _b;
+        return ((_a = n.nodeValue) != null ? _a : "").trim().length >= 2 && !((opts == null ? void 0 : opts.protectProperNouns) && FilterEngine.isProperNounLike(((_b = n.nodeValue) != null ? _b : "").trim()));
+      }
+    );
     const total = targets.length;
     let settled = 0;
     const progress = total > 0 ? this.beginProgress(doc, total) : null;
@@ -2096,6 +2151,56 @@ var MarketplacePatcher = class {
     }
     this.endProgress(doc, progress, done);
     return { done, detached, modeSuppressed, outcomes, firstError };
+  }
+  /**
+   * 1.5（F3）：cache-only 自动回写——只查缓存与术语表，未命中不发任何 API（零 token 成本）。
+   * 详情重渲染/弹窗重开时由 injectDetailButton 触发：上次翻译中途关窗的已译内容自动呈现。
+   * 回写的文本节点内容变为目标语言后，后续手动「译」趟经 FilterEngine 规则 5c 天然跳过
+   * （不打 data-uut 标记，避免与手动趟的延迟打标状态交叉）。
+   */
+  async cacheOnlyPass(item, skipClosest) {
+    const doc = item.ownerDocument;
+    if (!doc)
+      return;
+    const skipSelector = "[data-no-translate], [data-uut], code, pre" + (skipClosest ? `, ${skipClosest}` : "");
+    const walker = doc.createTreeWalker(item, NodeFilter.SHOW_TEXT, {
+      acceptNode: (n) => {
+        var _a;
+        return ((_a = n.parentElement) == null ? void 0 : _a.closest(skipSelector)) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT;
+      }
+    });
+    const nodes = [];
+    let cur = walker.nextNode();
+    while (cur) {
+      nodes.push(cur);
+      cur = walker.nextNode();
+    }
+    await Promise.all(
+      nodes.map(async (node) => {
+        var _a, _b;
+        const original = (_a = node.nodeValue) != null ? _a : "";
+        const trimmed = original.trim();
+        if (trimmed.length < 2)
+          return;
+        try {
+          const res = await this.coordinator.translateWithOutcome(
+            trimmed,
+            { source: "dom", pluginId: "marketplace" },
+            { cacheOnly: true }
+          );
+          if (res.outcome !== "cache" && res.outcome !== "glossary")
+            return;
+          const formatted = this.format(res.text, trimmed);
+          if (formatted === null || formatted === trimmed)
+            return;
+          if (!node.isConnected)
+            return;
+          node.nodeValue = original.replace(trimmed, formatted);
+          (_b = this.onWriteBack) == null ? void 0 : _b.call(this, node);
+        } catch (e) {
+        }
+      })
+    );
   }
   /** P1 二级：注册一趟在途翻译（取消该文档待移除计时器，复用已有浮条） */
   beginProgress(doc, total) {
@@ -3457,6 +3562,13 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
         }
       });
     });
+    new import_obsidian6.Setting(el).setName(t("settings.cache.loose-key")).setDesc(t("settings.cache.loose-key.desc")).addToggle(
+      (tg) => tg.setValue(s.looseCacheKey).onChange(async (v) => {
+        s.looseCacheKey = v;
+        await this.plugin.saveSettings();
+        await this.renderTabs();
+      })
+    );
     const stats = this.plugin.cache.stats();
     const bytes = await this.plugin.cacheFileBytes();
     const sizeInfo = bytes === null ? t("settings.cache.disk-absent") : t("settings.cache.disk-size", { mb: (bytes / 1024 / 1024).toFixed(2) });
@@ -3476,13 +3588,13 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
         await this.renderTabs();
       })
     );
-    new import_obsidian6.Setting(el).setName(t("settings.cache.purge-stale")).setDesc(t("settings.cache.purge-stale.desc")).addButton(
-      (b) => b.setButtonText(t("settings.cache.purge-stale")).onClick(async () => {
+    new import_obsidian6.Setting(el).setName(t("settings.cache.purge-stale")).setDesc(t("settings.cache.purge-stale.desc")).addButton((b) => {
+      b.setButtonText(t("settings.cache.purge-stale")).setDisabled(s.looseCacheKey).onClick(async () => {
         const res = await this.plugin.purgeStaleCacheEntries();
         new import_obsidian6.Notice(`UUT\uFF1A${res.message}`);
         await this.renderTabs();
-      })
-    );
+      });
+    });
     new import_obsidian6.Setting(el).setName(t("settings.cache.clear")).setDesc(t("settings.cache.clear.desc")).addButton((b) => {
       var _a;
       b.setButtonText(t("settings.cache.clear"));
@@ -4031,6 +4143,8 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
     /** v1.3：用量速率状态栏段（与翻译进度段独立并存） */
     this.usageBarItem = null;
     this.lastUsageBarText = "";
+    /** 1.5（F2）：上一回调的队列深度（>0→0 边沿检测；字段而非局部——refreshRuntime 重建 batcher 后状态延续） */
+    this.prevQueuePending = 0;
     /** O-1：状态栏进度提示——在途时显示剩余/已译计数，归零时短暂显示完成（data-uut 标记防自家通道拾取） */
     this.statusHideTimer = null;
     /** v1.2 A3：熔断倒计时定时器（状态栏常驻 mm:ss；到期/复位/卸载清除） */
@@ -4058,6 +4172,23 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
       write: (p, d) => this.app.vault.adapter.write(p, d),
       exists: (p) => this.app.vault.adapter.exists(p)
     };
+    try {
+      let fsMod;
+      try {
+        fsMod = await import("fs");
+      } catch (e) {
+        const rq = globalThis.require;
+        if (typeof rq === "function")
+          fsMod = rq("fs");
+      }
+      const basePath = this.app.vault.adapter.basePath;
+      this.syncIO = fsMod && basePath ? {
+        writeSync: (p, d) => fsMod.writeFileSync(`${basePath}/${p}`, d, "utf8"),
+        renameSync: (f, to) => fsMod.renameSync(`${basePath}/${f}`, `${basePath}/${to}`)
+      } : { writeSync: () => void 0, renameSync: () => void 0 };
+    } catch (e) {
+      this.syncIO = { writeSync: () => void 0, renameSync: () => void 0 };
+    }
     this.requestSemaphore = new Semaphore(() => this.settings.maxConcurrentRequests);
     this.http = async (req) => {
       await this.requestSemaphore.acquire();
@@ -4128,7 +4259,16 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
     this.batcher = new BatchTranslator(() => this.provider, {
       windowMs: this.settings.batchWindowMs,
       concurrency: this.settings.maxConcurrentRequests,
-      onQueueChange: (pending) => this.updateStatusBar(pending)
+      onQueueChange: (pending) => {
+        var _a2;
+        this.updateStatusBar(pending);
+        if (this.prevQueuePending > 0 && pending === 0 && this.cache.pendingWrites > 0) {
+          const last = (_a2 = this.cache.stats().lastFlushAt) != null ? _a2 : 0;
+          if (Date.now() - last >= 5e3)
+            void this.cache.flush();
+        }
+        this.prevQueuePending = pending;
+      }
     });
     this.usageTracker = new UsageTracker(this.io, `${pluginDir}/usage.json`);
     this.coordinatorOptions = {
@@ -4143,6 +4283,8 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
       monthlyCharBudget: this.settings.monthlyCharBudget,
       // v1.1.5：cacheEnabled 接线（此前为死配置，缓存读写始终生效）
       isCacheEnabled: () => this.settings.cacheEnabled,
+      // 1.5（B3）：宽松缓存键开关（开时键去引擎/模型维度，跨模型复用译文）
+      isLooseCacheKey: () => this.settings.looseCacheKey,
       // 4.2.2 错误分类：Key 失效（401/403）立即引导，不等熔断
       onAuthFailure: () => new import_obsidian7.Notice(t("notice.auth-failed")),
       // v1.1.8：预算超限提示（types.ts 承诺的"超限提示"此前未实现，纯静默 = 用户实测"按钮失效"头号嫌疑）
@@ -4192,7 +4334,9 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
     (_e = this.marketplacePatcher) == null ? void 0 : _e.deactivate();
     (_f = this.windowHook) == null ? void 0 : _f.deactivate();
     void this.batcher.flush();
-    void this.cache.flush();
+    if (!this.cache.flushSync(this.syncIO)) {
+      void this.cache.flush();
+    }
     void this.usageTracker.flush();
   }
   async saveSettings() {
@@ -4322,6 +4466,9 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
     if (!this.provider) {
       return { ok: false, message: t("common.purge-no-engine") };
     }
+    if (this.settings.looseCacheKey) {
+      return { ok: false, message: t("status.cache-purge-loose") };
+    }
     const model = (_a = this.provider.modelId) != null ? _a : "";
     const removed = this.cache.purgeMismatched(
       this.provider.id,
@@ -4401,7 +4548,16 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
     this.batcher = new BatchTranslator(() => this.provider, {
       windowMs: this.settings.batchWindowMs,
       concurrency: this.settings.maxConcurrentRequests,
-      onQueueChange: (pending) => this.updateStatusBar(pending)
+      onQueueChange: (pending) => {
+        var _a2;
+        this.updateStatusBar(pending);
+        if (this.prevQueuePending > 0 && pending === 0 && this.cache.pendingWrites > 0) {
+          const last = (_a2 = this.cache.stats().lastFlushAt) != null ? _a2 : 0;
+          if (Date.now() - last >= 5e3)
+            void this.cache.flush();
+        }
+        this.prevQueuePending = pending;
+      }
     });
     this.coordinatorOptions.targetLang = this.settings.targetLang;
     this.coordinatorOptions.glossary = this.settings.glossary;
