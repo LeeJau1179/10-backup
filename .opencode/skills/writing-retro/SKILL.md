@@ -32,7 +32,7 @@ python .agents/skills/writing-retro/scripts/retro_ledger.py snapshot --scene "<�
 '@ | python .agents/skills/writing-retro/scripts/retro_ledger.py snapshot --scene "<场次名>" --stdin
 ```
 
-快照存在 `.agents/cache/writing-retro/snapshots/`（已 gitignore，Obsidian 不索引，复盘完成后自动清理）。
+快照存在 `.writing-retro/snapshots/`（已 gitignore，Obsidian 不索引，复盘完成后自动清理；台账在 `.writing-retro/state.json`，均在沙盒可写目录内）。
 
 ---
 
@@ -42,7 +42,7 @@ python .agents/skills/writing-retro/scripts/retro_ledger.py snapshot --scene "<�
 
 - **初稿来源**（按优先级）：
   1. 本轮对话中刚写出的初稿文本；
-  2. 保底快照 `.agents/cache/writing-retro/snapshots/<场次名>.md`；
+  2. 保底快照 `.writing-retro/snapshots/<场次名>.md`；
   3. 作者在对话里直接给出的初稿片段。
 - **改后正文来源**：
   1. 硬盘上当前场景 `.md` 文件（去除 YAML frontmatter 只比对正文，同时读取 frontmatter 与对应 `SceneNotes` 作为背景参照）；

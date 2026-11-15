@@ -6,6 +6,7 @@ StoryLine/逆世书/今生/Research/迁移原始资料/
 .opencode/bun.lock
 /copilot/
 /.agents/
+/.writing-retro/snapshots/
 /.claudian/sessions/
 .obsidian/workspace.json
 .obsidian/workspace-mobile.json

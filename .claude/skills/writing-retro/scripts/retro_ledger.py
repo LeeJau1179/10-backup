@@ -16,7 +16,6 @@ if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8")
 
 SKILL_DIR = Path(__file__).resolve().parent.parent
-DEFAULT_STATE_PATH = SKILL_DIR / "state.json"
 
 
 def find_repo_root(start: Path) -> Path:
@@ -28,7 +27,8 @@ def find_repo_root(start: Path) -> Path:
 
 
 REPO_ROOT = find_repo_root(SKILL_DIR)
-SNAPSHOT_DIR = REPO_ROOT / ".agents" / "cache" / "writing-retro" / "snapshots"
+DEFAULT_STATE_PATH = REPO_ROOT / ".writing-retro" / "state.json"
+SNAPSHOT_DIR = REPO_ROOT / ".writing-retro" / "snapshots"
 
 
 def sanitize_scene_key(scene: str) -> str:
