@@ -30,7 +30,7 @@
 | `今生/Codex/`                 | 本一层设定：Characters / Locations / Items / Culture / Lore / Organizations；Systems 空置  |
 | `今生/Scenes/Act 0–5、Act 99/` | 场景卡（成果驱动）                                                                         |
 | `今生/SceneNotes/`            | 场景笔记：节拍、边界、正文待改                                                                   |
-| `今生/Notes/`                 | 作者私人参考工作区                                                                         |
+| `今生/Notes/`                 | 作者工作区与写作规范（文风、AI 语录、大纲、课表、排期等）                                                     |
 | `今生/Research/`              | 研究资料                                                                              |
 | `今生/Archive/`               | 归档场景卡                                                                             |
 | `今生/System/`                | StoryLine 插件数据（board / plotgrid / plotlines / timeline / characters / stats 等）    |
@@ -39,6 +39,7 @@
 
 ## 规范入口索引
 
-- [[StoryLine/逆世书/AGENTS]]
-- [[StoryLine/逆世书/Codex/AGENTS]]
-- [[StoryLine/逆世书/今生/Notes/AGENTS]]
+- [[StoryLine/逆世书/AGENTS]]（写作主规范、写正文 SOP、场景卡与 SceneNotes）
+- [[StoryLine/逆世书/场景管理SOP]]（新建场景、改序、链接、`tags` 故事线与插件同步）
+- [[StoryLine/逆世书/Codex/AGENTS]]（设定层目录、命名、单一事实源、人物卡分工）
+- [[StoryLine/逆世书/今生/Notes/AGENTS]]（Notes 定位与单向依赖）
