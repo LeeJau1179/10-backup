@@ -129,6 +129,11 @@ var zhCN = {
   "settings.general.display-mode.replace": "\u7EAF\u8BD1\u6587",
   "settings.general.display-mode.bilingual": "\u53CC\u8BED\u5BF9\u7167",
   "settings.general.display-mode.original": "\u539F\u6587\uFF08\u6682\u505C\u56DE\u5199\uFF09",
+  // 1.6（M1）：翻译模式预设（效率优先默认——Notice 类批量通知翻译价值低且必耗 token）
+  "settings.general.mode": "\u7FFB\u8BD1\u6A21\u5F0F",
+  "settings.general.mode.desc": '\u6548\u7387\u4F18\u5148\uFF08\u9ED8\u8BA4\uFF09\uFF1A\u8DF3\u8FC7\u5176\u4ED6\u63D2\u4EF6\u7684 Notice \u5F39\u7A97\u63D0\u793A\uFF08\u6279\u91CF\u4EFB\u52A1\u7684\u901A\u77E5\u6700\u8017 token\uFF0C\u4E14\u5F39\u7A97\u51E0\u79D2\u5373\u901D\u3001\u8BD1\u6587\u5E38\u6765\u4E0D\u53CA\u663E\u793A\uFF09\uFF1B\u6548\u679C\u4F18\u5148\uFF1A\u5C3D\u91CF\u7FFB\u8BD1\u4E00\u5207\u53EF\u89C1\u6587\u672C\uFF0C\u6570\u5B57\u6A21\u677F\uFF08\u5982 "New preset: 540/1234"\uFF09\u5F52\u4E00\u5316\u540E\u540C\u7C7B\u63D0\u793A\u4EC5\u9996\u6B21\u4EA7\u751F\u8BF7\u6C42',
+  "settings.general.mode.quality": "\u6548\u679C\u4F18\u5148",
+  "settings.general.mode.efficiency": "\u6548\u7387\u4F18\u5148\uFF08\u9ED8\u8BA4\uFF09",
   "settings.general.bilingual-format": "\u53CC\u8BED\u683C\u5F0F",
   "settings.general.bilingual-format.desc": "\u4EC5\u53CC\u8BED\u5BF9\u7167\u6A21\u5F0F\u751F\u6548\uFF1B\u5BF9 API \u6D88\u8017\u65E0\u5F71\u54CD\uFF08\u4EC5\u6539\u53D8\u56DE\u5199\u6392\u7248\uFF09",
   "settings.general.bilingual-format.t-first": "\u8BD1\u6587 (\u539F\u6587)",
@@ -267,6 +272,9 @@ var zhCN = {
   "settings.advanced.timeout.desc": "\u9ED8\u8BA4 30000\uFF08R-23\uFF1A\u6162\u5F15\u64CE\u4E0A\u8C03\uFF09\uFF1B\u53EF\u914D\u7F6E 5000\u2013120000\uFF084.2.2\uFF09\u3002\u8D85\u65F6\u7684\u8BF7\u6C42\u6309\u5931\u8D25\u5904\u7406\uFF1A\u5DF2\u53D1\u9001\u7684\u5B57\u7B26\u901A\u5E38\u4ECD\u4F1A\u8BA1\u8D39",
   "settings.advanced.debug": "\u8C03\u8BD5\u6A21\u5F0F",
   "settings.advanced.debug.desc": "Console \u8F93\u51FA\u62E6\u622A\u65E5\u5FD7\u3002\u7EAF\u672C\u5730\u884C\u4E3A\uFF0C\u96F6 API \u6D88\u8017",
+  // 1.6（F）：成本审计日志
+  "settings.advanced.cost-audit-log": "\u6210\u672C\u5BA1\u8BA1\u65E5\u5FD7",
+  "settings.advanced.cost-audit-log.desc": "\u5F00\u542F\u540E\u6BCF\u6761\u9001\u8BD1\u8BF7\u6C42\u5728 Console \u6253\u5370\u660E\u7EC6\uFF08\u6587\u672C\u622A\u65AD 60 \u5B57\u7B26 + \u6765\u6E90\u901A\u9053 + \u5B57\u7B26\u6570\uFF09\uFF0C\u53EF\u81EA\u67E5\u300C\u8C01\u5728\u70E7 token\u300D\u3001\u53CD\u9988\u95EE\u9898\u65F6\u9644\u65E5\u5FD7\u5B9A\u4F4D\u3002\u7EAF\u672C\u5730\u884C\u4E3A\uFF0C\u96F6\u989D\u5916 API \u6D88\u8017",
   // —— Provider 错误消息（批次五 33 条：值逐字取自源码字面量；消息构造时刻 t() 解析）——
   "provider.http-not-injected": "HttpClient \u672A\u6CE8\u5165",
   "provider.request": "\u8BF7\u6C42",
@@ -398,6 +406,12 @@ var en = {
   "settings.general.display-mode.replace": "Translation only",
   "settings.general.display-mode.bilingual": "Bilingual",
   "settings.general.display-mode.original": "Original (paused)",
+  // 1.6 (M1): translation mode preset (efficiency-first default — batch notices cost the
+  // most tokens yet rarely live long enough to display a translation)
+  "settings.general.mode": "Translation mode",
+  "settings.general.mode.desc": 'Efficiency-first (default): skips Notice popups from other plugins (batch-task notices burn the most tokens and vanish in seconds, before any translation can land); Quality-first: translates everything visible. Number templates (e.g. "New preset: 540/1234") are normalized so each template is paid for only once',
+  "settings.general.mode.quality": "Quality first",
+  "settings.general.mode.efficiency": "Efficiency first (default)",
   "settings.general.bilingual-format": "Bilingual format",
   "settings.general.bilingual-format.desc": "Applies in bilingual mode only; no API impact (layout of the written-back text only)",
   "settings.general.bilingual-format.t-first": "Translation (original)",
@@ -536,6 +550,9 @@ var en = {
   "settings.advanced.timeout.desc": "Default 30000 (R-23: raise for slow engines); configurable 5000\u2013120000 (4.2.2). Timed-out requests count as failed: sent characters are usually still billed",
   "settings.advanced.debug": "Debug mode",
   "settings.advanced.debug.desc": "Console interception logs. Purely local, zero API cost",
+  // 1.6 (F): cost audit log
+  "settings.advanced.cost-audit-log": "Cost audit log",
+  "settings.advanced.cost-audit-log.desc": "When on, every translation request prints a line to the Console (text truncated to 60 chars + source channel + char count) so you can audit what burns tokens and attach logs to bug reports. Purely local, zero extra API cost",
   // —— Provider error messages (batch 5: 33 entries, resolved via t() at message-construction time) ——
   "provider.http-not-injected": "HttpClient not injected",
   "provider.request": "request",
@@ -610,6 +627,12 @@ var BatchTranslator = class _BatchTranslator {
     this.byText = /* @__PURE__ */ new Map();
     this.timer = null;
     this.flushing = false;
+    /** 1.6.0（E1-b）：已取走结算中、尚未全部完成的条数（flush 取走 entries 时置位、
+     *  F3 逐批上报点同步递减、finally 归零）。原口径 queue.length 在 flush 后立即清零，
+     *  真机实测（1116-0836 复审）：dom 逐条异步预算检查把提交摊薄跨窗口，队列峰值
+     *  常规时序下爬不过 30，降级结构性不触发——计入在途后，批次结算期（API 慢时
+     *  可达数秒）队列深度持续 >30，触发面覆盖真实堆积场景（用户拍板 b） */
+    this.inflight = 0;
     this.statSubmitted = 0;
     this.statCompleted = 0;
     this.statFailed = 0;
@@ -642,6 +665,16 @@ var BatchTranslator = class _BatchTranslator {
       failed: this.statFailed
     };
   }
+  /**
+   * 1.6（E1）→ 1.6.0 收尾（b 拍板）：当前待结算条数 = 聚合窗口内 queue.length +
+   * 已取走在途未结算 inflight。dom 高峰降级（效率档）据此判定；计入在途使批次
+   * 结算期（API 慢/堆积时）队列深度持续高于阈值，触发面覆盖真实风暴（复审发现
+   * 原纯 queue 口径在逐条摊薄时序下结构性不触发，见验收报告 v1.1 §四-1）。
+   * 注意装配层 must 经 this 调用期取 batcher（refreshRuntime 会重建实例），不得构造期捕获。
+   */
+  pendingCount() {
+    return this.queue.length + this.inflight;
+  }
   schedule() {
     var _a;
     if (this.timer)
@@ -662,6 +695,7 @@ var BatchTranslator = class _BatchTranslator {
       const groups = this.byText;
       this.queue = [];
       this.byText = /* @__PURE__ */ new Map();
+      this.inflight = entries.length;
       const provider = this.getProvider();
       if (!provider || entries.length === 0) {
         for (const e of entries)
@@ -680,6 +714,8 @@ var BatchTranslator = class _BatchTranslator {
             const batch = batches[idx++];
             await this.runBatch(provider, batch, groups);
             remaining -= batch.length;
+            if (this.flushing)
+              this.inflight = remaining;
             (_b2 = (_a2 = this.options).onQueueChange) == null ? void 0 : _b2.call(_a2, remaining);
           }
         }
@@ -687,6 +723,7 @@ var BatchTranslator = class _BatchTranslator {
       await Promise.all(workers);
     } finally {
       this.flushing = false;
+      this.inflight = 0;
       (_c = (_b = this.options).onQueueChange) == null ? void 0 : _c.call(_b, this.queue.length);
       if (this.queue.length > 0)
         this.schedule();
@@ -766,6 +803,8 @@ var import_crypto = require("crypto");
 var DEFAULT_SETTINGS = {
   enabled: true,
   targetLang: "zh-CN",
+  // 1.6（M1）：默认效率优先（用户反馈拍板：Notice 类批量通知翻译价值低且必耗 token）
+  mode: "efficiency",
   displayMode: "replace",
   bilingualFormat: "{t} ({o})",
   activeProvider: "openai",
@@ -790,7 +829,8 @@ var DEFAULT_SETTINGS = {
   interceptors: { command: true, menu: true, setting: true, dom: true, marketplace: true },
   usageInStatusBar: true,
   uiLanguage: "auto",
-  debugMode: false
+  debugMode: false,
+  costAuditLog: false
 };
 var CACHE_SCHEMA_VERSION = 1;
 
@@ -1153,6 +1193,62 @@ var _FilterEngine = class _FilterEngine {
     });
     return out;
   }
+  static maskAll(text) {
+    const tokens = [];
+    const spans = [];
+    const numericValues = [];
+    const re = new RegExp(_FilterEngine.MASK_PATTERN_SOURCE, "g");
+    const masked = text.replace(re, (m) => {
+      const token = `__UUTPH${tokens.length}__`;
+      tokens.push(token);
+      spans.push(m);
+      if (/^\d/.test(m))
+        numericValues.push(m);
+      return token;
+    });
+    return { masked, spans, numericValues };
+  }
+  /**
+   * 1.6（C3）：按 spans 还原（token → 原文 span，含数字值）。
+   * 与既有 restorePlaceholders（token → token，供显式占位符直接回填）不同——
+   * maskAll 的 token 必须回填原文值，数字模板跨缓存命中才能各自还原正确数字。
+   */
+  static restoreSpans(translated, spans) {
+    let out = translated;
+    spans.forEach((span, i) => {
+      out = out.split(`__UUTPH${i}__`).join(span);
+    });
+    return out;
+  }
+  /**
+   * 1.6（C2）：还原校验——masked 态译文的 token 编号集合必须与送译 masked 完全一致
+   * （不多不少：少 = 模型吞 token，多 = 模型幻觉 token），且还原后每个数字 token 的值
+   * 须以字符串形式出现（对正确还原是恒真安全网：guard 住"token 未被回填值"类回归；
+   * 已知边界：千分位形态译文去逗号会被误杀——罕见，接受，走回退原文）。
+   * 通过返回还原后的译文；违例返回 null（调用方走 failed：回退原文、不写缓存）。
+   */
+  static validateAndRestore(rawMasked, spans, numericValues) {
+    const expected = new Set(spans.map((_, i) => `__UUTPH${i}__`));
+    const found = /* @__PURE__ */ new Set();
+    const re = /__UUTPH\d+__/g;
+    let m;
+    while ((m = re.exec(rawMasked)) !== null)
+      found.add(m[0]);
+    for (const tk of expected) {
+      if (!found.has(tk))
+        return null;
+    }
+    for (const tk of found) {
+      if (!expected.has(tk))
+        return null;
+    }
+    const restored = _FilterEngine.restoreSpans(rawMasked, spans);
+    for (const v of numericValues) {
+      if (!restored.includes(v))
+        return null;
+    }
+    return restored;
+  }
   /**
    * 规则 6 校验闭环：还原后译文与原文的占位符集合必须一致。
    * 不一致时调用方丢弃译文、回退原文，且不写入缓存（残缺译文落盘会永久化）。
@@ -1165,6 +1261,17 @@ var _FilterEngine = class _FilterEngine {
 };
 /** 单条可送译文本长度上限（字符）；超出拒绝送译（成本与缓存硬上限，v1.1.5） */
 _FilterEngine.MAX_TRANSLATABLE_CHARS = 2e3;
+/**
+ * 1.6（C1）：单趟联合提取——显式占位符（{0}/%s/{{var}}）与裸数字（整数/小数/千分位/
+ * 百分比）合并正则一次扫描、统一编号后逐 span 替换为 __UUTPHn__。
+ * 禁止两层串行调用 protectPlaceholders：两函数各自从 0 编号且数字正则会互噬 token
+ * 下标数字（审查实测 "%s" 丢失、"{{user2}}" 破坏）；replace 单趟天然规避互噬。
+ * 数字负向前瞻 (?![\da-zA-Z]) 排除粘连形态：字母紧跟（1st/10K）与回溯截断的数字
+ * 前缀（"10K" 中 \d+ 贪婪 "10" 被拒后回溯 "1"——前瞻同时排除数字，短前缀即被拒绝，
+ * 整个数字串保持原样；C 批次门禁实测抓出）。B2B 前后皆字母天然不 mask。
+ * 动态数字模板（"New preset: 540/1234" 型）masked 后同模板共享缓存键——归一化缓存的根基。
+ */
+_FilterEngine.MASK_PATTERN_SOURCE = "\\{\\d+\\}|%[sd]|\\{\\{[^}]+\\}\\}|\\d+(?:[.,]\\d+)*%?(?![\\da-zA-Z])";
 var FilterEngine = _FilterEngine;
 
 // src/core/coordinator.ts
@@ -1198,7 +1305,7 @@ var TranslationCoordinator = class {
    *   "cache-miss"），不发任何 API——弹窗重开时自动回写已译内容用，零 token 成本
    */
   async translateWithOutcome(text, ctx, opts) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r;
     if (!this.filter.shouldTranslate(text))
       return { text, outcome: "filtered" };
     const fixed = this.options.glossary[text];
@@ -1207,42 +1314,57 @@ var TranslationCoordinator = class {
     const provider = this.getProvider();
     if (!provider)
       return { text, outcome: "no-provider" };
+    const { masked, spans, numericValues } = FilterEngine.maskAll(text);
     const cacheOn = (_c = (_b = (_a = this.options).isCacheEnabled) == null ? void 0 : _b.call(_a)) != null ? _c : true;
     const model = (_f = (_e = (_d = this.options).getModelId) == null ? void 0 : _e.call(_d)) != null ? _f : "";
-    const key = ((_h = (_g = this.options).isLooseCacheKey) == null ? void 0 : _h.call(_g)) ? CacheManager.makeLooseKey(text, this.options.targetLang) : CacheManager.makeKey(text, provider.id, this.options.targetLang, model);
+    const key = ((_h = (_g = this.options).isLooseCacheKey) == null ? void 0 : _h.call(_g)) ? CacheManager.makeLooseKey(masked, this.options.targetLang) : CacheManager.makeKey(masked, provider.id, this.options.targetLang, model);
     const hit = cacheOn ? this.cache.get(key) : null;
-    if (hit)
-      return { text: hit.tgt, outcome: "cache" };
+    if (hit) {
+      const cached = FilterEngine.validateAndRestore(hit.tgt, spans, numericValues);
+      if (cached !== null)
+        return { text: cached, outcome: "cache" };
+    }
     if (opts == null ? void 0 : opts.cacheOnly)
       return { text, outcome: "cache-miss" };
-    if (this.options.usageTracker && await this.options.usageTracker.isOverBudget((_i = this.options.monthlyCharBudget) != null ? _i : null)) {
+    if (ctx.source === "dom" && ctx.pluginId === "unknown" && ((_j = (_i = this.options).shouldThrottleDom) == null ? void 0 : _j.call(_i))) {
+      return { text, outcome: "throttled" };
+    }
+    if (this.options.usageTracker && await this.options.usageTracker.isOverBudget((_k = this.options.monthlyCharBudget) != null ? _k : null)) {
       if (!this.budgetNotified) {
         this.budgetNotified = true;
-        (_k = (_j = this.options).onBudgetExceeded) == null ? void 0 : _k.call(_j);
+        (_m = (_l = this.options).onBudgetExceeded) == null ? void 0 : _m.call(_l);
       }
       return { text, outcome: "budget" };
     }
     if (this.isCircuitOpen())
       return { text, outcome: "circuit" };
     if (!(opts == null ? void 0 : opts.bypassNegativeCache)) {
-      const neg = this.negativeCache.get(text);
+      const neg = this.negativeCache.get(masked);
       if (neg !== void 0 && this.now() - neg < NEGATIVE_TTL_MS) {
         return { text, outcome: "negative-cache" };
       }
     }
     try {
-      const { masked, tokens } = FilterEngine.protectPlaceholders(text);
       const context = `${ctx.source}:${ctx.pluginId}`;
+      if ((_o = (_n = this.options).isCostAuditLog) == null ? void 0 : _o.call(_n)) {
+        console.log("[UUT]", ctx.source, ctx.pluginId, masked.length, masked.slice(0, 60));
+      }
       const raw = this.options.translateVia ? await this.options.translateVia(masked, context) : await provider.translate(masked, { context });
-      const restored = FilterEngine.restorePlaceholders(raw.trim(), tokens);
-      void ((_l = this.options.usageTracker) == null ? void 0 : _l.record(masked.length, restored.length));
+      const restored = FilterEngine.validateAndRestore(raw.trim(), spans, numericValues);
+      if (restored === null) {
+        this.noteFailure(masked);
+        return { text, outcome: "failed", error: t("common.placeholder-rewritten") };
+      }
+      void ((_p = this.options.usageTracker) == null ? void 0 : _p.record(masked.length, restored.length));
       if (!FilterEngine.placeholdersIntact(text, restored)) {
+        this.noteFailure(masked);
         return { text, outcome: "failed", error: t("common.placeholder-rewritten") };
       }
       if (cacheOn) {
         this.cache.set(key, {
           src: text,
-          tgt: restored,
+          // 1.6（C3）：tgt 存 masked 态译文（未还原）——同模板不同数字命中后按当前 spans 还原
+          tgt: raw.trim(),
           provider: provider.id,
           lang: this.options.targetLang,
           // v1.1.9：缓存键已含模型维度，条目冗余一份供「清理失效条目」按模型判定
@@ -1256,12 +1378,12 @@ var TranslationCoordinator = class {
     } catch (e) {
       if (/HTTP 40[13]/.test(String(e)) && !this.authNotified) {
         this.authNotified = true;
-        (_n = (_m = this.options).onAuthFailure) == null ? void 0 : _n.call(_m);
+        (_r = (_q = this.options).onAuthFailure) == null ? void 0 : _r.call(_q);
       }
       if (this.consecutiveFailures < 3) {
         console.warn(t("common.log-translate-failed", { n: String(e).slice(0, 160) }));
       }
-      this.noteFailure(text, e);
+      this.noteFailure(masked, e);
       return { text, outcome: "failed", error: String(e).slice(0, 160) };
     }
   }
@@ -1588,13 +1710,14 @@ var SKIP_SELECTORS = [
 ];
 var DOMPatcher = class {
   constructor(coordinator, format, isBilingual, debug = () => {
-  }, app, rescanIntervalMs = 3e3) {
+  }, app, rescanIntervalMs = 3e3, skipNotice = () => false) {
     this.coordinator = coordinator;
     this.format = format;
     this.isBilingual = isBilingual;
     this.debug = debug;
     this.app = app;
     this.rescanIntervalMs = rescanIntervalMs;
+    this.skipNotice = skipNotice;
     this.observers = [];
     this.documents = /* @__PURE__ */ new Set();
     this.layoutEventRef = null;
@@ -1742,6 +1865,8 @@ var DOMPatcher = class {
       if (el.closest(sel))
         return true;
     }
+    if (this.skipNotice() && el.closest(".notice"))
+      return true;
     return false;
   }
   scheduleIdle() {
@@ -1765,7 +1890,7 @@ var DOMPatcher = class {
     );
   }
   async processNode(node) {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     const original = (_a = node.nodeValue) != null ? _a : "";
     const trimmed = original.trim();
     if (trimmed.length < 2)
@@ -1787,10 +1912,25 @@ var DOMPatcher = class {
       }
       return;
     }
-    const translated = await this.coordinator.translate(trimmed, {
+    const res = await this.coordinator.translateWithOutcome(trimmed, {
       source: "dom",
       pluginId: "unknown"
     });
+    if (res.outcome === "throttled") {
+      this.processed.delete(node);
+      const attempts = ((_c = this.retryAttempts.get(node)) != null ? _c : 0) + 1;
+      this.retryAttempts.set(node, attempts);
+      if (attempts <= 15) {
+        window.setTimeout(() => {
+          if (node.isConnected && this.documents.size > 0) {
+            this.enqueue(node, true);
+            this.scheduleIdle();
+          }
+        }, 2e3);
+      }
+      return;
+    }
+    const translated = res.text;
     if (!node.isConnected)
       return;
     let formatted = this.format(translated, trimmed);
@@ -1808,7 +1948,7 @@ var DOMPatcher = class {
     } finally {
       this.writing = false;
     }
-    this.processed.set(node, ((_c = node.nodeValue) != null ? _c : "").trim());
+    this.processed.set(node, ((_d = node.nodeValue) != null ? _d : "").trim());
   }
   /**
    * v1.1.5：外部通道（MarketplacePatcher 条目「译」）回写后登记——
@@ -2114,6 +2254,9 @@ var MarketplacePatcher = class {
           outcomes.push(res.outcome);
           if (res.outcome === "failed") {
             firstError != null ? firstError : firstError = res.error;
+            return;
+          }
+          if (res.outcome === "throttled") {
             return;
           }
           const formatted = this.format(res.text, trimmed);
@@ -2671,7 +2814,8 @@ function buildUiTranslationPrompt(targetLang) {
     `You are a UI localization expert. Translate the following interface text into ${targetLang}.`,
     "Rules:",
     `1. ${resolveRule1(targetLang)}`,
-    "2. Preserve placeholders exactly: {0}, %s, {{variable}}",
+    // 1.6（C4）：数字归一化后送译文本含 __UUTPHn__ 联合 token，与显式占位符一并明示保护
+    "2. Preserve placeholders exactly: {0}, %s, {{variable}}, __UUTPH0__",
     "3. Preserve keyboard shortcuts exactly: Ctrl+P, Cmd+Shift+S",
     "4. Preserve brand names, plugin names and proper nouns",
     "5. Return ONLY the translation, no explanations",
@@ -3255,6 +3399,12 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
     new import_obsidian6.Setting(el).setName(t("settings.general.display-mode")).setDesc(t("settings.general.display-mode.desc")).addDropdown(
       (d) => d.addOption("replace", t("settings.general.display-mode.replace")).addOption("bilingual", t("settings.general.display-mode.bilingual")).addOption("original", t("settings.general.display-mode.original")).setValue(s.displayMode).onChange(async (v) => {
         s.displayMode = v;
+        await this.plugin.saveSettings();
+      })
+    );
+    new import_obsidian6.Setting(el).setName(t("settings.general.mode")).setDesc(t("settings.general.mode.desc")).addDropdown(
+      (d) => d.addOption("quality", t("settings.general.mode.quality")).addOption("efficiency", t("settings.general.mode.efficiency")).setValue(s.mode).onChange(async (v) => {
+        s.mode = v;
         await this.plugin.saveSettings();
       })
     );
@@ -3863,6 +4013,12 @@ var UutSettingTab = class extends import_obsidian6.PluginSettingTab {
         await this.plugin.saveSettings();
       })
     );
+    new import_obsidian6.Setting(el).setName(t("settings.advanced.cost-audit-log")).setDesc(t("settings.advanced.cost-audit-log.desc")).addToggle(
+      (toggle) => toggle.setValue(s.costAuditLog).onChange(async (v) => {
+        s.costAuditLog = v;
+        await this.plugin.saveSettings();
+      })
+    );
   }
   addTextSetting(el, name, desc, value, placeholder, apply) {
     new import_obsidian6.Setting(el).setName(name).setDesc(desc).addText(
@@ -4285,6 +4441,15 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
       isCacheEnabled: () => this.settings.cacheEnabled,
       // 1.5（B3）：宽松缓存键开关（开时键去引擎/模型维度，跨模型复用译文）
       isLooseCacheKey: () => this.settings.looseCacheKey,
+      // 1.6（E1）：dom 高峰降级（效率档）——队列深度 > 30 时 dom 兜底通道暂停发新 API 请求
+      // （仅回写已缓存内容）。必须经 this 调用期取 batcher：refreshRuntime 会重建实例，
+      // 构造期捕获会读到旧实例（冷读终审钉死的装配红线）
+      shouldThrottleDom: () => {
+        var _a2, _b;
+        return this.settings.mode === "efficiency" && ((_b = (_a2 = this.batcher) == null ? void 0 : _a2.pendingCount()) != null ? _b : 0) > 30;
+      },
+      // 1.6（F）：成本审计日志（默认关）——懒闭包实时读 settings，开关热生效
+      isCostAuditLog: () => this.settings.costAuditLog,
       // 4.2.2 错误分类：Key 失效（401/403）立即引导，不等熔断
       onAuthFailure: () => new import_obsidian7.Notice(t("notice.auth-failed")),
       // v1.1.8：预算超限提示（types.ts 承诺的"超限提示"此前未实现，纯静默 = 用户实测"按钮失效"头号嫌疑）
@@ -4607,7 +4772,15 @@ var UniversalUiTranslatorPlugin = class extends import_obsidian7.Plugin {
       this.settingPatcher.activate();
     }
     if (on.dom && !this.domPatcher) {
-      this.domPatcher = new DOMPatcher(this.coordinator, format, isBilingual, debug, this.app);
+      this.domPatcher = new DOMPatcher(
+        this.coordinator,
+        format,
+        isBilingual,
+        debug,
+        this.app,
+        void 0,
+        () => this.settings.mode === "efficiency"
+      );
       this.domPatcher.activate();
     }
     if (on.marketplace !== false && !this.marketplacePatcher) {
